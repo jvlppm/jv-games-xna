@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CA4F269F-53E9-427D-B750-8156C0AE320D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Jv.Games.Xna.Async</RootNamespace>
+    <AssemblyName>Jv.Games.Xna.Async</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="XNATweener">
+      <HintPath>..\..\references\XNATweener\XNATweener.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\AsyncBridge.cs" />
+    <Compile Include="AsyncContext.cs" />
+    <Compile Include="Timers\CountdownTimer.cs" />
+    <Compile Include="GameLoopEvent.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Timers\Interpolator.cs" />
+    <Compile Include="Timers\ITimer.cs" />
+    <Compile Include="Timers\YieldTimer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jv.Games.Xna\Jv.Games.Xna.csproj">
+      <Project>{df62e955-1dfa-4900-9163-fd28f47b1ce2}</Project>
+      <Name>Jv.Games.Xna</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)' == 'Debug-Linux' Or '$(Configuration)' == 'Release-Linux' ">
+      <ItemGroup>
+        <Reference Include="Lidgren.Network">
+          <HintPath>..\..\references\Linux\MonoGame\3.2\Lidgren.Network.dll</HintPath>
+        </Reference>
+        <Reference Include="MonoGame.Framework">
+          <HintPath>..\..\references\Linux\MonoGame\3.2\MonoGame.Framework.dll</HintPath>
+        </Reference>
+        <Reference Include="OpenTK">
+          <HintPath>..\..\references\Linux\MonoGame\3.2\OpenTK.dll</HintPath>
+        </Reference>
+        <Reference Include="Tao.Sdl">
+          <HintPath>..\..\references\Linux\MonoGame\3.2\Tao.Sdl.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Lidgren.Network">
+          <HintPath>..\..\references\WinGL\MonoGame\3.2\Lidgren.Network.dll</HintPath>
+        </Reference>
+        <Reference Include="MonoGame.Framework">
+          <HintPath>..\..\references\WinGL\MonoGame\3.2\MonoGame.Framework.dll</HintPath>
+        </Reference>
+        <Reference Include="OpenTK">
+          <HintPath>..\..\references\WinGL\MonoGame\3.2\OpenTK.dll</HintPath>
+        </Reference>
+        <Reference Include="Tao.Sdl">
+          <HintPath>..\..\references\WinGL\MonoGame\3.2\Tao.Sdl.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
