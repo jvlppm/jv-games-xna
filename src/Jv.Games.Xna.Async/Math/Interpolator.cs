@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XNATweener;
 
-namespace Jv.Games.Xna.Async.Timers
+namespace Jv.Games.Xna.Async.Math
 {
-    public class Interpolator<T> : ITimer<T>
+    public class Interpolator<T> : IGameLoopAction<T>
         where T : GameLoopEventArgs
     {
         bool _completed;
@@ -42,7 +43,7 @@ namespace Jv.Games.Xna.Async.Timers
             ValueStep(GetValue());
         }
 
-        public bool Tick(T args)
+        public bool Step(T args)
         {
             if (_completed)
                 return false;
@@ -68,6 +69,16 @@ namespace Jv.Games.Xna.Async.Timers
 
             var curValue = CurrentDuration / Duration;
             return MathHelper.Lerp(StartValue, EndValue, MathHelper.Clamp(curValue, 0, 1));
+        }
+    }
+
+    public static class InterpolatorExtensions
+    {
+        public static Task<T> Interpolate<T>(this SyncContext<T> context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
+            where T : GameLoopEventArgs
+        {
+            var info = new Interpolator<T>(duration, startValue, endValue, valueStep, easingFunction);
+            return context.RunTimer(info, cancellationToken);
         }
     }
 }

@@ -29,17 +29,15 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Attributes
-        readonly List<KeyValuePair<ITimer<T>, TaskCompletionSource<T>>> _timers;
+        readonly List<KeyValuePair<IGameLoopAction<T>, TaskCompletionSource<T>>> _timers;
         readonly Queue<Action> _asyncQueue;
-        readonly Action<T> _loop;
         #endregion
 
         #region Constructors
-        public SyncContext(Action<T> loop)
+        public SyncContext()
         {
-            _timers = new List<KeyValuePair<ITimer<T>, TaskCompletionSource<T>>>();
+            _timers = new List<KeyValuePair<IGameLoopAction<T>, TaskCompletionSource<T>>>();
             _asyncQueue = new Queue<Action>();
-            _loop = loop;
         }
         #endregion
 
@@ -77,8 +75,7 @@ namespace Jv.Games.Xna.Async
                 if (BeforeLoop != null)
                     BeforeLoop(this, args);
 
-                if (_loop != null)
-                    _loop(args);
+                UpdateTimers(args);
 
                 if (PostLoop != null)
                     PostLoop(this, args);
@@ -88,10 +85,9 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        #region Async
-        public Task<T> RunTimer(ITimer<T> timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<T> RunTimer(IGameLoopAction<T> timer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var kv = new KeyValuePair<ITimer<T>, TaskCompletionSource<T>>(timer, new TaskCompletionSource<T>());
+            var kv = new KeyValuePair<IGameLoopAction<T>, TaskCompletionSource<T>>(timer, new TaskCompletionSource<T>());
 
             if (cancellationToken != CancellationToken.None)
             {
@@ -101,9 +97,6 @@ namespace Jv.Games.Xna.Async
                     {
                         kv.Value.TrySetCanceled();
                         _timers.Remove(kv);
-
-                        if (_timers.Count == 0)
-                            BeforeLoop -= UpdateTimers;
                     });
                 }
                 else
@@ -113,52 +106,20 @@ namespace Jv.Games.Xna.Async
                 }
             }
 
-            if (_timers.Count == 0)
-                BeforeLoop += UpdateTimers;
-
             _timers.Add(kv);
 
             return kv.Value.Task;
         }
-
-        public Task<T> Yield()
-        {
-            return RunTimer(new YieldTimer<T>());
-        }
-
-        /// <summary>
-        /// Creates a task that will complete after a time delay.
-        /// </summary>
-        /// <param name="dueTime">The time span to wait before completing the returned task.</param>
-        /// <param name="cancellationToken">The cancellation token that will be checked prior to completing the returned task.</param>
-        public Task<T> Delay(TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var timer = new CountdownTimer<T>(dueTime);
-            return RunTimer(timer, cancellationToken);
-        }
-
-        public Task Interpolate(TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var info = new Interpolator<T>(duration, startValue, endValue, valueStep, easingFunction);
-            return RunTimer(info, cancellationToken);
-        }
-        #endregion
         #endregion
 
         #region Private Methods
-        void UpdateTimers(object sender, T args)
+        void UpdateTimers(T args)
         {
-            foreach (var timer in _timers.ToList())
+            foreach (var timer in _timers.Where(t => !t.Key.Step(args)).ToList())
             {
-                if (!timer.Key.Tick(args))
-                {
-                    _timers.Remove(timer);
-                    timer.Value.TrySetResult(args);
-                }
+                _timers.Remove(timer);
+                timer.Value.TrySetResult(args);
             }
-
-            if (_timers.Count == 0)
-                BeforeLoop -= UpdateTimers;
         }
         #endregion
     }

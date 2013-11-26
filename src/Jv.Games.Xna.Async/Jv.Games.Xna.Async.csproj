@@ -49,9 +49,9 @@
     <Compile Include="Timers\CountdownTimer.cs" />
     <Compile Include="GameLoopEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Timers\Interpolator.cs" />
-    <Compile Include="Timers\ITimer.cs" />
-    <Compile Include="Timers\YieldTimer.cs" />
+    <Compile Include="Math\Interpolator.cs" />
+    <Compile Include="IGameLoopAction.cs" />
+    <Compile Include="Timers\Yield.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Jv.Games.Xna\Jv.Games.Xna.csproj">
