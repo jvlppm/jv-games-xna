@@ -39,32 +39,15 @@ namespace Jv.Games.Xna.Async.Timers
         where T : GameLoopEventArgs
     {
         public readonly CountdownTimer Timer;
-        TaskCompletionSource<T> Completion;
-        public Task<T> Task { get { return Completion.Task; } }
 
         public CountdownTimer(TimeSpan duration)
         {
             Timer = new CountdownTimer(duration);
-            Completion = new TaskCompletionSource<T>();
         }
 
         public bool Tick(T args)
         {
-            if (Completion.Task.IsCompleted)
-                return false;
-
-            if (!Timer.Tick(args.GameTime))
-            {
-                Completion.TrySetResult(args);
-                return false;
-            }
-
-            return true;
-        }
-
-        public void Cancel()
-        {
-            Completion.TrySetCanceled();
+            return Timer.Tick(args.GameTime);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Attributes
-        readonly List<ITimer<T>> _timers;
+        readonly List<KeyValuePair<ITimer<T>, TaskCompletionSource<T>>> _timers;
         readonly Queue<Action> _asyncQueue;
         readonly Action<T> _loop;
         #endregion
@@ -37,7 +37,7 @@ namespace Jv.Games.Xna.Async
         #region Constructors
         public SyncContext(Action<T> loop)
         {
-            _timers = new List<ITimer<T>>();
+            _timers = new List<KeyValuePair<ITimer<T>, TaskCompletionSource<T>>>();
             _asyncQueue = new Queue<Action>();
             _loop = loop;
         }
@@ -91,18 +91,34 @@ namespace Jv.Games.Xna.Async
         #region Async
         public Task<T> RunTimer(ITimer<T> timer, CancellationToken cancellationToken = default(CancellationToken))
         {
+            var kv = new KeyValuePair<ITimer<T>, TaskCompletionSource<T>>(timer, new TaskCompletionSource<T>());
+
             if (cancellationToken != CancellationToken.None)
-                cancellationToken.Register(timer.Cancel);
-
-            if (!cancellationToken.IsCancellationRequested)
             {
-                if (_timers.Count == 0)
-                    BeforeLoop += UpdateTimers;
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    cancellationToken.Register(delegate
+                    {
+                        kv.Value.TrySetCanceled();
+                        _timers.Remove(kv);
 
-                _timers.Add(timer);
+                        if (_timers.Count == 0)
+                            BeforeLoop -= UpdateTimers;
+                    });
+                }
+                else
+                {
+                    kv.Value.SetCanceled();
+                    return kv.Value.Task;
+                }
             }
 
-            return timer.Task;
+            if (_timers.Count == 0)
+                BeforeLoop += UpdateTimers;
+
+            _timers.Add(kv);
+
+            return kv.Value.Task;
         }
 
         public Task<T> Yield()
@@ -134,8 +150,11 @@ namespace Jv.Games.Xna.Async
         {
             foreach (var timer in _timers.ToList())
             {
-                if (!timer.Tick(args))
+                if (!timer.Key.Tick(args))
+                {
                     _timers.Remove(timer);
+                    timer.Value.TrySetResult(args);
+                }
             }
 
             if (_timers.Count == 0)

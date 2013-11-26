@@ -11,15 +11,14 @@ namespace Jv.Games.Xna.Async.Timers
     public class Interpolator<T> : ITimer<T>
         where T : GameLoopEventArgs
     {
-        TaskCompletionSource<T> Completion;
+        bool _completed;
+
         float CurrentDuration;
         float Duration;
         Action<float> ValueStep;
         float StartValue;
         float EndValue;
         TweeningFunction EasingFunction;
-
-        public Task<T> Task { get { return Completion.Task; } }
 
         public Interpolator(TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null)
         {
@@ -29,7 +28,6 @@ namespace Jv.Games.Xna.Async.Timers
             if (valueStep == null)
                 throw new ArgumentNullException("valueStep");
 
-            Completion = new TaskCompletionSource<T>();
             Duration = (float)duration.TotalMilliseconds;
             ValueStep = valueStep;
             StartValue = startValue;
@@ -46,7 +44,7 @@ namespace Jv.Games.Xna.Async.Timers
 
         public bool Tick(T args)
         {
-            if (Completion.Task.IsCompleted)
+            if (_completed)
                 return false;
 
             Duration += (float)args.GameTime.ElapsedGameTime.TotalMilliseconds;
@@ -59,13 +57,8 @@ namespace Jv.Games.Xna.Async.Timers
 
             CurrentDuration = Duration;
             NotifyValue();
-            Completion.TrySetResult(args);
+            _completed = true;
             return false;
-        }
-
-        public void Cancel()
-        {
-            Completion.TrySetCanceled();
         }
 
         float GetValue()

@@ -6,7 +6,5 @@ namespace Jv.Games.Xna.Async.Timers
         where T : GameLoopEventArgs
     {
         bool Tick(T args);
-        Task<T> Task { get; }
-        void Cancel();
     }
 }
