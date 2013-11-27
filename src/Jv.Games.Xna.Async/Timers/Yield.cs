@@ -16,7 +16,7 @@ namespace Jv.Games.Xna.Async.Timers
         public static Task<T> Yield<T>(this SyncContext<T> context)
             where T : GameLoopEventArgs
         {
-            return context.RunTimer(new Yield());
+            return context.Run(new Yield());
         }
     }
 }

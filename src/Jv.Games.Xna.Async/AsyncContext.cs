@@ -1,12 +1,8 @@
-﻿using Jv.Games.Xna.Async.Timers;
-using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using XNATweener;
 
 namespace Jv.Games.Xna.Async
 {
@@ -75,7 +71,7 @@ namespace Jv.Games.Xna.Async
                 if (BeforeLoop != null)
                     BeforeLoop(this, args);
 
-                UpdateTimers(args);
+                UpdateOperations(args);
 
                 if (PostLoop != null)
                     PostLoop(this, args);
@@ -85,7 +81,7 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        public Task<T> RunTimer(ITimedOperation timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<T> Run(ITimedOperation timer, CancellationToken cancellationToken = default(CancellationToken))
         {
             var kv = new KeyValuePair<ITimedOperation, TaskCompletionSource<T>>(timer, new TaskCompletionSource<T>());
 
@@ -113,7 +109,7 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Private Methods
-        void UpdateTimers(T args)
+        void UpdateOperations(T args)
         {
             foreach (var timer in _timers.Where(t => !t.Key.Tick(args.GameTime)).ToList())
             {
