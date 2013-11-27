@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async.Timers
 {
-    public class CountdownTimer
+    public class CountdownTimer : ITimedOperation
     {
         #region Attributes
         public TimeSpan CurrentDuration;
@@ -36,22 +36,6 @@ namespace Jv.Games.Xna.Async.Timers
         #endregion
     }
 
-    public class CountdownTimer<T> : IGameLoopAction<T>
-        where T : GameLoopEventArgs
-    {
-        public readonly CountdownTimer Timer;
-
-        public CountdownTimer(TimeSpan duration)
-        {
-            Timer = new CountdownTimer(duration);
-        }
-
-        public bool Step(T args)
-        {
-            return Timer.Tick(args.GameTime);
-        }
-    }
-
     public static class CountdownTimerExtensions
     {
         /// <summary>
@@ -62,7 +46,7 @@ namespace Jv.Games.Xna.Async.Timers
         public static Task<T> Delay<T>(SyncContext<T> context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
             where T : GameLoopEventArgs
         {
-            var timer = new CountdownTimer<T>(dueTime);
+            var timer = new CountdownTimer(dueTime);
             return context.RunTimer(timer, cancellationToken);
         }
     }

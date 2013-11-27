@@ -29,14 +29,14 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Attributes
-        readonly List<KeyValuePair<IGameLoopAction<T>, TaskCompletionSource<T>>> _timers;
+        readonly List<KeyValuePair<ITimedOperation, TaskCompletionSource<T>>> _timers;
         readonly Queue<Action> _asyncQueue;
         #endregion
 
         #region Constructors
         public SyncContext()
         {
-            _timers = new List<KeyValuePair<IGameLoopAction<T>, TaskCompletionSource<T>>>();
+            _timers = new List<KeyValuePair<ITimedOperation, TaskCompletionSource<T>>>();
             _asyncQueue = new Queue<Action>();
         }
         #endregion
@@ -85,9 +85,9 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        public Task<T> RunTimer(IGameLoopAction<T> timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<T> RunTimer(ITimedOperation timer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var kv = new KeyValuePair<IGameLoopAction<T>, TaskCompletionSource<T>>(timer, new TaskCompletionSource<T>());
+            var kv = new KeyValuePair<ITimedOperation, TaskCompletionSource<T>>(timer, new TaskCompletionSource<T>());
 
             if (cancellationToken != CancellationToken.None)
             {
@@ -115,7 +115,7 @@ namespace Jv.Games.Xna.Async
         #region Private Methods
         void UpdateTimers(T args)
         {
-            foreach (var timer in _timers.Where(t => !t.Key.Step(args)).ToList())
+            foreach (var timer in _timers.Where(t => !t.Key.Tick(args.GameTime)).ToList())
             {
                 _timers.Remove(timer);
                 timer.Value.TrySetResult(args);

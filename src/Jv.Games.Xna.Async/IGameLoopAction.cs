@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
+using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    public interface IGameLoopAction<T>
-        where T : GameLoopEventArgs
+    public interface ITimedOperation
     {
-        bool Step(T args);
+        bool Tick(GameTime gameTime);
     }
 }

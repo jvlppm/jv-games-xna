@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
+using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async.Timers
 {
-    public class Yield<T> : IGameLoopAction<T>
-        where T : GameLoopEventArgs
+    public class Yield : ITimedOperation
     {
-        public bool Step(T args)
+        public bool Tick(GameTime gameTime)
         {
             return false;
         }
@@ -16,7 +16,7 @@ namespace Jv.Games.Xna.Async.Timers
         public static Task<T> Yield<T>(this SyncContext<T> context)
             where T : GameLoopEventArgs
         {
-            return context.RunTimer(new Yield<T>());
+            return context.RunTimer(new Yield());
         }
     }
 }

@@ -9,8 +9,7 @@ using XNATweener;
 
 namespace Jv.Games.Xna.Async.Math
 {
-    public class Interpolator<T> : IGameLoopAction<T>
-        where T : GameLoopEventArgs
+    public class Interpolator : ITimedOperation
     {
         bool _completed;
 
@@ -43,12 +42,12 @@ namespace Jv.Games.Xna.Async.Math
             ValueStep(GetValue());
         }
 
-        public bool Step(T args)
+        public bool Tick(GameTime gameTime)
         {
             if (_completed)
                 return false;
 
-            Duration += (float)args.GameTime.ElapsedGameTime.TotalMilliseconds;
+            Duration += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (CurrentDuration < Duration)
             {
@@ -77,7 +76,7 @@ namespace Jv.Games.Xna.Async.Math
         public static Task<T> Interpolate<T>(this SyncContext<T> context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
             where T : GameLoopEventArgs
         {
-            var info = new Interpolator<T>(duration, startValue, endValue, valueStep, easingFunction);
+            var info = new Interpolator(duration, startValue, endValue, valueStep, easingFunction);
             return context.RunTimer(info, cancellationToken);
         }
     }
