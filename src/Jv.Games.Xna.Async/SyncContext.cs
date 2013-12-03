@@ -10,84 +10,40 @@ using XNATweener;
 
 namespace Jv.Games.Xna.Async
 {
-    public interface ISyncContext
+    public class SyncContext
     {
-        void Enqueue(Action action);
-        void Run(Action action);
-    }
-
-    public interface ISyncContext<in T> : ISyncContext
-    {
-        void RunLoop(T args);
-    }
-
-    public class SyncContext<T> : ISyncContext<T>
-        where T : GameLoopEventArgs
-    {
-        #region Events
-        public event GameLoopEventHandler<T> BeforeLoop, PostLoop;
+        #region Nested
+        struct TimerInfo
+        {
+            public ITimedOperation Operation;
+            public TaskCompletionSource<GameTime> Completion;
+        }
         #endregion
 
         #region Attributes
-        readonly List<KeyValuePair<ITimedOperation, TaskCompletionSource<T>>> _timers;
-        readonly Queue<Action> _asyncQueue;
+        readonly List<TimerInfo> _timers;
         #endregion
 
         #region Constructors
         public SyncContext()
         {
-            _timers = new List<KeyValuePair<ITimedOperation, TaskCompletionSource<T>>>();
-            _asyncQueue = new Queue<Action>();
+            _timers = new List<TimerInfo>();
         }
         #endregion
 
         #region Public Methods
-        public IDisposable Activate()
+        public void Update(GameTime gameTime)
         {
-            var oldCont = TaskAwaiter.CurrentContext;
-            TaskAwaiter.CurrentContext = this;
-
-            return Disposable.Create(() =>
+            foreach (var timer in _timers.Where(t => !t.Operation.Tick(gameTime)).ToList())
             {
-                if (TaskAwaiter.CurrentContext != this)
-                    throw new InvalidOperationException("Context must be active, in order to be deactivated.");
-
-                TaskAwaiter.CurrentContext = oldCont;
-            });
-        }
-
-        public void Enqueue(Action action)
-        {
-            lock (_asyncQueue)
-                _asyncQueue.Enqueue(action);
-        }
-
-        public void Run(Action action)
-        {
-            using (Activate())
-                action();
-        }
-
-        public void RunLoop(T args)
-        {
-            using (Activate())
-            {
-                if (BeforeLoop != null)
-                    BeforeLoop(this, args);
-
-                UpdateTimers(args);
-
-                if (PostLoop != null)
-                    PostLoop(this, args);
-
-                while (_asyncQueue.Count > 0)
-                    _asyncQueue.Dequeue()();
+                _timers.Remove(timer);
+                timer.Completion.TrySetResult(gameTime);
             }
         }
 
-        public Task<T> RunTimer(ITimedOperation timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<GameTime> RunTimer(ITimedOperation timer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var kv = new KeyValuePair<ITimedOperation, TaskCompletionSource<T>>(timer, new TaskCompletionSource<T>());
+            var info = new TimerInfo { Completion = new TaskCompletionSource<GameTime>(), Operation = timer };
 
             if (cancellationToken != CancellationToken.None)
             {
@@ -95,31 +51,20 @@ namespace Jv.Games.Xna.Async
                 {
                     cancellationToken.Register(delegate
                     {
-                        kv.Value.TrySetCanceled();
-                        _timers.Remove(kv);
+                        info.Completion.TrySetCanceled();
+                        _timers.Remove(info);
                     });
                 }
                 else
                 {
-                    kv.Value.SetCanceled();
-                    return kv.Value.Task;
+                    info.Completion.SetCanceled();
+                    return info.Completion.Task;
                 }
             }
 
-            _timers.Add(kv);
+            _timers.Add(info);
 
-            return kv.Value.Task;
-        }
-        #endregion
-
-        #region Private Methods
-        void UpdateTimers(T args)
-        {
-            foreach (var timer in _timers.Where(t => !t.Key.Tick(args.GameTime)).ToList())
-            {
-                _timers.Remove(timer);
-                timer.Value.TrySetResult(args);
-            }
+            return info.Completion.Task;
         }
         #endregion
     }

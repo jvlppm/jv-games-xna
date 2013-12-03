@@ -13,8 +13,7 @@ namespace Jv.Games.Xna.Async.Timers
 
     public static class YieldExtensions
     {
-        public static Task<T> Yield<T>(this SyncContext<T> context)
-            where T : GameLoopEventArgs
+        public static Task<GameTime> Yield(this SyncContext context)
         {
             return context.RunTimer(new Yield());
         }

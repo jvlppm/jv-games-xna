@@ -73,8 +73,7 @@ namespace Jv.Games.Xna.Async.Math
 
     public static class InterpolatorExtensions
     {
-        public static Task<T> Interpolate<T>(this SyncContext<T> context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
-            where T : GameLoopEventArgs
+        public static Task<GameTime> Interpolate(this SyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new Interpolator(duration, startValue, endValue, valueStep, easingFunction);
             return context.RunTimer(info, cancellationToken);

@@ -15,5 +15,4 @@ namespace Jv.Games.Xna.Async
     }
 
     public delegate void GameLoopEventHandler(object sender, GameLoopEventArgs e);
-    public delegate void GameLoopEventHandler<in T>(object sender, T e) where T : GameLoopEventArgs;
 }
