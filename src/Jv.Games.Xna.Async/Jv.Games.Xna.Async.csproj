@@ -45,7 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AsyncBridge.cs" />
-    <Compile Include="AsyncContext.cs" />
+    <Compile Include="SyncContext.cs" />
+    <Compile Include="ContextLoopEvent.cs" />
     <Compile Include="Timers\CountdownTimer.cs" />
     <Compile Include="GameLoopEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
