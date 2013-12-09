@@ -45,13 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AsyncBridge.cs" />
-    <Compile Include="SyncContext.cs" />
-    <Compile Include="ContextLoopEvent.cs" />
+    <Compile Include="TimerContext.cs" />
+    <Compile Include="Events\TimerContextLoopEvent.cs" />
     <Compile Include="Timers\CountdownTimer.cs" />
-    <Compile Include="GameLoopEvent.cs" />
+    <Compile Include="Events\GameLoopEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Math\Interpolator.cs" />
-    <Compile Include="IGameLoopAction.cs" />
+    <Compile Include="Timers\Math\Interpolator.cs" />
+    <Compile Include="ITimer.cs" />
     <Compile Include="Timers\Yield.cs" />
   </ItemGroup>
   <ItemGroup>

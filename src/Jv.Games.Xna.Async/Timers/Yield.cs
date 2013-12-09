@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async.Timers
 {
-    public class Yield : ITimedOperation
+    public class Yield : ITimer
     {
         public bool Tick(GameTime gameTime)
         {
@@ -13,7 +13,7 @@ namespace Jv.Games.Xna.Async.Timers
 
     public static class YieldExtensions
     {
-        public static Task<GameTime> Yield(this SyncContext context)
+        public static Task<GameTime> Yield(this TimerContext context)
         {
             return context.RunTimer(new Yield());
         }

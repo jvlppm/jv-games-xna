@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    public interface ITimedOperation
+    public interface ITimer
     {
         bool Tick(GameTime gameTime);
     }

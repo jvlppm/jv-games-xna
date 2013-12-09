@@ -1,21 +1,17 @@
-﻿using Jv.Games.Xna.Async.Timers;
-using Microsoft.Xna.Framework;
-using System;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using XNATweener;
 
 namespace Jv.Games.Xna.Async
 {
-    public class SyncContext
+    public class TimerContext
     {
         #region Nested
         struct TimerInfo
         {
-            public ITimedOperation Operation;
+            public ITimer Operation;
             public TaskCompletionSource<GameTime> Completion;
         }
         #endregion
@@ -25,7 +21,7 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Constructors
-        public SyncContext()
+        public TimerContext()
         {
             _timers = new List<TimerInfo>();
         }
@@ -41,7 +37,7 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        public Task<GameTime> RunTimer(ITimedOperation timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<GameTime> RunTimer(ITimer timer, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new TimerInfo { Completion = new TaskCompletionSource<GameTime>(), Operation = timer };
 

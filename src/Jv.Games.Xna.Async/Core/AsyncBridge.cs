@@ -41,6 +41,11 @@ using Jv.Games.Xna.Async;
 
 namespace System.Threading.Tasks
 {
+    public interface ISoftSynchronizationContext
+    {
+        void Post(Action action);
+    }
+
     public static class TaskEx
     {
         public static TaskAwaiter GetAwaiter(this Task task)
@@ -524,7 +529,7 @@ namespace System.Threading.Tasks
 
     public class TaskAwaiter : TaskAwaiter<bool>
     {
-        public static ISyncContext CurrentContext { get; set; }
+        public static ISoftSynchronizationContext CurrentContext { get; set; }
 
         public TaskAwaiter(Task task)
             : base(task)
@@ -547,7 +552,7 @@ namespace System.Threading.Tasks
     public class TaskAwaiter<T> : INotifyCompletion
     {
         protected readonly Task task;
-        readonly ISyncContext capturedContext;
+        readonly ISoftSynchronizationContext capturedContext;
         readonly TaskScheduler capturedScheduler;
 
         public TaskAwaiter(Task<T> task)
@@ -574,7 +579,7 @@ namespace System.Threading.Tasks
         {
             this.task.ContinueWith(delegate
             {
-                capturedContext.Enqueue(continuation);
+                capturedContext.Post(continuation);
             }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, this.capturedScheduler);
         }
 

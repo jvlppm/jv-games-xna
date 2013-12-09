@@ -7,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using XNATweener;
 
-namespace Jv.Games.Xna.Async.Math
+namespace Jv.Games.Xna.Async.Timers.Math
 {
-    public class Interpolator : ITimedOperation
+    public class Interpolator : ITimer
     {
         bool _completed;
 
@@ -73,7 +73,7 @@ namespace Jv.Games.Xna.Async.Math
 
     public static class InterpolatorExtensions
     {
-        public static Task<GameTime> Interpolate(this SyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
+        public static Task<GameTime> Interpolate(this TimerContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new Interpolator(duration, startValue, endValue, valueStep, easingFunction);
             return context.RunTimer(info, cancellationToken);

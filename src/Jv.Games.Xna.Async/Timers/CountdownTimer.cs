@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async.Timers
 {
-    public class CountdownTimer : ITimedOperation
+    public class CountdownTimer : ITimer
     {
         #region Attributes
         public TimeSpan CurrentDuration;
@@ -43,7 +43,7 @@ namespace Jv.Games.Xna.Async.Timers
         /// </summary>
         /// <param name="dueTime">The time span to wait before completing the returned task.</param>
         /// <param name="cancellationToken">The cancellation token that will be checked prior to completing the returned task.</param>
-        public static Task<GameTime> Delay(SyncContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
+        public static Task<GameTime> Delay(TimerContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
         {
             var timer = new CountdownTimer(dueTime);
             return context.RunTimer(timer, cancellationToken);
