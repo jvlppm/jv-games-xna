@@ -41,12 +41,13 @@ namespace Jv.Games.Xna.Async.Timers
         /// <summary>
         /// Creates a task that will complete after a time delay.
         /// </summary>
+        /// <param name = "context">The context to run the operation.</param>
         /// <param name="dueTime">The time span to wait before completing the returned task.</param>
         /// <param name="cancellationToken">The cancellation token that will be checked prior to completing the returned task.</param>
         public static Task<GameTime> Delay(TimerContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
         {
             var timer = new CountdownTimer(dueTime);
-            return context.RunTimer(timer, cancellationToken);
+            return context.Run(timer, cancellationToken);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Jv.Games.Xna.Async.Timers
     {
         public static Task<GameTime> Yield(this TimerContext context)
         {
-            return context.RunTimer(new Yield());
+            return context.Run(new Yield());
         }
     }
 }

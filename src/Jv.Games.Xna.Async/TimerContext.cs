@@ -37,7 +37,7 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        public Task<GameTime> RunTimer(ITimer timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<GameTime> Run(ITimer timer, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new TimerInfo { Completion = new TaskCompletionSource<GameTime>(), Operation = timer };
 

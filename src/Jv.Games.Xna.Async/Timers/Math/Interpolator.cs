@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XNATweener;
@@ -14,11 +11,11 @@ namespace Jv.Games.Xna.Async.Timers.Math
         bool _completed;
 
         float CurrentDuration;
-        float Duration;
-        Action<float> ValueStep;
-        float StartValue;
-        float EndValue;
-        TweeningFunction EasingFunction;
+        readonly float Duration;
+        readonly Action<float> ValueStep;
+        readonly float StartValue;
+        readonly float EndValue;
+        readonly TweeningFunction EasingFunction;
 
         public Interpolator(TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null)
         {
@@ -47,7 +44,7 @@ namespace Jv.Games.Xna.Async.Timers.Math
             if (_completed)
                 return false;
 
-            Duration += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            CurrentDuration += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (CurrentDuration < Duration)
             {
@@ -76,7 +73,7 @@ namespace Jv.Games.Xna.Async.Timers.Math
         public static Task<GameTime> Interpolate(this TimerContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new Interpolator(duration, startValue, endValue, valueStep, easingFunction);
-            return context.RunTimer(info, cancellationToken);
+            return context.Run(info, cancellationToken);
         }
     }
 }
