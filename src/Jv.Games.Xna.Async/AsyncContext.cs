@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Jv.Games.Xna.Async.Operations;
+using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,38 +9,44 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    public class TimerContext
+    public class AsyncContext : ISoftSynchronizationContext
     {
         #region Nested
         struct TimerInfo
         {
-            public ITimer Operation;
+            public IAsyncOperation Operation;
             public TaskCompletionSource<GameTime> Completion;
         }
         #endregion
 
         #region Attributes
         readonly List<TimerInfo> _timers;
+        readonly ConcurrentQueue<Action> _jobs;
         #endregion
 
         #region Constructors
-        public TimerContext()
+        public AsyncContext()
         {
             _timers = new List<TimerInfo>();
+            _jobs = new ConcurrentQueue<Action>();
         }
         #endregion
 
         #region Public Methods
         public void Update(GameTime gameTime)
         {
-            foreach (var timer in _timers.Where(t => !t.Operation.Tick(gameTime)).ToList())
+            foreach (var timer in _timers.Where(t => !t.Operation.Continue(gameTime)).ToList())
             {
                 _timers.Remove(timer);
                 timer.Completion.TrySetResult(gameTime);
             }
+
+            Action job;
+            while (_jobs.TryDequeue(out job))
+                job();
         }
 
-        public Task<GameTime> Run(ITimer timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<GameTime> Run(IAsyncOperation timer, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new TimerInfo { Completion = new TaskCompletionSource<GameTime>(), Operation = timer };
 
@@ -61,6 +70,11 @@ namespace Jv.Games.Xna.Async
             _timers.Add(info);
 
             return info.Completion.Task;
+        }
+
+        public void Post(System.Action action)
+        {
+            _jobs.Enqueue(action);
         }
         #endregion
     }

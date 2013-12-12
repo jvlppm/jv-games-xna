@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Threading.Tasks;
 
-namespace Jv.Games.Xna.Async.Timers
+namespace Jv.Games.Xna.Async.Operations
 {
-    public class Yield : ITimer
+    public class Yield : IAsyncOperation
     {
-        public bool Tick(GameTime gameTime)
+        public bool Continue(GameTime gameTime)
         {
             return false;
         }
@@ -13,7 +13,7 @@ namespace Jv.Games.Xna.Async.Timers
 
     public static class YieldExtensions
     {
-        public static Task<GameTime> Yield(this TimerContext context)
+        public static Task<GameTime> Yield(this AsyncContext context)
         {
             return context.Run(new Yield());
         }

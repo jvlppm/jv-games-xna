@@ -3,9 +3,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jv.Games.Xna.Async.Timers
+namespace Jv.Games.Xna.Async.Operations
 {
-    public class CountdownTimer : ITimer
+    public class CountdownTimer : IAsyncOperation
     {
         #region Attributes
         public TimeSpan CurrentDuration;
@@ -25,7 +25,7 @@ namespace Jv.Games.Xna.Async.Timers
         /// </summary>
         /// <param name="gameTime">Current game time.</param>
         /// <returns>True if the timer is complete.</returns>
-        public virtual bool Tick(GameTime gameTime)
+        public virtual bool Continue(GameTime gameTime)
         {
             if (CurrentDuration >= Duration)
                 return false;
@@ -44,7 +44,7 @@ namespace Jv.Games.Xna.Async.Timers
         /// <param name = "context">The context to run the operation.</param>
         /// <param name="dueTime">The time span to wait before completing the returned task.</param>
         /// <param name="cancellationToken">The cancellation token that will be checked prior to completing the returned task.</param>
-        public static Task<GameTime> Delay(TimerContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
+        public static Task<GameTime> Delay(this AsyncContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
         {
             var timer = new CountdownTimer(dueTime);
             return context.Run(timer, cancellationToken);
