@@ -64,6 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncGameComponent.cs" />
     <Compile Include="ContextExtensions.cs" />
     <Compile Include="Core\AsyncBridge.cs" />
     <Compile Include="AsyncContext.cs" />

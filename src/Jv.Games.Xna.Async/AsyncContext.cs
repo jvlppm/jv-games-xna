@@ -21,6 +21,7 @@ namespace Jv.Games.Xna.Async
 
         #region Attributes
         readonly List<TimerInfo> _timers;
+        readonly ConcurrentQueue<Action<GameTime>> _updateJobs;
         readonly ConcurrentQueue<Action> _jobs;
         #endregion
 
@@ -29,6 +30,7 @@ namespace Jv.Games.Xna.Async
         {
             _timers = new List<TimerInfo>();
             _jobs = new ConcurrentQueue<Action>();
+            _updateJobs = new ConcurrentQueue<Action<GameTime>>();
         }
         #endregion
 
@@ -46,6 +48,10 @@ namespace Jv.Games.Xna.Async
                 Action job;
                 while (_jobs.TryDequeue(out job))
                     job();
+
+                Action<GameTime> updateJob;
+                while (_updateJobs.TryDequeue(out updateJob))
+                    updateJob(gameTime);
             }
         }
 
@@ -73,6 +79,11 @@ namespace Jv.Games.Xna.Async
             _timers.Add(info);
 
             return info.Completion.Task;
+        }
+
+        public void Post(System.Action<GameTime> action)
+        {
+            _updateJobs.Enqueue(action);
         }
 
         public void Post(System.Action action)
