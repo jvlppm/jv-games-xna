@@ -35,15 +35,18 @@ namespace Jv.Games.Xna.Async
         #region Public Methods
         public void Update(GameTime gameTime)
         {
-            foreach (var timer in _timers.Where(t => !t.Operation.Continue(gameTime)).ToList())
+            using (this.Activate())
             {
-                _timers.Remove(timer);
-                timer.Completion.TrySetResult(gameTime);
-            }
+                foreach (var timer in _timers.Where(t => !t.Operation.Continue(gameTime)).ToList())
+                {
+                    _timers.Remove(timer);
+                    timer.Completion.TrySetResult(gameTime);
+                }
 
-            Action job;
-            while (_jobs.TryDequeue(out job))
-                job();
+                Action job;
+                while (_jobs.TryDequeue(out job))
+                    job();
+            }
         }
 
         public Task<GameTime> Run(IAsyncOperation timer, CancellationToken cancellationToken = default(CancellationToken))
