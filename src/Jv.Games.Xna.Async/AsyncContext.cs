@@ -11,16 +11,8 @@ namespace Jv.Games.Xna.Async
 {
     public class AsyncContext : ISoftSynchronizationContext
     {
-        #region Nested
-        struct TimerInfo
-        {
-            public IAsyncOperation Operation;
-            public TaskCompletionSource<GameTime> Completion;
-        }
-        #endregion
-
         #region Attributes
-        readonly List<TimerInfo> _timers;
+        readonly List<IAsyncOperation> _timers;
         readonly ConcurrentQueue<Action<GameTime>> _updateJobs;
         readonly ConcurrentQueue<Action> _jobs;
         #endregion
@@ -28,7 +20,7 @@ namespace Jv.Games.Xna.Async
         #region Constructors
         public AsyncContext()
         {
-            _timers = new List<TimerInfo>();
+            _timers = new List<IAsyncOperation>();
             _jobs = new ConcurrentQueue<Action>();
             _updateJobs = new ConcurrentQueue<Action<GameTime>>();
         }
@@ -39,11 +31,8 @@ namespace Jv.Games.Xna.Async
         {
             using (this.Activate())
             {
-                foreach (var timer in _timers.Where(t => !t.Operation.Continue(gameTime)).ToList())
-                {
+                foreach (var timer in _timers.Where(t => !t.Continue(gameTime)).ToList())
                     _timers.Remove(timer);
-                    timer.Completion.TrySetResult(gameTime);
-                }
 
                 Action job;
                 while (_jobs.TryDequeue(out job))
@@ -55,30 +44,16 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        public Task<GameTime> Run(IAsyncOperation timer, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<T> Run<T>(IAsyncOperation<T> operation)
         {
-            var info = new TimerInfo { Completion = new TaskCompletionSource<GameTime>(), Operation = timer };
+            _timers.Add(operation);
+            return operation.Task;
+        }
 
-            if (cancellationToken != CancellationToken.None)
-            {
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    cancellationToken.Register(delegate
-                    {
-                        info.Completion.TrySetCanceled();
-                        _timers.Remove(info);
-                    });
-                }
-                else
-                {
-                    info.Completion.SetCanceled();
-                    return info.Completion.Task;
-                }
-            }
-
-            _timers.Add(info);
-
-            return info.Completion.Task;
+        public Task Run(IAsyncOperation operation)
+        {
+            _timers.Add(operation);
+            return operation.Task;
         }
 
         public void Post(System.Action<GameTime> action)

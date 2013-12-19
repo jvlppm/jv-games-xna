@@ -6,17 +6,26 @@ using XNATweener;
 
 namespace Jv.Games.Xna.Async.Operations.Math
 {
-    public class Interpolator : IAsyncOperation
+    public class Interpolator : IAsyncOperation<TimeSpan>
     {
-        bool _completed;
+        #region Attributes
+        TaskCompletionSource<TimeSpan> _taskCompletion;
 
-        float CurrentDuration;
-        readonly float Duration;
-        readonly Action<float> ValueStep;
-        readonly float StartValue;
-        readonly float EndValue;
-        readonly TweeningFunction EasingFunction;
+        public readonly TimeSpan Duration;
+        public readonly Action<float> ValueStep;
+        public readonly float StartValue;
+        public readonly float EndValue;
+        public readonly TweeningFunction EasingFunction;
+        #endregion
 
+        #region Properties
+        public Task<TimeSpan> Task { get { return _taskCompletion.Task; } }
+        Task IAsyncOperation.Task { get { return _taskCompletion.Task; } }
+
+        public TimeSpan CurrentDuration { get; private set; }
+        #endregion
+
+        #region Constructors
         public Interpolator(TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null)
         {
             if (duration <= TimeSpan.Zero)
@@ -25,55 +34,70 @@ namespace Jv.Games.Xna.Async.Operations.Math
             if (valueStep == null)
                 throw new ArgumentNullException("valueStep");
 
-            Duration = (float)duration.TotalMilliseconds;
-            ValueStep = valueStep;
+            _taskCompletion = new TaskCompletionSource<TimeSpan>();
+
+            Duration = duration;
+
             StartValue = startValue;
             EndValue = endValue;
+            ValueStep = valueStep;
             EasingFunction = easingFunction;
 
             NotifyValue();
         }
+        #endregion
 
-        public void NotifyValue()
+        #region Public Methods
+        public bool Continue(GameTime gameTime)
+        {
+            if (Task.IsCompleted)
+                return false;
+
+            CurrentDuration += gameTime.ElapsedGameTime;
+            NotifyValue();
+
+            if (CurrentDuration < Duration)
+                return true;
+
+            _taskCompletion.SetResult(CurrentDuration);
+            return false;
+        }
+
+        public void Cancel()
+        {
+            _taskCompletion.SetCanceled();
+        }
+        #endregion
+
+        #region Private Methods
+        void NotifyValue()
         {
             ValueStep(GetValue());
         }
 
-        public bool Continue(GameTime gameTime)
-        {
-            if (_completed)
-                return false;
-
-            CurrentDuration += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (CurrentDuration < Duration)
-            {
-                NotifyValue();
-                return true;
-            }
-
-            CurrentDuration = Duration;
-            NotifyValue();
-            _completed = true;
-            return false;
-        }
-
         float GetValue()
         {
-            if (EasingFunction != null)
-                return EasingFunction(CurrentDuration, StartValue, EndValue - StartValue, Duration);
+            float curDuration = MathHelper.Clamp((float)CurrentDuration.TotalMilliseconds, 0, (float)Duration.TotalMilliseconds);
 
-            var curValue = CurrentDuration / Duration;
+            if (EasingFunction != null)
+                return EasingFunction(curDuration, StartValue, EndValue - StartValue, (float)Duration.TotalMilliseconds);
+
+            var curValue = curDuration / (float)Duration.TotalMilliseconds;
             return MathHelper.Lerp(StartValue, EndValue, MathHelper.Clamp(curValue, 0, 1));
         }
+        #endregion
     }
 
     public static class InterpolatorExtensions
     {
-        public static Task<GameTime> Interpolate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
+        public static Task<TimeSpan> Interpolate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new Interpolator(duration, startValue, endValue, valueStep, easingFunction);
-            return context.Run(info, cancellationToken);
+
+            if (cancellationToken != default(CancellationToken))
+                cancellationToken.Register(info.Cancel);
+
+            return context.Run(info);
         }
     }
 }

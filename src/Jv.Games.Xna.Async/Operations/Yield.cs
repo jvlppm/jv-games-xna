@@ -3,11 +3,31 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async.Operations
 {
-    public class Yield : IAsyncOperation
+    public class Yield : IAsyncOperation<GameTime>
     {
+        #region Attributes
+        TaskCompletionSource<GameTime> _taskCompletion;
+        #endregion
+
+        #region Properties
+        public Task<GameTime> Task { get { return _taskCompletion.Task; } }
+        Task IAsyncOperation.Task { get { return _taskCompletion.Task; } }
+        #endregion
+
+        public Yield()
+        {
+            _taskCompletion = new TaskCompletionSource<GameTime>();
+        }
+
         public bool Continue(GameTime gameTime)
         {
+            _taskCompletion.TrySetResult(gameTime);
             return false;
+        }
+
+        public void Cancel()
+        {
+            _taskCompletion.SetCanceled();
         }
     }
 
