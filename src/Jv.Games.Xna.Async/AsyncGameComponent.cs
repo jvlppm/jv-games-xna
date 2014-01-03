@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Jv.Games.Xna.Async
 {
-    public class AsyncGameComponent<T> : IGameComponent, IDrawable, IUpdateable
+    public class AsyncGameComponent : IGameComponent, IDrawable, IUpdateable
     {
         #region Attributes
         public readonly AsyncContext DrawContext, UpdateContext;
@@ -108,8 +108,8 @@ namespace Jv.Games.Xna.Async
 
         protected virtual void Initialize(AsyncContext context) { }
 
-        protected virtual void Draw(AsyncContext context, GameTime gameTime) { }
+        protected virtual void Draw(AsyncContext activeContext, GameTime gameTime) { }
 
-        protected virtual void Update(AsyncContext context, GameTime gameTime) { }
+        protected virtual void Update(AsyncContext activeContext, GameTime gameTime) { }
     }
 }
