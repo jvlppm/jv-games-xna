@@ -1,9 +1,5 @@
-﻿using Jv.Games.Xna.Async.Operations;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Jv.Games.Xna.Async
 {
@@ -96,20 +92,20 @@ namespace Jv.Games.Xna.Async
             UpdateContext.Send((Action<AsyncContext>)Initialize);
         }
 
-        public void Draw(GameTime gameTime)
+        protected virtual void Initialize(AsyncContext context) { }
+
+        protected virtual void Draw(GameTime gameTime) { }
+
+        protected virtual void Update(GameTime gameTime) { }
+
+        void IDrawable.Draw(GameTime gameTime)
         {
             DrawContext.Send(Draw, gameTime);
         }
 
-        public void Update(GameTime gameTime)
+        void IUpdateable.Update(GameTime gameTime)
         {
             UpdateContext.Send(Update, gameTime);
         }
-
-        protected virtual void Initialize(AsyncContext context) { }
-
-        protected virtual void Draw(AsyncContext activeContext, GameTime gameTime) { }
-
-        protected virtual void Update(AsyncContext activeContext, GameTime gameTime) { }
     }
 }

@@ -28,10 +28,10 @@ namespace Jv.Games.Xna.Async
                 action(context);
         }
 
-        public static void Send(this AsyncContext context, System.Action<AsyncContext, GameTime> action, GameTime gameTime)
+        public static void Send(this AsyncContext context, System.Action<GameTime> action, GameTime gameTime)
         {
             using (context.Activate())
-                action(context, gameTime);
+                action(gameTime);
         }
     }
 }
