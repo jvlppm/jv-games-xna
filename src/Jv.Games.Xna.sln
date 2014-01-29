@@ -1,15 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Xna.Async", "Jv.Games.Xna.Async\Jv.Games.Xna.Async.csproj", "{CA4F269F-53E9-427D-B750-8156C0AE320D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Xna", "Jv.Games.Xna\Jv.Games.Xna.csproj", "{DF62E955-1DFA-4900-9163-FD28F47B1CE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Xna.Sample", "Jv.Games.Xna.Sample\Jv.Games.Xna.Sample.csproj", "{7801321A-6DDB-434C-A69E-F77013AB6E6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
 		Debug-Linux|Any CPU = Debug-Linux|Any CPU
+		Release|Any CPU = Release|Any CPU
 		Release-Linux|Any CPU = Release-Linux|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -29,11 +33,19 @@ Global
 		{DF62E955-1DFA-4900-9163-FD28F47B1CE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF62E955-1DFA-4900-9163-FD28F47B1CE2}.Release-Linux|Any CPU.ActiveCfg = Release-Linux|Any CPU
 		{DF62E955-1DFA-4900-9163-FD28F47B1CE2}.Release-Linux|Any CPU.Build.0 = Release-Linux|Any CPU
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Jv.Games.Xna.Async\Jv.Games.Xna.Async.csproj
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Debug-Linux|Any CPU.ActiveCfg = Debug|Any CPU
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Debug-Linux|Any CPU.Build.0 = Debug|Any CPU
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Release-Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{7801321A-6DDB-434C-A69E-F77013AB6E6A}.Release-Linux|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Jv.Games.Xna.Async\Jv.Games.Xna.Async.csproj
 	EndGlobalSection
 EndGlobal
