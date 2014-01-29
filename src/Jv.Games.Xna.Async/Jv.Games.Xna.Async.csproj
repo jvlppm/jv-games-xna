@@ -65,10 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity.cs" />
+    <Compile Include="ActivityExtensions.cs" />
     <Compile Include="AsyncGameComponent.cs" />
     <Compile Include="ContextExtensions.cs" />
     <Compile Include="Core\AsyncBridge.cs" />
     <Compile Include="AsyncContext.cs" />
+    <Compile Include="InlineActivity.cs" />
     <Compile Include="Operations\CountdownTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Operations\Math\Interpolator.cs" />
@@ -81,9 +83,7 @@
       <Name>Jv.Games.Xna</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Events\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition=" '$(Configuration)' == 'Debug-Linux' Or '$(Configuration)' == 'Release-Linux' ">
       <ItemGroup>
