@@ -72,6 +72,8 @@ namespace Jv.Games.Xna.Async
                     EnabledChanged(this, EventArgs.Empty);
             }
         }
+
+        protected Game Game { get; private set; }
         #endregion
 
         #region Events
@@ -83,8 +85,13 @@ namespace Jv.Games.Xna.Async
 
         public AsyncGameComponent(Game game)
         {
+            _visible = true;
+            _enabled = true;
+
             DrawContext = new AsyncContext();
             UpdateContext = new AsyncContext();
+
+            Game = game;
         }
 
         public void Initialize()
@@ -101,11 +108,13 @@ namespace Jv.Games.Xna.Async
         void IDrawable.Draw(GameTime gameTime)
         {
             DrawContext.Send(Draw, gameTime);
+            DrawContext.Update(gameTime);
         }
 
         void IUpdateable.Update(GameTime gameTime)
         {
             UpdateContext.Send(Update, gameTime);
+            UpdateContext.Update(gameTime);
         }
     }
 }

@@ -33,18 +33,32 @@ namespace Jv.Games.Xna.Async
         void IDrawable.Draw(GameTime gameTime)
         {
             if (SubActivity == null || SubActivity.RenderParent())
+            {
                 DrawContext.Send(Draw, gameTime);
+                DrawContext.Update(gameTime);
+            }
 
             if (SubActivity != null)
+            {
                 SubActivity.Draw(gameTime);
+                if (SubActivity == null)
+                    DrawContext.Update(gameTime);
+            }
         }
 
         void IUpdateable.Update(GameTime gameTime)
         {
             if (SubActivity == null || SubActivity.RenderParent())
+            {
                 UpdateContext.Send(Update, gameTime);
+                UpdateContext.Update(gameTime);
+            }
             if (SubActivity != null)
+            {
                 SubActivity.Update(gameTime);
+                if (SubActivity == null)
+                    UpdateContext.Update(gameTime);
+            }
         }
         #endregion
 

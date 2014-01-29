@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Jv.Games.Xna.Async;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -26,12 +27,11 @@ namespace Jv.Games.Xna.Sample
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
-        }
 
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            base.Draw(gameTime);
+            this.Play(async activity =>
+            {
+                await activity.Run(new SampleActivity(this));
+            });
         }
     }
 }
