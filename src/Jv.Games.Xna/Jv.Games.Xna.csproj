@@ -60,69 +60,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <Choose>
-    <When Condition=" '$(Configuration)' == 'Debug-Linux' Or '$(Configuration)' == 'Release-Linux' ">
-      <ItemGroup>
-        <Reference Include="Lidgren.Network">
-          <HintPath>..\..\references\Linux\MonoGame\3.2\Lidgren.Network.dll</HintPath>
-        </Reference>
-        <Reference Include="MonoGame.Framework">
-          <HintPath>..\..\references\Linux\MonoGame\3.2\MonoGame.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="OpenTK">
-          <HintPath>..\..\references\Linux\MonoGame\3.2\OpenTK.dll</HintPath>
-        </Reference>
-        <Reference Include="Tao.Sdl">
-          <HintPath>..\..\references\Linux\MonoGame\3.2\Tao.Sdl.dll</HintPath>
-        </Reference>
-        <None Include="..\..\references\Linux\MonoGame\3.2\OpenAL32.dll">
-          <Link>OpenAL32.dll</Link>
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Include="..\..\references\Linux\MonoGame\3.2\SDL.dll">
-          <Link>SDL.dll</Link>
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Include="..\..\references\Linux\MonoGame\3.2\OpenTK.dll.config">
-          <Link>OpenTK.dll.config</Link>
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Include="..\..\references\Linux\MonoGame\3.2\Tao.Sdl.dll.config">
-          <Link>Tao.Sdl.dll.config</Link>
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <Reference Include="Lidgren.Network">
-          <HintPath>..\..\references\WinGL\MonoGame\3.2\Lidgren.Network.dll</HintPath>
-        </Reference>
-        <Reference Include="MonoGame.Framework">
-          <HintPath>..\..\references\WinGL\MonoGame\3.2\MonoGame.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="OpenTK">
-          <HintPath>..\..\references\WinGL\MonoGame\3.2\OpenTK.dll</HintPath>
-        </Reference>
-        <Reference Include="Tao.Sdl">
-          <HintPath>..\..\references\WinGL\MonoGame\3.2\Tao.Sdl.dll</HintPath>
-        </Reference>
-        <Content Include="..\..\references\WinGL\MonoGame\3.2\OpenAL32.dll">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\references\WinGL\MonoGame\3.2\OpenTK.dll.config">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\references\WinGL\MonoGame\3.2\SDL.dll">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
   <ItemGroup>
     <Compile Include="Disposable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <Import Project="..\..\references\MonoGame.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
