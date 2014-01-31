@@ -32,6 +32,16 @@ Copyright (C) Microsoft Corporation. All rights reserved.
           <HintPath>..\..\references\Linux\MonoGame\3.2\Tao.Sdl.dll</HintPath>
         </Reference>
       </ItemGroup>
+      <ItemGroup>
+        <None Include="..\..\references\Linux\MonoGame\3.2\OpenTK.dll.config">
+          <Link>OpenTK.dll.config</Link>
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Include="..\..\references\Linux\MonoGame\3.2\Tao.Sdl.dll.config">
+          <Link>Tao.Sdl.dll.config</Link>
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+      </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>

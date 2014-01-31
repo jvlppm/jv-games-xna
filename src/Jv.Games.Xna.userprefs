@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug-Linux" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../references/Linux/MonoGame/3.2/Tao.Sdl.dll.config">
+    <Files>
+      <File FileName="Jv.Games.Xna.Sample/Program.cs" Line="4" Column="14" />
+      <File FileName="../references/Linux/MonoGame/3.2/Tao.Sdl.dll.config" Line="16" Column="15" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
