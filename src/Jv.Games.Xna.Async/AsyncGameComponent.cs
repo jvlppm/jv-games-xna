@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Jv.Games.Xna.Async.Core;
+using Microsoft.Xna.Framework;
 using System;
 
 namespace Jv.Games.Xna.Async

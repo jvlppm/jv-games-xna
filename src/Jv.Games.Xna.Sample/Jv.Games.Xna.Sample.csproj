@@ -59,6 +59,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="XNATweener, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\references\XNATweener\XNATweener.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainGame.cs" />
@@ -79,7 +83,7 @@
       <Name>Jv.Games.Xna</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\..\references\MonoGame.targets" />
+  <Import Project="..\..\references\MonoGame\3.2\MonoGame.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

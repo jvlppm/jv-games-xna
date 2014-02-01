@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Jv.Games.Xna.Async.Core;
+using Microsoft.Xna.Framework;
 using System.Threading.Tasks;
 
-namespace Jv.Games.Xna.Async.Operations
+namespace Jv.Games.Xna.Async
 {
     public class Yield : IAsyncOperation<GameTime>
     {

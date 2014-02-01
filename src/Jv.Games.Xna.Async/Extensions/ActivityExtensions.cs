@@ -1,28 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
     public static class ActivityExtensions
     {
-        public static bool RenderParent(this IActivityStackItem activity)
-        {
-            return activity.IsTransparent && (activity.SubActivity == null || activity.SubActivity.RenderParent());
-        }
-
-        private static async Task<TResult> RunComponent<T, TResult>(Game game, T component, Func<T, Task<TResult>> asyncMethod)
-            where T : IGameComponent
-        {
-            game.Components.Add(component);
-            var result = await asyncMethod(component);
-            game.Components.Remove(component);
-            return result;
-        }
-
         public static Task RunComponent<T>(Game game, T component, Func<T, Task> asyncMethod)
             where T : AsyncGameComponent
         {
@@ -38,5 +21,20 @@ namespace Jv.Games.Xna.Async
                 game.Exit();
             }, TaskContinuationOptions.ExecuteSynchronously);
         }
+
+        #region Private Methods
+        internal static bool AllTransparent(this IActivityStackItem activity)
+        {
+            return activity.IsTransparent && (activity.SubActivity == null || activity.SubActivity.AllTransparent());
+        }
+        static async Task<TResult> RunComponent<T, TResult>(Game game, T component, Func<T, Task<TResult>> asyncMethod)
+            where T : IGameComponent
+        {
+            game.Components.Add(component);
+            var result = await asyncMethod(component);
+            game.Components.Remove(component);
+            return result;
+        }
+        #endregion
     }
 }

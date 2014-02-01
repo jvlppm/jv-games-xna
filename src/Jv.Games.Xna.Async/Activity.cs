@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
@@ -25,7 +25,7 @@ namespace Jv.Games.Xna.Async
         #region Game Loop
         void IUpdateable.Update(GameTime gameTime)
         {
-            if (SubActivity == null || SubActivity.RenderParent())
+            if (SubActivity == null || SubActivity.AllTransparent())
             {
                 UpdateContext.Send(Update, gameTime);
                 UpdateContext.Update(gameTime);
@@ -40,7 +40,7 @@ namespace Jv.Games.Xna.Async
 
         void IDrawable.Draw(GameTime gameTime)
         {
-            if (SubActivity == null || SubActivity.RenderParent())
+            if (SubActivity == null || SubActivity.AllTransparent())
             {
                 DrawContext.Send(Draw, gameTime);
                 DrawContext.Update(gameTime);

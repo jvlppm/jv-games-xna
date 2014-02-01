@@ -1,10 +1,5 @@
 ﻿using Jv.Games.Xna.Async;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Sample
@@ -12,7 +7,6 @@ namespace Jv.Games.Xna.Sample
     class MainGame : Game
     {
         public GraphicsDeviceManager Graphics { get; private set; }
-        SpriteBatch _spriteBatch;
 
         public MainGame()
         {
@@ -25,7 +19,6 @@ namespace Jv.Games.Xna.Sample
 
         protected override void Initialize()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
 
             this.Play(async activity =>

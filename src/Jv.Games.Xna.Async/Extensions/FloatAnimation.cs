@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Jv.Games.Xna.Async.Core;
+using Microsoft.Xna.Framework;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using XNATweener;
 
-namespace Jv.Games.Xna.Async.Operations.Math
+namespace Jv.Games.Xna.Async
 {
-    public class Interpolator : IAsyncOperation<TimeSpan>
+    public class FloatAnimation : IAsyncOperation<TimeSpan>
     {
         #region Attributes
         TaskCompletionSource<TimeSpan> _taskCompletion;
@@ -26,7 +27,7 @@ namespace Jv.Games.Xna.Async.Operations.Math
         #endregion
 
         #region Constructors
-        public Interpolator(TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null)
+        public FloatAnimation(TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null)
         {
             if (duration <= TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException("duration", "Duration must be greater than zero");
@@ -86,18 +87,5 @@ namespace Jv.Games.Xna.Async.Operations.Math
             return MathHelper.Lerp(StartValue, EndValue, MathHelper.Clamp(curValue, 0, 1));
         }
         #endregion
-    }
-
-    public static class InterpolatorExtensions
-    {
-        public static Task<TimeSpan> Interpolate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var info = new Interpolator(duration, startValue, endValue, valueStep, easingFunction);
-
-            if (cancellationToken != default(CancellationToken))
-                cancellationToken.Register(info.Cancel);
-
-            return context.Run(info);
-        }
     }
 }

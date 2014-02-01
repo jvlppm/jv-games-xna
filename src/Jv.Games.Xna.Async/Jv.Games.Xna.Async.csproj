@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -63,17 +64,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity.cs" />
-    <Compile Include="ActivityExtensions.cs" />
+    <Compile Include="Extensions\ActivityExtensions.cs" />
     <Compile Include="AsyncGameComponent.cs" />
-    <Compile Include="ContextExtensions.cs" />
     <Compile Include="Core\AsyncBridge.cs" />
-    <Compile Include="AsyncContext.cs" />
+    <Compile Include="Core\AsyncContext.cs" />
     <Compile Include="ActivityHost.cs" />
-    <Compile Include="Operations\CountdownTimer.cs" />
+    <Compile Include="Extensions\AnimationExtensions.cs" />
+    <Compile Include="Extensions\CountdownTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Operations\Math\Interpolator.cs" />
-    <Compile Include="Operations\IAsyncOperation.cs" />
-    <Compile Include="Operations\Yield.cs" />
+    <Compile Include="Extensions\FloatAnimation.cs" />
+    <Compile Include="Extensions\IAsyncOperation.cs" />
+    <Compile Include="Extensions\Yield.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Jv.Games.Xna\Jv.Games.Xna.csproj">
@@ -82,7 +83,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\..\references\MonoGame.targets" />
+  <Import Project="..\..\references\MonoGame\3.2\MonoGame.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

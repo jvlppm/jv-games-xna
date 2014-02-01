@@ -1,17 +1,13 @@
 ﻿using Jv.Games.Xna.Async;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Sample
 {
     class SampleActivity : Activity
     {
+        Reference<Color> _color = Color.CornflowerBlue;
+
         public SampleActivity(Game game)
             : base(game)
         {
@@ -19,7 +15,7 @@ namespace Jv.Games.Xna.Sample
 
         protected override void Draw(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            Game.GraphicsDevice.Clear(Color.CornflowerBlue);
+            Game.GraphicsDevice.Clear(_color);
 
             // TODO: Add your drawing code here
         }

@@ -1,13 +1,11 @@
-﻿using Jv.Games.Xna.Async.Operations;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jv.Games.Xna.Async
+namespace Jv.Games.Xna.Async.Core
 {
     public class AsyncContext : ISoftSynchronizationContext
     {
@@ -64,6 +62,33 @@ namespace Jv.Games.Xna.Async
         public void Post(System.Action action)
         {
             _jobs.Enqueue(action);
+        }
+
+        public void Send(System.Action action)
+        {
+            using (Activate())
+                action();
+        }
+
+        public void Send(System.Action<AsyncContext> action)
+        {
+            using (Activate())
+                action(this);
+        }
+
+        public void Send(Action<GameTime> action, GameTime gameTime)
+        {
+            using (Activate())
+                action(gameTime);
+        }
+        #endregion
+
+        #region Private Methods
+        internal IDisposable Activate()
+        {
+            var oldContext = TaskAwaiter.CurrentContext;
+            TaskAwaiter.CurrentContext = this;
+            return Disposable.Create(() => TaskAwaiter.CurrentContext = oldContext);
         }
         #endregion
     }
