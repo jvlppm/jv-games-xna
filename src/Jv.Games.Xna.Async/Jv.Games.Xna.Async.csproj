@@ -71,6 +71,7 @@
     <Compile Include="ActivityHost.cs" />
     <Compile Include="Extensions\AnimationExtensions.cs" />
     <Compile Include="Extensions\CountdownTimer.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\FloatAnimation.cs" />
     <Compile Include="Extensions\IAsyncOperation.cs" />

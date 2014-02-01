@@ -130,7 +130,7 @@ namespace Jv.Games.Xna.Async
 
         protected Task Run(Activity level)
         {
-            return Run(level, () => level.RunActivity().ContinueWith(t => true));
+            return Run(level, () => level.RunActivity().Select(true));
         }
 
         #region Life Cycle

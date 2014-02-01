@@ -10,16 +10,14 @@ namespace Jv.Games.Xna.Async
             where T : AsyncGameComponent
         {
             using(component.UpdateContext.Activate())
-                return RunComponent(game, component, c => asyncMethod(c).ContinueWith(t => true));
+                return RunComponent(game, component, c => asyncMethod(c).Select(true));
         }
 
         public static Task Play(this Game game, Func<ActivityHost, Task> asyncMethod)
         {
             var act = new ActivityHost(game);
-            return RunComponent<ActivityHost>(game, act, asyncMethod).ContinueWith(t =>
-            {
-                game.Exit();
-            }, TaskContinuationOptions.ExecuteSynchronously);
+            return RunComponent<ActivityHost>(game, act, asyncMethod)
+                    .Finally(t => { game.Exit(); });
         }
 
         #region Private Methods
