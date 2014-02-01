@@ -20,6 +20,14 @@ namespace Jv.Games.Xna.Async
                     .Finally(t => { game.Exit(); });
         }
 
+        public static Task Play<T>(this T game, Func<ActivityHost<T>, Task> asyncMethod)
+            where T : Game
+        {
+            var act = new ActivityHost<T>(game);
+            return RunComponent<ActivityHost<T>>(game, act, asyncMethod)
+                    .Finally(t => { game.Exit(); });
+        }
+
         #region Private Methods
         internal static bool AllTransparent(this IActivityStackItem activity)
         {

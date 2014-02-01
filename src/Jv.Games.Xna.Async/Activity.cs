@@ -133,11 +133,43 @@ namespace Jv.Games.Xna.Async
             return Run(level, () => level.RunActivity().Select(true));
         }
 
+        protected Task Run<T>(params object[] args)
+            where T : Activity
+        {
+            Type[] argTypes;
+            object[] ctorArgs;
+            GetConstructorInfo(args, out argTypes, out ctorArgs);
+
+            var ctor = typeof(T).GetConstructor(argTypes);
+            var act = (T)ctor.Invoke(ctorArgs);
+            return Run(act);
+        }
+
+        protected Task<TResult> Run<T, TResult>(params object[] args)
+            where T : Activity<TResult>
+        {
+            Type[] argTypes;
+            object[] ctorArgs;
+            GetConstructorInfo(args, out argTypes, out ctorArgs);
+
+            var ctor = typeof(T).GetConstructor(argTypes);
+            var act = (T)ctor.Invoke(ctorArgs);
+            return Run(act);
+        }
+
         #region Life Cycle
         protected virtual void Deactivating() { }
         protected virtual void Starting() { }
         protected virtual void Activating() { }
         protected virtual void Completing() { }
+        #endregion
+
+        #region Private Methods
+        private void GetConstructorInfo(object[] args, out Type[] argTypes, out object[] ctorArgs)
+        {
+            argTypes = new[] { Game.GetType() }.Concat(args.Select(a => a == null ? typeof(object) : a.GetType())).ToArray();
+            ctorArgs = new[] { Game }.Concat(args).ToArray();
+        }
         #endregion
     }
 

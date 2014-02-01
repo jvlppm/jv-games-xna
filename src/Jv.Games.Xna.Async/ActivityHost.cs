@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    public class ActivityHost : ActivityBase
+    public class ActivityHost<T> : ActivityBase
+        where T : Game
     {
+        new public T Game { get { return (T)base.Game; } }
+
         public ActivityHost(Game game)
             : base(game)
         {
@@ -22,5 +25,22 @@ namespace Jv.Games.Xna.Async
         {
             return base.Run(activity);
         }
+
+        new public Task Run<T>(params object[] args)
+            where T : Activity
+        {
+            return base.Run<T>(args);
+        }
+
+        new public Task<TResult> Run<T, TResult>(params object[] args)
+            where T : Activity<TResult>
+        {
+            return base.Run<T, TResult>(args);
+        }
+    }
+
+    public class ActivityHost : ActivityHost<Game>
+    {
+        public ActivityHost(Game game) : base(game) { }
     }
 }
