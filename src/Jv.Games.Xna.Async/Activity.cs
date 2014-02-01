@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,12 @@ namespace Jv.Games.Xna.Async
         public IActivityStackItem SubActivity { get; private set; }
         public bool IsTransparent { get; protected set; }
 
+        public SpriteBatch SpriteBatch { get; private set; }
+
         public ActivityBase(Game game)
             : base(game)
         {
+            SpriteBatch = new SpriteBatch(game.GraphicsDevice);
         }
 
         #region Game Loop
