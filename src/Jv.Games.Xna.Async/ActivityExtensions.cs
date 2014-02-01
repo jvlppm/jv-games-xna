@@ -9,35 +9,30 @@ namespace Jv.Games.Xna.Async
 {
     public static class ActivityExtensions
     {
-        public static bool RenderParent(this IActivity activity)
+        public static bool RenderParent(this IActivityStackItem activity)
         {
             return activity.IsTransparent && (activity.SubActivity == null || activity.SubActivity.RenderParent());
         }
 
-        public static async Task<T> RunAsync<T>(this Game game, Activity<T> activity)
+        private static async Task<TResult> RunComponent<T, TResult>(Game game, T component, Func<T, Task<TResult>> asyncMethod)
+            where T : IGameComponent
         {
-            game.Components.Add(activity);
-
-            using (activity.UpdateContext.Activate())
-            {
-                var result = await activity.RunActivity();
-                game.Components.Remove(activity);
-                return result;
-            }
+            game.Components.Add(component);
+            var result = await asyncMethod(component);
+            game.Components.Remove(component);
+            return result;
         }
 
-        public static Task<T> RunAsync<T>(this Game game, Func<InlineActivity<T>, Task<T>> asyncMethod)
+        private static Task RunComponent<T>(Game game, T component, Func<T, Task> asyncMethod)
+            where T : IGameComponent
         {
-            return game.RunAsync(new InlineActivity<T>(game, asyncMethod));
+            return RunComponent(game, component, c => asyncMethod(c).ContinueWith(t => true));
         }
 
-        public static Task Play(this Game game, Func<InlineActivity<bool>, Task> asyncMethod)
+        public static Task Play(this Game game, Func<IInlineActivity, Task> asyncMethod)
         {
-            return game.RunAsync(new InlineActivity<bool>(game, async i =>
-            {
-                await asyncMethod(i);
-                return true;
-            })).ContinueWith(t =>
+            var act = new InlineActivity(game);
+            return RunComponent<InlineActivity>(game, act, asyncMethod).ContinueWith(t =>
             {
                 game.Exit();
             }, TaskContinuationOptions.ExecuteSynchronously);

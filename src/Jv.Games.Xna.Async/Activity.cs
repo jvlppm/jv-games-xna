@@ -6,29 +6,41 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    public interface IActivity : IDrawable, IUpdateable
+    public interface IActivityStackItem : IDrawable, IUpdateable
     {
-        IActivity SubActivity { get; }
+        IActivityStackItem SubActivity { get; }
         bool IsTransparent { get; }
     }
 
-    public abstract class Activity<T> : AsyncGameComponent, IActivity
+    public abstract class ActivityBase : AsyncGameComponent, IActivityStackItem
     {
-        protected readonly TaskCompletionSource<T> ActivityCompletion;
-
-        public IActivity SubActivity { get; private set; }
+        public IActivityStackItem SubActivity { get; private set; }
         public bool IsTransparent { get; protected set; }
 
-        public Activity(Game game)
+        public ActivityBase(Game game)
             : base(game)
         {
-            ActivityCompletion = new TaskCompletionSource<T>();
         }
 
         #region Game Loop
+        override protected abstract void Update(GameTime gameTime);
+
         override protected abstract void Draw(GameTime gameTime);
 
-        override protected abstract void Update(GameTime gameTime);
+        void IUpdateable.Update(GameTime gameTime)
+        {
+            if (SubActivity == null || SubActivity.RenderParent())
+            {
+                UpdateContext.Send(Update, gameTime);
+                UpdateContext.Update(gameTime);
+            }
+            if (SubActivity != null)
+            {
+                SubActivity.Update(gameTime);
+                if (SubActivity == null)
+                    UpdateContext.Update(gameTime);
+            }
+        }
 
         void IDrawable.Draw(GameTime gameTime)
         {
@@ -45,31 +57,16 @@ namespace Jv.Games.Xna.Async
                     DrawContext.Update(gameTime);
             }
         }
-
-        void IUpdateable.Update(GameTime gameTime)
-        {
-            if (SubActivity == null || SubActivity.RenderParent())
-            {
-                UpdateContext.Send(Update, gameTime);
-                UpdateContext.Update(gameTime);
-            }
-            if (SubActivity != null)
-            {
-                SubActivity.Update(gameTime);
-                if (SubActivity == null)
-                    UpdateContext.Update(gameTime);
-            }
-        }
         #endregion
 
-        protected Task<TActivity> Run<TActivity>(Activity<TActivity> level)
+        internal Task<TActivity> Run<TActivity>(ActivityBase activity, Func<Task<TActivity>> runActivity)
         {
             using (UpdateContext.Activate())
                 Deactivating();
 
-            SubActivity = level;
+            SubActivity = activity;
 
-            using (level.UpdateContext.Activate())
+            using (activity.UpdateContext.Activate())
             {
                 var tcs = new TaskCompletionSource<TActivity>();
 
@@ -78,11 +75,11 @@ namespace Jv.Games.Xna.Async
 
                 try
                 {
-                    level.Starting();
+                    activity.Starting();
                     started = true;
-                    level.Activating();
+                    activity.Activating();
                     activated = true;
-                    runTask = level.RunActivity();
+                    runTask = runActivity();
                 }
                 catch (Exception ex)
                 {
@@ -96,17 +93,17 @@ namespace Jv.Games.Xna.Async
                     if (t.IsFaulted)
                         errors.AddRange(t.Exception.InnerExceptions);
 
-                    using (level.UpdateContext.Activate())
+                    using (activity.UpdateContext.Activate())
                     {
                         if (activated)
                         {
-                            try { level.Deactivating(); }
+                            try { activity.Deactivating(); }
                             catch (Exception ex) { errors.Add(ex); }
                         }
 
                         if (started)
                         {
-                            try { level.Completing(); }
+                            try { activity.Completing(); }
                             catch (Exception ex) { errors.Add(ex); }
                         }
                     }
@@ -125,6 +122,56 @@ namespace Jv.Games.Xna.Async
             }
         }
 
+        protected Task<TActivity> Run<TActivity>(Activity<TActivity> level)
+        {
+            return Run(level, level.RunActivity);
+        }
+
+        protected Task Run(Activity level)
+        {
+            return Run(level, () => level.RunActivity().ContinueWith(t => true));
+        }
+
+        #region Life Cycle
+        internal protected virtual void Deactivating() { }
+        internal protected virtual void Starting() { }
+        internal protected virtual void Activating() { }
+        internal protected virtual void Completing() { }
+        #endregion
+    }
+
+    public abstract class Activity : ActivityBase
+    {
+        protected readonly TaskCompletionSource<bool> ActivityCompletion;
+
+        public Activity(Game game)
+            : base(game)
+        {
+            ActivityCompletion = new TaskCompletionSource<bool>();
+        }
+
+        #region Life Cycle
+        internal protected virtual Task RunActivity()
+        {
+            return ActivityCompletion.Task;
+        }
+        protected void Exit()
+        {
+            ActivityCompletion.SetResult(true);
+        }
+        #endregion
+    }
+
+    public abstract class Activity<T> : ActivityBase
+    {
+        protected readonly TaskCompletionSource<T> ActivityCompletion;
+
+        public Activity(Game game)
+            : base(game)
+        {
+            ActivityCompletion = new TaskCompletionSource<T>();
+        }
+
         #region Life Cycle
         internal protected virtual Task<T> RunActivity()
         {
@@ -134,10 +181,6 @@ namespace Jv.Games.Xna.Async
         {
             ActivityCompletion.SetResult(result);
         }
-        internal protected virtual void Deactivating() { }
-        internal protected virtual void Starting() { }
-        internal protected virtual void Activating() { }
-        internal protected virtual void Completing() { }
         #endregion
     }
 }

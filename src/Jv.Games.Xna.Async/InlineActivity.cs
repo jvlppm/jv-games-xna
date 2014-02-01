@@ -4,28 +4,56 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    public class InlineActivity<T> : Activity<T>
+    public interface IInlineActivity
     {
-        Action<InlineActivity<T>, GameTime> _update;
-        Action<InlineActivity<T>, GameTime> _draw;
-        Func<InlineActivity<T>, Task<T>> _runActivity;
+        Task Run(Activity activity);
+        Task<T> Run<T>(Activity<T> activity);
+    }
+
+    //public class InlineActivityBase : ActivityBase, IInlineActivity
+    //{
+    //    Action<IInlineActivity, GameTime> _update;
+    //    Action<IInlineActivity, GameTime> _draw;
+
+    //    public InlineActivityBase(Game game,
+    //        Action<IInlineActivity, GameTime> update = null,
+    //        Action<IInlineActivity, GameTime> draw = null)
+    //        : base(game)
+    //    {
+    //        _update = update;
+    //        _draw = draw;
+    //    }
+
+    //    protected override void Draw(GameTime gameTime)
+    //    {
+    //        if (_draw != null)
+    //            _draw(this, gameTime);
+    //    }
+
+    //    protected override void Update(GameTime gameTime)
+    //    {
+    //        if (_update != null)
+    //            _update(this, gameTime);
+    //    }
+    //}
+
+    public class InlineActivity : ActivityBase, IInlineActivity
+    {
+        Action<IInlineActivity, GameTime> _update;
+        Action<IInlineActivity, GameTime> _draw;
 
         public InlineActivity(Game game,
-            Func<InlineActivity<T>, Task<T>> runActivity,
-            Action<InlineActivity<T>, GameTime> update = null,
-            Action<InlineActivity<T>, GameTime> draw = null)
+            Action<IInlineActivity, GameTime> update = null,
+            Action<IInlineActivity, GameTime> draw = null)
             : base(game)
         {
-            if (runActivity == null)
-                throw new ArgumentNullException("runActivity");
-            _runActivity = runActivity;
             _update = update;
             _draw = draw;
         }
 
-        internal protected override Task<T> RunActivity()
+        new public Task Run(Activity activity)
         {
-            return _runActivity(this);
+            return base.Run(activity);
         }
 
         new public Task<TActivity> Run<TActivity>(Activity<TActivity> activity)
@@ -45,4 +73,15 @@ namespace Jv.Games.Xna.Async
                 _update(this, gameTime);
         }
     }
+
+    //public class InlineActivity<T> : InlineActivity
+    //{
+    //    public InlineActivity(Game game,
+    //        Func<IInlineActivity, Task<T>> runActivity,
+    //        Action<IInlineActivity, GameTime> update = null,
+    //        Action<IInlineActivity, GameTime> draw = null)
+    //        : base(game, runActivity, update, draw)
+    //    {
+    //    }
+    //}
 }
