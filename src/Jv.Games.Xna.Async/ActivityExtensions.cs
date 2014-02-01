@@ -30,10 +30,10 @@ namespace Jv.Games.Xna.Async
                 return RunComponent(game, component, c => asyncMethod(c).ContinueWith(t => true));
         }
 
-        public static Task Play(this Game game, Func<InlineActivity, Task> asyncMethod)
+        public static Task Play(this Game game, Func<ActivityHost, Task> asyncMethod)
         {
-            var act = new InlineActivity(game);
-            return RunComponent<InlineActivity>(game, act, asyncMethod).ContinueWith(t =>
+            var act = new ActivityHost(game);
+            return RunComponent<ActivityHost>(game, act, asyncMethod).ContinueWith(t =>
             {
                 game.Exit();
             }, TaskContinuationOptions.ExecuteSynchronously);

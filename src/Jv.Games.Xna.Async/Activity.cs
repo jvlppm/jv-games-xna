@@ -12,7 +12,7 @@ namespace Jv.Games.Xna.Async
         bool IsTransparent { get; }
     }
 
-    public abstract class ActivityBase : AsyncGameComponent, IActivityStackItem
+    public class ActivityBase : AsyncGameComponent, IActivityStackItem
     {
         public IActivityStackItem SubActivity { get; private set; }
         public bool IsTransparent { get; protected set; }
@@ -23,10 +23,6 @@ namespace Jv.Games.Xna.Async
         }
 
         #region Game Loop
-        override protected abstract void Update(GameTime gameTime);
-
-        override protected abstract void Draw(GameTime gameTime);
-
         void IUpdateable.Update(GameTime gameTime)
         {
             if (SubActivity == null || SubActivity.RenderParent())
@@ -151,6 +147,11 @@ namespace Jv.Games.Xna.Async
             ActivityCompletion = new TaskCompletionSource<bool>();
         }
 
+        #region Game Loop
+        protected abstract override void Update(GameTime gameTime);
+        protected abstract override void Draw(GameTime gameTime);
+        #endregion
+
         #region Life Cycle
         internal protected virtual Task RunActivity()
         {
@@ -172,6 +173,11 @@ namespace Jv.Games.Xna.Async
         {
             ActivityCompletion = new TaskCompletionSource<T>();
         }
+
+        #region Game Loop
+        protected abstract override void Update(GameTime gameTime);
+        protected abstract override void Draw(GameTime gameTime);
+        #endregion
 
         #region Life Cycle
         internal protected virtual Task<T> RunActivity()

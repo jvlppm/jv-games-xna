@@ -68,7 +68,7 @@
     <Compile Include="ContextExtensions.cs" />
     <Compile Include="Core\AsyncBridge.cs" />
     <Compile Include="AsyncContext.cs" />
-    <Compile Include="InlineActivity.cs" />
+    <Compile Include="ActivityHost.cs" />
     <Compile Include="Operations\CountdownTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Operations\Math\Interpolator.cs" />
