@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Sample
 {
-    class SampleActivity : Activity<bool>
+    class SampleActivity : Activity
     {
         public SampleActivity(Game game)
             : base(game)
@@ -27,7 +27,7 @@ namespace Jv.Games.Xna.Sample
         protected override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit(true);
+                Exit();
 
             // TODO: Add your update logic here
         }

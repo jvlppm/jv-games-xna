@@ -10,6 +10,7 @@ namespace Jv.Games.Xna.Async
 
         int _drawOrder, _updateOrder;
         bool _visible, _enabled;
+        bool _initialized;
         #endregion
 
         #region Properties
@@ -94,16 +95,20 @@ namespace Jv.Games.Xna.Async
             Game = game;
         }
 
-        public void Initialize()
-        {
-            UpdateContext.Send((Action<AsyncContext>)Initialize);
-        }
-
-        protected virtual void Initialize(AsyncContext context) { }
+        protected virtual void Initialize() { }
 
         protected virtual void Draw(GameTime gameTime) { }
 
         protected virtual void Update(GameTime gameTime) { }
+
+        void IGameComponent.Initialize()
+        {
+            if (!_initialized)
+            {
+                _initialized = true;
+                UpdateContext.Send(Initialize);
+            }
+        }
 
         void IDrawable.Draw(GameTime gameTime)
         {

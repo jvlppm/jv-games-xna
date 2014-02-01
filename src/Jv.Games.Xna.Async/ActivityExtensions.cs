@@ -23,13 +23,14 @@ namespace Jv.Games.Xna.Async
             return result;
         }
 
-        private static Task RunComponent<T>(Game game, T component, Func<T, Task> asyncMethod)
-            where T : IGameComponent
+        public static Task RunComponent<T>(Game game, T component, Func<T, Task> asyncMethod)
+            where T : AsyncGameComponent
         {
-            return RunComponent(game, component, c => asyncMethod(c).ContinueWith(t => true));
+            using(component.UpdateContext.Activate())
+                return RunComponent(game, component, c => asyncMethod(c).ContinueWith(t => true));
         }
 
-        public static Task Play(this Game game, Func<IInlineActivity, Task> asyncMethod)
+        public static Task Play(this Game game, Func<InlineActivity, Task> asyncMethod)
         {
             var act = new InlineActivity(game);
             return RunComponent<InlineActivity>(game, act, asyncMethod).ContinueWith(t =>

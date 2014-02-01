@@ -65,6 +65,7 @@ namespace Jv.Games.Xna.Async
                 Deactivating();
 
             SubActivity = activity;
+            ((IGameComponent)activity).Initialize();
 
             using (activity.UpdateContext.Activate())
             {
@@ -133,10 +134,10 @@ namespace Jv.Games.Xna.Async
         }
 
         #region Life Cycle
-        internal protected virtual void Deactivating() { }
-        internal protected virtual void Starting() { }
-        internal protected virtual void Activating() { }
-        internal protected virtual void Completing() { }
+        protected virtual void Deactivating() { }
+        protected virtual void Starting() { }
+        protected virtual void Activating() { }
+        protected virtual void Completing() { }
         #endregion
     }
 
