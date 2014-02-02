@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    public class CountdownTimer : IAsyncOperation<TimeSpan>
+    public class ContextTimer : IAsyncOperation<TimeSpan>
     {
         #region Attributes
         TaskCompletionSource<TimeSpan> _taskCompletion;
@@ -18,11 +18,12 @@ namespace Jv.Games.Xna.Async
         public Task<TimeSpan> Task { get { return _taskCompletion.Task; } }
         Task IAsyncOperation.Task { get { return _taskCompletion.Task; } }
 
-        public TimeSpan CurrentDuration { get; private set; }
+        public TimeSpan Time { get; private set; }
+        public TimeSpan RemainingTime { get { return Duration - Time; } }
         #endregion
 
         #region Constructors
-        public CountdownTimer(TimeSpan duration)
+        public ContextTimer(TimeSpan duration)
         {
             _taskCompletion = new TaskCompletionSource<TimeSpan>();
             Duration = duration;
@@ -40,10 +41,10 @@ namespace Jv.Games.Xna.Async
             if (Task.IsCompleted)
                 return false;
 
-            CurrentDuration += gameTime.ElapsedGameTime;
-            if (CurrentDuration >= Duration)
+            Time += gameTime.ElapsedGameTime;
+            if (Time >= Duration)
             {
-                _taskCompletion.SetResult(CurrentDuration);
+                _taskCompletion.SetResult(Time);
                 return false;
             }
             return true;
@@ -66,7 +67,7 @@ namespace Jv.Games.Xna.Async
         /// <param name="cancellationToken">The cancellation token that will be checked prior to completing the returned task.</param>
         public static Task<TimeSpan> Delay(this AsyncContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var timer = new CountdownTimer(dueTime);
+            var timer = new ContextTimer(dueTime);
 
             if(cancellationToken != default(CancellationToken))
                 cancellationToken.Register(timer.Cancel);

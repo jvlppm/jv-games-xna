@@ -70,7 +70,7 @@
     <Compile Include="Core\AsyncContext.cs" />
     <Compile Include="ActivityHost.cs" />
     <Compile Include="Extensions\AnimationExtensions.cs" />
-    <Compile Include="Extensions\CountdownTimer.cs" />
+    <Compile Include="Extensions\ContextTimer.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\FloatAnimation.cs" />

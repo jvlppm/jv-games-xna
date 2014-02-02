@@ -6,7 +6,7 @@ namespace Jv.Games.Xna.Async
 {
     public static class ActivityExtensions
     {
-        public static Task RunComponent<T>(Game game, T component, Func<T, Task> asyncMethod)
+        public static Task RunComponent<T>(this Game game, T component, Func<T, Task> asyncMethod)
             where T : AsyncGameComponent
         {
             using(component.UpdateContext.Activate())

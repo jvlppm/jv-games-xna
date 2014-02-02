@@ -195,7 +195,7 @@ namespace Jv.Games.Xna.Async
         }
         protected void Exit()
         {
-            ActivityCompletion.SetResult(true);
+            ActivityCompletion.TrySetResult(true);
         }
         #endregion
     }
@@ -222,7 +222,7 @@ namespace Jv.Games.Xna.Async
         }
         protected void Exit(T result)
         {
-            ActivityCompletion.SetResult(result);
+            ActivityCompletion.TrySetResult(result);
         }
         #endregion
     }
