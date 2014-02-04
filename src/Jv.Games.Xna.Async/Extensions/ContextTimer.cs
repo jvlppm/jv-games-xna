@@ -57,7 +57,7 @@ namespace Jv.Games.Xna.Async
         #endregion
     }
 
-    public static class CountdownTimerExtensions
+    public static class ContextTimerExtensions
     {
         /// <summary>
         /// Creates a task that will complete after a time delay.

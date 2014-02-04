@@ -128,9 +128,9 @@ namespace Jv.Games.Xna.Async
             return Run(level, level.RunActivity);
         }
 
-        protected Task Run(Activity level)
+        protected Task Run(Activity activity)
         {
-            return Run(level, () => level.RunActivity().Select(true));
+            return Run(activity, () => activity.RunActivity().Select(true));
         }
 
         protected Task Run<T>(params object[] args)
