@@ -18,7 +18,9 @@ namespace Jv.Games.Xna.Async
         public IActivityStackItem SubActivity { get; private set; }
         public bool IsTransparent { get; protected set; }
 
-        public SpriteBatch SpriteBatch { get; private set; }
+        protected SpriteBatch SpriteBatch { get; private set; }
+        protected GraphicsDevice GraphicsDevice { get { return Game.GraphicsDevice; } }
+        protected Viewport Viewport { get { return Game.GraphicsDevice.Viewport; } }
 
         public ActivityBase(Game game)
             : base(game)
