@@ -11,7 +11,7 @@ namespace Jv.Games.Xna.Async
         #region Attributes
         TaskCompletionSource<TimeSpan> _taskCompletion;
 
-        public readonly TimeSpan Duration;
+        public TimeSpan Duration;
         #endregion
 
         #region Properties
