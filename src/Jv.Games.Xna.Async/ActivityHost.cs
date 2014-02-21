@@ -26,16 +26,16 @@ namespace Jv.Games.Xna.Async
             return base.Run(activity);
         }
 
-        new public Task Run<TActivity>(params object[] args)
+        new public ContextTaskAwaitable Run<TActivity>(params object[] args)
             where TActivity : Activity
         {
-            return base.Run<TActivity>(args);
+            return base.Run<TActivity>(args).On(UpdateContext);
         }
 
-        new public Task<TResult> Run<TActivity, TResult>(params object[] args)
+        new public ContextTaskAwaitable<TResult> Run<TActivity, TResult>(params object[] args)
             where TActivity : Activity<TResult>
         {
-            return base.Run<TActivity, TResult>(args);
+            return base.Run<TActivity, TResult>(args).On(UpdateContext);
         }
     }
 

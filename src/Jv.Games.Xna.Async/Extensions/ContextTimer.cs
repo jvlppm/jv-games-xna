@@ -65,7 +65,7 @@ namespace Jv.Games.Xna.Async
         /// <param name = "context">The context to run the operation.</param>
         /// <param name="dueTime">The time span to wait before completing the returned task.</param>
         /// <param name="cancellationToken">The cancellation token that will be checked prior to completing the returned task.</param>
-        public static Task<TimeSpan> Delay(this AsyncContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
+        public static ContextTaskAwaitable<TimeSpan> Delay(this AsyncContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
         {
             var timer = new ContextTimer(dueTime);
 

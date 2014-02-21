@@ -32,6 +32,7 @@
 
 // This makes games compatible with .Net Framework 4.0 under Windows or Mono (2.10+).
 
+#if ASYNC_BRIDGE
 
 using System;
 using System.Diagnostics;
@@ -58,12 +59,7 @@ using Jv.Games.Xna.Async;
 
 namespace System.Threading.Tasks
 {
-    public interface ISoftSynchronizationContext
-    {
-        void Post(Action action);
-    }
-
-    public static class TaskEx
+    public static class AsyncBridge
     {
         public static TaskAwaiter GetAwaiter(this Task task)
         {
@@ -90,7 +86,7 @@ namespace System.Threading.Tasks
         }))();
         private const string ArgumentOutOfRange_TimeoutNonNegativeOrMinusOne = "The timeout must be non-negative or -1, and it must be less than or equal to Int32.MaxValue.";
 
-        static TaskEx()
+        static AsyncBridge()
         {
         }
 
@@ -546,8 +542,6 @@ namespace System.Threading.Tasks
 
     public class TaskAwaiter : TaskAwaiter<bool>
     {
-        public static ISoftSynchronizationContext CurrentContext { get; set; }
-
         public TaskAwaiter(Task task)
             : base(task)
         {
@@ -580,7 +574,7 @@ namespace System.Threading.Tasks
         internal TaskAwaiter(Task task)
         {
             this.task = task;
-            this.capturedContext = TaskAwaiter.CurrentContext;
+            this.capturedContext = TaskEx.CurrentContext;
             this.capturedScheduler = TaskScheduler.Current;
 
             if (capturedContext == null)
@@ -774,3 +768,5 @@ namespace System.Runtime.CompilerServices
         }
     }
 }
+
+#endif

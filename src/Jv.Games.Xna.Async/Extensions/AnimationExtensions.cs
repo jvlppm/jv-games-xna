@@ -9,7 +9,7 @@ namespace Jv.Games.Xna.Async
 {
     public static class AnimationExtensions
     {
-        public static Task<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
+        public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var info = new FloatAnimation(duration, startValue, endValue, valueStep, easingFunction);
 
@@ -19,7 +19,7 @@ namespace Jv.Games.Xna.Async
             return context.Run(info);
         }
 
-        public static Task<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Reference<Color> color, Color endColor, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
+        public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Reference<Color> color, Color endColor, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (color == null)
                 throw new ArgumentNullException("color");
@@ -30,7 +30,7 @@ namespace Jv.Games.Xna.Async
             }, easingFunction, cancellationToken);
         }
 
-        public static Task<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Color startColor, Color endColor, Action<Color> colorStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
+        public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Color startColor, Color endColor, Action<Color> colorStep, TweeningFunction easingFunction = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (colorStep == null)
                 throw new ArgumentNullException("colorStep");

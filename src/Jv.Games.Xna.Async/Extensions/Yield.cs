@@ -34,7 +34,7 @@ namespace Jv.Games.Xna.Async
 
     public static class YieldExtensions
     {
-        public static Task<GameTime> Yield(this AsyncContext context)
+        public static ContextTaskAwaitable<GameTime> Yield(this AsyncContext context)
         {
             return context.Run(new Yield());
         }

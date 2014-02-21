@@ -42,16 +42,16 @@ namespace Jv.Games.Xna.Async.Core
             }
         }
 
-        public Task<T> Run<T>(IAsyncOperation<T> operation)
+        public ContextTaskAwaitable<T> Run<T>(IAsyncOperation<T> operation)
         {
             _timers.Add(operation);
-            return operation.Task;
+            return operation.Task.On(this);
         }
 
-        public Task Run(IAsyncOperation operation)
+        public ContextTaskAwaitable Run(IAsyncOperation operation)
         {
             _timers.Add(operation);
-            return operation.Task;
+            return operation.Task.On(this);
         }
 
         public void Post(System.Action<GameTime> action)
@@ -86,9 +86,9 @@ namespace Jv.Games.Xna.Async.Core
         #region Private Methods
         internal IDisposable Activate()
         {
-            var oldContext = TaskAwaiter.CurrentContext;
-            TaskAwaiter.CurrentContext = this;
-            return Disposable.Create(() => TaskAwaiter.CurrentContext = oldContext);
+            var oldContext = TaskEx.CurrentContext;
+            TaskEx.CurrentContext = this;
+            return Disposable.Create(() => TaskEx.CurrentContext = oldContext);
         }
         #endregion
     }
