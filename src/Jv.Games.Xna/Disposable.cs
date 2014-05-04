@@ -2,7 +2,7 @@
 
 namespace Jv.Games.Xna
 {
-    public class Disposable : IDisposable
+    public struct Disposable : IDisposable
     {
         #region Attributes
         bool _disposed;
@@ -17,30 +17,18 @@ namespace Jv.Games.Xna
         #region Constructors
         private Disposable(Action onDispose)
         {
+            _disposed = false;
             _onDispose = onDispose;
         }
         #endregion
 
         #region IDisposable
-        ~Disposable()
-        {
-            Dispose(false);
-        }
-
         public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
-                if (disposing)
-                {
-                    _disposed = true;
-                    _onDispose();
-                }
+                _disposed = true;
+                _onDispose();
             }
         }
         #endregion
