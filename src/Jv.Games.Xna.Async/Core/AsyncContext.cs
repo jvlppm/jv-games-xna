@@ -29,8 +29,7 @@ namespace Jv.Games.Xna.Async.Core
         {
             using (this.Activate())
             {
-                foreach (var timer in _timers.Where(t => !t.Continue(gameTime)).ToList())
-                    _timers.Remove(timer);
+                _timers.RemoveAll(t => !t.Continue(gameTime));
 
                 Action job;
                 while (_jobs.TryDequeue(out job))
