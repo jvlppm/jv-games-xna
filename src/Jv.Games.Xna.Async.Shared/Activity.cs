@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace Jv.Games.Xna.Async
         public bool IsTransparent { get; protected set; }
 
         protected SpriteBatch SpriteBatch { get; private set; }
+
+        protected ContentManager Content { get { return Game.Content; } }
         protected GraphicsDevice GraphicsDevice { get { return Game.GraphicsDevice; } }
         protected Viewport Viewport { get { return Game.GraphicsDevice.Viewport; } }
 
