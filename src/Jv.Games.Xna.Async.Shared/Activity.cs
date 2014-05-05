@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
@@ -181,11 +182,15 @@ namespace Jv.Games.Xna.Async
     public abstract class Activity : ActivityBase
     {
         protected readonly TaskCompletionSource<bool> ActivityCompletion;
+        protected readonly CancellationToken CancelOnExit;
 
         public Activity(Game game)
             : base(game)
         {
             ActivityCompletion = new TaskCompletionSource<bool>();
+            var cts = new CancellationTokenSource();
+            ActivityCompletion.Task.ContinueWith(t => cts.Cancel());
+            CancelOnExit = cts.Token;
         }
 
         #region Game Loop
@@ -208,11 +213,15 @@ namespace Jv.Games.Xna.Async
     public abstract class Activity<T> : ActivityBase
     {
         protected readonly TaskCompletionSource<T> ActivityCompletion;
+        protected readonly CancellationToken CancelOnExit;
 
         public Activity(Game game)
             : base(game)
         {
             ActivityCompletion = new TaskCompletionSource<T>();
+            var cts = new CancellationTokenSource();
+            ActivityCompletion.Task.ContinueWith(t => cts.Cancel());
+            CancelOnExit = cts.Token;
         }
 
         #region Game Loop
