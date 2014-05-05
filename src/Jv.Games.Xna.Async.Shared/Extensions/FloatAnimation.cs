@@ -66,7 +66,7 @@ namespace Jv.Games.Xna.Async
 
         public void Cancel()
         {
-            _taskCompletion.SetCanceled();
+            _taskCompletion.TrySetCanceled();
         }
         #endregion
 
