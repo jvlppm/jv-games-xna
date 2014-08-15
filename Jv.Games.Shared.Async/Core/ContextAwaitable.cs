@@ -10,7 +10,7 @@ namespace System.Threading.Tasks
     public class ContextTaskAwaiter : INotifyCompletion
     {
         readonly ISoftSynchronizationContext _context;
-        TaskAwaiter _taskAwaiter;
+        readonly TaskAwaiter _taskAwaiter;
 
         public bool IsCompleted { get { return _taskAwaiter.IsCompleted; } }
 
@@ -34,7 +34,7 @@ namespace System.Threading.Tasks
     public class ContextTaskAwaiter<T> : INotifyCompletion
     {
         readonly ISoftSynchronizationContext _context;
-        TaskAwaiter<T> _taskAwaiter;
+        readonly TaskAwaiter<T> _taskAwaiter;
 
         public bool IsCompleted { get { return _taskAwaiter.IsCompleted; } }
 
@@ -136,7 +136,7 @@ namespace System.Threading.Tasks
 
         public static ContextTaskAwaitable<Task<T>> WhenAnyOn<T>(ISoftSynchronizationContext context, params Task<T>[] tasks)
         {
-#if ASYNC_BRIDGE
+#if NET_40
             return AsyncBridge.WhenAny(tasks).On(context);
 #else
             return Task.WhenAny(tasks).On(context);
@@ -145,7 +145,7 @@ namespace System.Threading.Tasks
 
         public static ContextTaskAwaitable<Task> WhenAnyOn(ISoftSynchronizationContext context, params Task[] tasks)
         {
-#if ASYNC_BRIDGE
+#if NET_40
             return AsyncBridge.WhenAny(tasks).On(context);
 #else
             return Task.WhenAny(tasks).On(context);
@@ -154,7 +154,7 @@ namespace System.Threading.Tasks
 
         public static ContextTaskAwaitable<T[]> WhenAllOn<T>(ISoftSynchronizationContext context, params Task<T>[] tasks)
         {
-#if ASYNC_BRIDGE
+#if NET_40
             return AsyncBridge.WhenAll(tasks).On(context);
 #else
             return Task.WhenAll(tasks).On(context);
@@ -163,7 +163,7 @@ namespace System.Threading.Tasks
 
         public static ContextTaskAwaitable WhenAllOn(ISoftSynchronizationContext context, params Task[] tasks)
         {
-#if ASYNC_BRIDGE
+#if NET_40
             return AsyncBridge.WhenAll(tasks).On(context);
 #else
             return Task.WhenAll(tasks).On(context);
@@ -172,7 +172,7 @@ namespace System.Threading.Tasks
 
         public static ContextTaskAwaitable DelayOn(ISoftSynchronizationContext context, TimeSpan delay)
         {
-#if ASYNC_BRIDGE
+#if NET_40
             return AsyncBridge.Delay(delay).On(context);
 #else
             return Task.Delay(delay).On(context);

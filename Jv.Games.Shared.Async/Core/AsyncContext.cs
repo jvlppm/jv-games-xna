@@ -27,7 +27,7 @@ namespace Jv.Games.Xna.Async.Core
         #region Public Methods
         public void Update(GameTime gameTime)
         {
-            using (this.Activate())
+            using (Activate())
             {
                 _timers.RemoveAll(t => !t.Continue(gameTime));
 
@@ -53,23 +53,23 @@ namespace Jv.Games.Xna.Async.Core
             return operation.Task.On(this);
         }
 
-        public void Post(System.Action<GameTime> action)
+        public void Post(Action<GameTime> action)
         {
             _updateJobs.Enqueue(action);
         }
 
-        public void Post(System.Action action)
+        public void Post(Action action)
         {
             _jobs.Enqueue(action);
         }
 
-        public void Send(System.Action action)
+        public void Send(Action action)
         {
             using (Activate())
                 action();
         }
 
-        public void Send(System.Action<AsyncContext> action)
+        public void Send(Action<AsyncContext> action)
         {
             using (Activate())
                 action(this);
