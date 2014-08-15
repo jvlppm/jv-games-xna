@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{9AFF3E13-6E8B-4067-8B77-52503AFFB72F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MonoGame", "MonoGame", "{FA5AB381-3DE9-4429-B1C3-D34E61ECF629}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.MonoGame.Base", "Platforms\Jv.Games.MonoGame.Base\Jv.Games.MonoGame.Base.csproj", "{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.MonoGame.Async", "Platforms\Jv.Games.MonoGame.Async\Jv.Games.MonoGame.Async.csproj", "{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Jv.Games.Shared.Base", "Jv.Games.Shared.Base\Jv.Games.Shared.Base.shproj", "{E0196C1B-647B-4FE0-879A-2A62F98F73D1}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Jv.Games.Shared.Async", "Jv.Games.Shared.Async\Jv.Games.Shared.Async.shproj", "{4048A83C-597E-4BFB-AD20-85D6FA3873C9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FA5AB381-3DE9-4429-B1C3-D34E61ECF629} = {9AFF3E13-6E8B-4067-8B77-52503AFFB72F}
+		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C} = {FA5AB381-3DE9-4429-B1C3-D34E61ECF629}
+		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27} = {FA5AB381-3DE9-4429-B1C3-D34E61ECF629}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Jv.Games.MonoGame.Base\Jv.Games.MonoGame.Base.csproj
+	EndGlobalSection
+EndGlobal
