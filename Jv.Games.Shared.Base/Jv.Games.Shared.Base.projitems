@@ -11,5 +11,24 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Disposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Back.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Bounce.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Circular.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Cubic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Elastic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Exponential.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Linear.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Quadratic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Quartic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Quintic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Sinusoidal.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XNATweener\Tweener.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)XNATweener\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)XNATweener\LICENSE.txt" />
+    <None Include="$(MSBuildThisFileDirectory)XNATweener\README.txt" />
   </ItemGroup>
 </Project>

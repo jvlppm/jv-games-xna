@@ -4,9 +4,6 @@ using System.Threading.Tasks;
 using Jv.Games.Xna.Base;
 using Microsoft.Xna.Framework;
 using Jv.Games.Xna.Async.Core;
-#if !DISABLE_TWEENER
-using XNATweener;
-#endif
 
 namespace Jv.Games.Xna.Async
 {
@@ -14,7 +11,7 @@ namespace Jv.Games.Xna.Async
     {
         public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, CancellationToken cancellationToken = default(CancellationToken)
 			#if !DISABLE_TWEENER
-			, TweeningFunction easingFunction = null
+            , XNATweener.TweeningFunction easingFunction = null
 			#endif
 		)
         {
@@ -32,7 +29,7 @@ namespace Jv.Games.Xna.Async
 
         public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Reference<Color> color, Color endColor, CancellationToken cancellationToken = default(CancellationToken)
 			#if !DISABLE_TWEENER
-			, TweeningFunction easingFunction = null
+            , XNATweener.TweeningFunction easingFunction = null
 			#endif
 		)
         {
@@ -51,7 +48,7 @@ namespace Jv.Games.Xna.Async
 
         public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Color startColor, Color endColor, Action<Color> colorStep, CancellationToken cancellationToken = default(CancellationToken)
 			#if !DISABLE_TWEENER
-			, TweeningFunction easingFunction = null
+            , XNATweener.TweeningFunction easingFunction = null
 			#endif
 		)
         {

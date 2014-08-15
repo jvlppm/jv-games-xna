@@ -13,7 +13,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;DISABLE_TWEENER;NET_40</DefineConstants>
+    <DefineConstants>DEBUG;NET_40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -45,12 +45,12 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\MonoGame.Binaries.targets" Condition="Exists('..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\MonoGame.Binaries.targets')" />
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Jv.Games.MonoGame.Base\Jv.Games.MonoGame.Base.csproj">
       <Project>{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}</Project>
       <Name>Jv.Games.MonoGame.Base</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

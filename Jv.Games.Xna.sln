@@ -34,6 +34,6 @@ Global
 		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27} = {FA5AB381-3DE9-4429-B1C3-D34E61ECF629}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Jv.Games.MonoGame.Base\Jv.Games.MonoGame.Base.csproj
+		StartupItem = Platforms\Jv.Games.MonoGame.Base\Jv.Games.MonoGame.Base.csproj
 	EndGlobalSection
 EndGlobal
