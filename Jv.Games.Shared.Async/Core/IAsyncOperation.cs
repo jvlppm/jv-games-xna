@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Threading.Tasks;
 
-namespace Jv.Games.Xna.Async.Core
+namespace Jv.Games.Xna.Async
 {
     public interface IOperation
     {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Jv.Games.Xna.Base;
 using Microsoft.Xna.Framework;
 
-namespace Jv.Games.Xna.Async.Core
+namespace Jv.Games.Xna.Async
 {
     public class AsyncContext : ISoftSynchronizationContext
     {
@@ -85,9 +85,9 @@ namespace Jv.Games.Xna.Async.Core
         #region Private Methods
         internal IDisposable Activate()
         {
-            var oldContext = TaskEx.CurrentContext;
-            TaskEx.CurrentContext = this;
-            return Disposable.Create(() => TaskEx.CurrentContext = oldContext);
+            var oldContext = Context.Current;
+            Context.Current = this;
+            return Disposable.Create(() => Context.Current = oldContext);
         }
         #endregion
     }

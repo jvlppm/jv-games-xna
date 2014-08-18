@@ -573,7 +573,7 @@ namespace System.Threading.Tasks
         internal TaskAwaiter(Task task)
         {
             this.task = task;
-            this.capturedContext = TaskEx.CurrentContext;
+            this.capturedContext = Context.Current;
             this.capturedScheduler = TaskScheduler.Current;
 
             if (capturedContext == null)

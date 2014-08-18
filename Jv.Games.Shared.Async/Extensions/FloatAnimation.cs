@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Jv.Games.Xna.Async.Core;
 #if !DISABLE_TWEENER
 using XNATweener;
 #endif

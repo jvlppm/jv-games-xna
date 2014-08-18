@@ -1,6 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
-namespace System.Threading.Tasks
+namespace Jv.Games.Xna.Async
 {
     public interface ISoftSynchronizationContext
     {
@@ -95,9 +97,9 @@ namespace System.Threading.Tasks
         }
     }
 
-    public static class TaskEx
+    public static class Context
     {
-        public static ISoftSynchronizationContext CurrentContext;
+        public static ISoftSynchronizationContext Current;
 
         public static ContextTaskAwaitable On(this Task task, ISoftSynchronizationContext context)
         {
@@ -111,27 +113,27 @@ namespace System.Threading.Tasks
 
         public static ContextTaskAwaitable<Task> WhenAny(params Task[] tasks)
         {
-            return WhenAnyOn(CurrentContext, tasks);
+            return WhenAnyOn(Current, tasks);
         }
 
         public static ContextTaskAwaitable<Task<T>> WhenAny<T>(params Task<T>[] tasks)
         {
-            return WhenAnyOn(CurrentContext, tasks);
+            return WhenAnyOn(Current, tasks);
         }
 
         public static ContextTaskAwaitable WhenAll(params Task[] tasks)
         {
-            return WhenAllOn(CurrentContext, tasks);
+            return WhenAllOn(Current, tasks);
         }
 
         public static ContextTaskAwaitable<T[]> WhenAll<T>(params Task<T>[] tasks)
         {
-            return WhenAllOn(CurrentContext, tasks);
+            return WhenAllOn(Current, tasks);
         }
 
         public static ContextTaskAwaitable Delay(TimeSpan delay)
         {
-            return DelayOn(CurrentContext, delay);
+            return DelayOn(Current, delay);
         }
 
         public static ContextTaskAwaitable<Task<T>> WhenAnyOn<T>(ISoftSynchronizationContext context, params Task<T>[] tasks)

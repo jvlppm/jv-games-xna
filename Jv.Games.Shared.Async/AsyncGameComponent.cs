@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Jv.Games.Xna.Async.Core;
 
 namespace Jv.Games.Xna.Async
 {
