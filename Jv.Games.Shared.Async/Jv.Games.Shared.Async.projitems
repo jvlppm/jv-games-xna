@@ -19,7 +19,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\Yield.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Activity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ActivityHost.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AsyncGameComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\AsyncBridge.cs" />
   </ItemGroup>

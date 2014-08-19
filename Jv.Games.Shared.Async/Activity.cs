@@ -20,16 +20,9 @@ namespace Jv.Games.Xna.Async
         public IActivityStackItem SubActivity { get; private set; }
         public bool IsTransparent { get; protected set; }
 
-        protected SpriteBatch SpriteBatch { get; private set; }
-
-        protected ContentManager Content { get { return Game.Content; } }
-        protected GraphicsDevice GraphicsDevice { get { return Game.GraphicsDevice; } }
-        protected Viewport Viewport { get { return Game.GraphicsDevice.Viewport; } }
-
         public ActivityBase(Game game)
             : base(game)
         {
-            SpriteBatch = new SpriteBatch(game.GraphicsDevice);
         }
 
         #region Game Loop
@@ -65,8 +58,14 @@ namespace Jv.Games.Xna.Async
         }
         #endregion
 
-        internal Task<TActivity> Run<TActivity>(ActivityBase activity, Func<Task<TActivity>> runActivity)
+        protected Task<TResult> Run<TResult>(ActivityBase activity, Func<Task<TResult>> runActivity)
         {
+            if (runActivity == null)
+                throw new ArgumentNullException("runActivity");
+
+            if (SubActivity != null)
+                throw new InvalidOperationException("Activity is already running another sub-activity");
+
             using (UpdateContext.Activate())
                 Deactivating();
 
@@ -75,9 +74,9 @@ namespace Jv.Games.Xna.Async
 
             using (activity.UpdateContext.Activate())
             {
-                var tcs = new TaskCompletionSource<TActivity>();
+                var tcs = new TaskCompletionSource<TResult>();
 
-                Task<TActivity> runTask;
+                Task<TResult> runTask;
                 bool started = false, activated = false;
 
                 try
@@ -129,91 +128,24 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        protected Task<TActivity> Run<TActivity>(Activity<TActivity> level)
-        {
-            return Run(level, level.RunActivity);
-        }
-
-        protected Task Run(Activity activity)
-        {
-            return Run(activity, () => activity.RunActivity().Select(true));
-        }
-
-        protected Task Run<T>(params object[] args)
-            where T : Activity
-        {
-            Type[] argTypes;
-            object[] ctorArgs;
-            GetConstructorInfo(args, out argTypes, out ctorArgs);
-
-            var ctor = typeof(T).GetConstructor(argTypes);
-            var act = (T)ctor.Invoke(ctorArgs);
-            return Run(act);
-        }
-
-        protected Task<TResult> Run<T, TResult>(params object[] args)
-            where T : Activity<TResult>
-        {
-            Type[] argTypes;
-            object[] ctorArgs;
-            GetConstructorInfo(args, out argTypes, out ctorArgs);
-
-            var ctor = typeof(T).GetConstructor(argTypes);
-            var act = (T)ctor.Invoke(ctorArgs);
-            return Run(act);
-        }
-
         #region Life Cycle
         protected virtual void Deactivating() { }
         protected virtual void Starting() { }
         protected virtual void Activating() { }
         protected virtual void Completing() { }
         #endregion
-
-        #region Private Methods
-        void GetConstructorInfo(object[] args, out Type[] argTypes, out object[] ctorArgs)
-        {
-            argTypes = new[] { Game.GetType() }.Concat(args.Select(a => a == null ? typeof(object) : a.GetType())).ToArray();
-            ctorArgs = new[] { Game }.Concat(args).ToArray();
-        }
-        #endregion
     }
 
-    public abstract class Activity : ActivityBase
-    {
-        protected readonly TaskCompletionSource<bool> ActivityCompletion;
-        protected readonly CancellationToken CancelOnExit;
-
-        protected Activity(Game game)
-            : base(game)
-        {
-            ActivityCompletion = new TaskCompletionSource<bool>();
-            var cts = new CancellationTokenSource();
-            ActivityCompletion.Task.ContinueWith(t => cts.Cancel());
-            CancelOnExit = cts.Token;
-        }
-
-        #region Game Loop
-        protected abstract override void Update(GameTime gameTime);
-        protected abstract override void Draw(GameTime gameTime);
-        #endregion
-
-        #region Life Cycle
-        internal protected virtual Task RunActivity()
-        {
-            return ActivityCompletion.Task;
-        }
-        protected void Exit()
-        {
-            ActivityCompletion.TrySetResult(true);
-        }
-        #endregion
-    }
-
-    public abstract class Activity<T> : ActivityBase
+    public class Activity<T> : ActivityBase
     {
         protected readonly TaskCompletionSource<T> ActivityCompletion;
         protected readonly CancellationToken CancelOnExit;
+
+        protected SpriteBatch SpriteBatch { get; private set; }
+
+        protected ContentManager Content { get { return Game.Content; } }
+        protected GraphicsDevice GraphicsDevice { get { return Game.GraphicsDevice; } }
+        protected Viewport Viewport { get { return Game.GraphicsDevice.Viewport; } }
 
         protected Activity(Game game)
             : base(game)
@@ -222,21 +154,45 @@ namespace Jv.Games.Xna.Async
             var cts = new CancellationTokenSource();
             ActivityCompletion.Task.ContinueWith(t => cts.Cancel());
             CancelOnExit = cts.Token;
+            SpriteBatch = new SpriteBatch(game.GraphicsDevice);
         }
-
-        #region Game Loop
-        protected abstract override void Update(GameTime gameTime);
-        protected abstract override void Draw(GameTime gameTime);
-        #endregion
 
         #region Life Cycle
         internal protected virtual Task<T> RunActivity()
         {
             return ActivityCompletion.Task;
         }
+
         protected void Exit(T result)
         {
             ActivityCompletion.TrySetResult(result);
+        }
+        #endregion
+
+        #region Public Methods
+        public Task<TResult> Run<TResult>(Activity<TResult> subActivity)
+        {
+            return Run(subActivity, subActivity.RunActivity);
+        }
+
+        public Task<TResult> RunNew<TActivity, TResult>(params object[] args)
+            where TActivity : Activity<TResult>
+        {
+            Type[] argTypes;
+            object[] ctorArgs;
+            GetConstructorInfo(args, out argTypes, out ctorArgs);
+
+            var ctor = typeof(TActivity).GetConstructor(argTypes);
+            var act = (TActivity)ctor.Invoke(ctorArgs);
+            return Run(act);
+        }
+        #endregion
+
+        #region Private Methods
+        void GetConstructorInfo(object[] args, out Type[] argTypes, out object[] ctorArgs)
+        {
+            argTypes = new[] { Game.GetType() }.Concat(args.Select(a => a == null ? typeof(object) : a.GetType())).ToArray();
+            ctorArgs = new[] { Game }.Concat(args).ToArray();
         }
         #endregion
     }
