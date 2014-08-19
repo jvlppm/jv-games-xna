@@ -58,13 +58,17 @@ namespace Jv.Games.Xna.Async
         }
         #endregion
 
-        protected Task<TResult> Run<TResult>(ActivityBase activity, Func<Task<TResult>> runActivity)
+        protected ContextTaskAwaitable<TResult> Run<TResult>(ActivityBase activity, Func<Task<TResult>> runActivity)
         {
             if (runActivity == null)
                 throw new ArgumentNullException("runActivity");
 
             if (SubActivity != null)
                 throw new InvalidOperationException("Activity is already running another sub-activity");
+
+            var capturedContext = Context.Current;
+            if (capturedContext == null)
+                throw new InvalidOperationException("Run must be called from inside a context.");
 
             using (UpdateContext.Activate())
                 Deactivating();
@@ -124,7 +128,8 @@ namespace Jv.Games.Xna.Async
                     else
                         tcs.TrySetResult(t.Result);
                 }, TaskContinuationOptions.ExecuteSynchronously);
-                return tcs.Task;
+
+                return tcs.Task.On(capturedContext);
             }
         }
 
@@ -170,12 +175,12 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Public Methods
-        public Task<TResult> Run<TResult>(Activity<TResult> subActivity)
+        public ContextTaskAwaitable<TResult> Run<TResult>(Activity<TResult> subActivity)
         {
             return Run(subActivity, subActivity.RunActivity);
         }
 
-        public Task<TResult> RunNew<TActivity, TResult>(params object[] args)
+        public ContextTaskAwaitable<TResult> RunNew<TActivity, TResult>(params object[] args)
             where TActivity : Activity<TResult>
         {
             Type[] argTypes;

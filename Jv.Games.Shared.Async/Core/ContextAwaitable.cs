@@ -111,32 +111,7 @@ namespace Jv.Games.Xna.Async
             return new ContextTaskAwaitable<T>(task, context);
         }
 
-        public static ContextTaskAwaitable<Task> WhenAny(params Task[] tasks)
-        {
-            return WhenAnyOn(Current, tasks);
-        }
-
-        public static ContextTaskAwaitable<Task<T>> WhenAny<T>(params Task<T>[] tasks)
-        {
-            return WhenAnyOn(Current, tasks);
-        }
-
-        public static ContextTaskAwaitable WhenAll(params Task[] tasks)
-        {
-            return WhenAllOn(Current, tasks);
-        }
-
-        public static ContextTaskAwaitable<T[]> WhenAll<T>(params Task<T>[] tasks)
-        {
-            return WhenAllOn(Current, tasks);
-        }
-
-        public static ContextTaskAwaitable Delay(TimeSpan delay)
-        {
-            return DelayOn(Current, delay);
-        }
-
-        public static ContextTaskAwaitable<Task<T>> WhenAnyOn<T>(ISoftSynchronizationContext context, params Task<T>[] tasks)
+        public static ContextTaskAwaitable<Task<T>> WhenAny<T>(this ISoftSynchronizationContext context, params Task<T>[] tasks)
         {
 #if NET_40
             return AsyncBridge.WhenAny(tasks).On(context);
@@ -145,7 +120,7 @@ namespace Jv.Games.Xna.Async
 #endif
         }
 
-        public static ContextTaskAwaitable<Task> WhenAnyOn(ISoftSynchronizationContext context, params Task[] tasks)
+        public static ContextTaskAwaitable<Task> WhenAny(this ISoftSynchronizationContext context, params Task[] tasks)
         {
 #if NET_40
             return AsyncBridge.WhenAny(tasks).On(context);
@@ -154,7 +129,7 @@ namespace Jv.Games.Xna.Async
 #endif
         }
 
-        public static ContextTaskAwaitable<T[]> WhenAllOn<T>(ISoftSynchronizationContext context, params Task<T>[] tasks)
+        public static ContextTaskAwaitable<T[]> WhenAll<T>(this ISoftSynchronizationContext context, params Task<T>[] tasks)
         {
 #if NET_40
             return AsyncBridge.WhenAll(tasks).On(context);
@@ -163,21 +138,12 @@ namespace Jv.Games.Xna.Async
 #endif
         }
 
-        public static ContextTaskAwaitable WhenAllOn(ISoftSynchronizationContext context, params Task[] tasks)
+        public static ContextTaskAwaitable WhenAll(this ISoftSynchronizationContext context, params Task[] tasks)
         {
 #if NET_40
             return AsyncBridge.WhenAll(tasks).On(context);
 #else
             return Task.WhenAll(tasks).On(context);
-#endif
-        }
-
-        public static ContextTaskAwaitable DelayOn(ISoftSynchronizationContext context, TimeSpan delay)
-        {
-#if NET_40
-            return AsyncBridge.Delay(delay).On(context);
-#else
-            return Task.Delay(delay).On(context);
 #endif
         }
     }
