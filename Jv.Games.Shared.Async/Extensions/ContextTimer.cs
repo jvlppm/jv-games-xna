@@ -5,18 +5,13 @@ using Microsoft.Xna.Framework;
 
 namespace Jv.Games.Xna.Async
 {
-    public class ContextTimer : IAsyncOperation<TimeSpan>
+    public class ContextTimer : AsyncOperation<TimeSpan>
     {
         #region Attributes
-        readonly TaskCompletionSource<TimeSpan> _taskCompletion;
-
         public TimeSpan Duration;
         #endregion
 
         #region Properties
-        public Task<TimeSpan> Task { get { return _taskCompletion.Task; } }
-        Task IAsyncOperation.Task { get { return _taskCompletion.Task; } }
-
         public TimeSpan Time { get; private set; }
         public TimeSpan RemainingTime { get { return Duration - Time; } }
         #endregion
@@ -24,7 +19,6 @@ namespace Jv.Games.Xna.Async
         #region Constructors
         public ContextTimer(TimeSpan duration)
         {
-            _taskCompletion = new TaskCompletionSource<TimeSpan>();
             Duration = duration;
         }
         #endregion
@@ -35,23 +29,18 @@ namespace Jv.Games.Xna.Async
         /// </summary>
         /// <param name="gameTime">Current game time.</param>
         /// <returns>True if the timer is complete.</returns>
-        public virtual bool Continue(GameTime gameTime)
+        public override bool Continue(GameTime gameTime)
         {
-            if (Task.IsCompleted)
+            if (IsCompleted)
                 return false;
 
             Time += gameTime.ElapsedGameTime;
             if (Time >= Duration)
             {
-                _taskCompletion.SetResult(Time);
+                SetResult(Time);
                 return false;
             }
             return true;
-        }
-
-        public void Cancel()
-        {
-            _taskCompletion.SetCanceled();
         }
         #endregion
     }
@@ -64,7 +53,7 @@ namespace Jv.Games.Xna.Async
         /// <param name = "context">The context to run the operation.</param>
         /// <param name="dueTime">The time span to wait before completing the returned task.</param>
         /// <param name="cancellationToken">The cancellation token that will be checked prior to completing the returned task.</param>
-        public static ContextTaskAwaitable<TimeSpan> Delay(this AsyncContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
+        public static ContextOperationAwaitable<TimeSpan> Delay(this AsyncContext context, TimeSpan dueTime, CancellationToken cancellationToken = default(CancellationToken))
         {
             var timer = new ContextTimer(dueTime);
 

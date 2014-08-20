@@ -7,11 +7,9 @@ using XNATweener;
 
 namespace Jv.Games.Xna.Async
 {
-    public class FloatAnimation : IAsyncOperation<TimeSpan>
+    public class FloatAnimation : AsyncOperation<TimeSpan>
     {
         #region Attributes
-        TaskCompletionSource<TimeSpan> _taskCompletion;
-
         public readonly TimeSpan Duration;
         public readonly Action<float> ValueStep;
         public readonly float StartValue;
@@ -22,9 +20,6 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Properties
-        public Task<TimeSpan> Task { get { return _taskCompletion.Task; } }
-        Task IAsyncOperation.Task { get { return _taskCompletion.Task; } }
-
         public TimeSpan CurrentDuration { get; private set; }
         #endregion
 
@@ -41,8 +36,6 @@ namespace Jv.Games.Xna.Async
             if (valueStep == null)
                 throw new ArgumentNullException("valueStep");
 
-            _taskCompletion = new TaskCompletionSource<TimeSpan>();
-
             Duration = duration;
 
             StartValue = startValue;
@@ -57,9 +50,9 @@ namespace Jv.Games.Xna.Async
         #endregion
 
         #region Public Methods
-        public bool Continue(GameTime gameTime)
+        public override bool Continue(GameTime gameTime)
         {
-            if (Task.IsCompleted)
+            if (IsCompleted)
                 return false;
 
             CurrentDuration += gameTime.ElapsedGameTime;
@@ -68,13 +61,8 @@ namespace Jv.Games.Xna.Async
             if (CurrentDuration < Duration)
                 return true;
 
-            _taskCompletion.SetResult(CurrentDuration);
+            SetResult(CurrentDuration);
             return false;
-        }
-
-        public void Cancel()
-        {
-            _taskCompletion.TrySetCanceled();
         }
         #endregion
 

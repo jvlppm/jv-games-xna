@@ -8,7 +8,7 @@ namespace Jv.Games.Xna.Async
 {
     public static class AnimationExtensions
     {
-        public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, CancellationToken cancellationToken = default(CancellationToken)
+        public static ContextOperationAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, float startValue, float endValue, Action<float> valueStep, CancellationToken cancellationToken = default(CancellationToken)
 			#if !DISABLE_TWEENER
             , XNATweener.TweeningFunction easingFunction = null
 			#endif
@@ -26,7 +26,7 @@ namespace Jv.Games.Xna.Async
             return context.Run(info);
         }
 
-        public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Reference<Color> color, Color endColor, CancellationToken cancellationToken = default(CancellationToken)
+        public static ContextOperationAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Reference<Color> color, Color endColor, CancellationToken cancellationToken = default(CancellationToken)
 			#if !DISABLE_TWEENER
             , XNATweener.TweeningFunction easingFunction = null
 			#endif
@@ -45,7 +45,7 @@ namespace Jv.Games.Xna.Async
 			);
         }
 
-        public static ContextTaskAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Color startColor, Color endColor, Action<Color> colorStep, CancellationToken cancellationToken = default(CancellationToken)
+        public static ContextOperationAwaitable<TimeSpan> Animate(this AsyncContext context, TimeSpan duration, Color startColor, Color endColor, Action<Color> colorStep, CancellationToken cancellationToken = default(CancellationToken)
 			#if !DISABLE_TWEENER
             , XNATweener.TweeningFunction easingFunction = null
 			#endif

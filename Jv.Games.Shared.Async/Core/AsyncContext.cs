@@ -59,16 +59,16 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        public ContextTaskAwaitable<T> Run<T>(IAsyncOperation<T> operation)
+        public ContextOperationAwaitable<T> Run<T>(IAsyncOperation<T> operation)
         {
             _timers.Add(operation);
-            return operation.Task.On(this);
+            return operation.On(this);
         }
 
-        public ContextTaskAwaitable Run(IAsyncOperation operation)
+        public ContextOperationAwaitable Run(IAsyncOperation operation)
         {
             _timers.Add(operation);
-            return operation.Task.On(this);
+            return operation.On(this);
         }
 
         public void Post(Action<GameTime> action)

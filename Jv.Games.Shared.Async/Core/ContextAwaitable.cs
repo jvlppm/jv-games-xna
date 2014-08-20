@@ -9,6 +9,52 @@ namespace Jv.Games.Xna.Async
         void Post(Action action);
     }
 
+    public class ContextOperationAwaiter : INotifyCompletion
+    {
+        readonly IAsyncOperation _operation;
+        readonly ISoftSynchronizationContext _context;
+
+        public ContextOperationAwaiter(IAsyncOperation operation, ISoftSynchronizationContext context)
+        {
+            _operation = operation;
+            _context = context;
+        }
+
+        #region INotifyCompletion implementation
+        public bool IsCompleted { get { return _operation.IsCompleted; } }
+
+        public void OnCompleted(Action continuation)
+        {
+            _operation.Completed += (s, e) => _context.Post(continuation);
+        }
+
+        public void GetResult() { _operation.GetResult(); }
+        #endregion
+    }
+
+    public class ContextOperationAwaiter<T> : INotifyCompletion
+    {
+        readonly IAsyncOperation<T> _operation;
+        readonly ISoftSynchronizationContext _context;
+
+        public ContextOperationAwaiter(IAsyncOperation<T> operation, ISoftSynchronizationContext context)
+        {
+            _operation = operation;
+            _context = context;
+        }
+
+        #region INotifyCompletion implementation
+        public bool IsCompleted { get { return _operation.IsCompleted; } }
+
+        public void OnCompleted(Action continuation)
+        {
+            _operation.Completed += (s, e) => _context.Post(continuation);
+        }
+
+        public T GetResult() { return _operation.GetResult(); }
+        #endregion
+    }
+
     public class ContextTaskAwaiter : INotifyCompletion
     {
         readonly ISoftSynchronizationContext _context;
@@ -26,10 +72,7 @@ namespace Jv.Games.Xna.Async
 
         public void OnCompleted(Action continuation)
         {
-            _taskAwaiter.OnCompleted(delegate
-            {
-                _context.Post(continuation);
-            });
+            _taskAwaiter.OnCompleted(() => _context.Post(continuation));
         }
     }
 
@@ -50,10 +93,7 @@ namespace Jv.Games.Xna.Async
 
         public void OnCompleted(Action continuation)
         {
-            _taskAwaiter.OnCompleted(delegate
-            {
-                _context.Post(continuation);
-            });
+            _taskAwaiter.OnCompleted(() => _context.Post(continuation));
         }
     }
 
@@ -97,9 +137,49 @@ namespace Jv.Games.Xna.Async
         }
     }
 
+    public class ContextOperationAwaitable
+    {
+        protected readonly IAsyncOperation Operation;
+        protected readonly ISoftSynchronizationContext Context;
+
+        public ContextOperationAwaitable(IAsyncOperation operation, ISoftSynchronizationContext context)
+        {
+            Operation = operation;
+            Context = context;
+        }
+
+        public ContextOperationAwaiter GetAwaiter()
+        {
+            return new ContextOperationAwaiter(Operation, Context);
+        }
+    }
+
+    public class ContextOperationAwaitable<T> : ContextOperationAwaitable
+    {
+        public ContextOperationAwaitable(IAsyncOperation<T> operation, ISoftSynchronizationContext context)
+            : base(operation, context)
+        {
+        }
+
+        public new ContextOperationAwaitable<T> GetAwaiter()
+        {
+            return new ContextOperationAwaitable<T>((IAsyncOperation<T>)Operation, Context);
+        }
+    }
+
     public static class Context
     {
         public static ISoftSynchronizationContext Current;
+
+        public static ContextOperationAwaitable On(this IAsyncOperation operation, ISoftSynchronizationContext context)
+        {
+            return new ContextOperationAwaitable(operation, context);
+        }
+
+        public static ContextOperationAwaitable<T> On<T>(this IAsyncOperation<T> operation, ISoftSynchronizationContext context)
+        {
+            return new ContextOperationAwaitable<T>(operation, context);
+        }
 
         public static ContextTaskAwaitable On(this Task task, ISoftSynchronizationContext context)
         {
