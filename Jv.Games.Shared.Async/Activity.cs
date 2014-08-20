@@ -70,14 +70,23 @@ namespace Jv.Games.Xna.Async
             if (capturedContext == null)
                 throw new InvalidOperationException("Run must be called from inside a context.");
 
-            using (UpdateContext.Activate())
-                Deactivating();
-
             SubActivity = activity;
-            ((IGameComponent)activity).Initialize();
 
-            using (activity.UpdateContext.Activate())
+            Context.Current = UpdateContext;
+            try
             {
+                Deactivating();
+            }
+            finally
+            {
+                Context.Current = capturedContext;
+            }
+
+            Context.Current = activity.UpdateContext;
+            try
+            {
+                ((IGameComponent)activity).Initialize();
+
                 var tcs = new TaskCompletionSource<TResult>();
 
                 Task<TResult> runTask;
@@ -103,7 +112,10 @@ namespace Jv.Games.Xna.Async
                     if (t.IsFaulted)
                         errors.AddRange(t.Exception.InnerExceptions);
 
-                    using (activity.UpdateContext.Activate())
+                    var oldC = Context.Current;
+
+                    Context.Current = activity.UpdateContext;
+                    try
                     {
                         if (activated)
                         {
@@ -117,11 +129,22 @@ namespace Jv.Games.Xna.Async
                             catch (Exception ex) { errors.Add(ex); }
                         }
                     }
+                    finally
+                    {
+                        Context.Current = oldC;
+                    }
 
                     SubActivity = null;
 
-                    using (UpdateContext.Activate())
+                    Context.Current = UpdateContext;
+                    try
+                    {
                         Activating();
+                    }
+                    finally
+                    {
+                        Context.Current = oldC;
+                    }
 
                     if (errors.Any())
                         tcs.TrySetException(new AggregateException(errors));
@@ -130,6 +153,10 @@ namespace Jv.Games.Xna.Async
                 }, TaskContinuationOptions.ExecuteSynchronously);
 
                 return tcs.Task.On(capturedContext);
+            }
+            finally
+            {
+                Context.Current = capturedContext;
             }
         }
 

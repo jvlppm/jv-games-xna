@@ -9,8 +9,17 @@ namespace Jv.Games.Xna.Async
         public static Task<TResult> RunComponent<T, TResult>(this Game game, T component, Func<T, Task<TResult>> asyncMethod)
             where T : AsyncGameComponent
         {
-            using(component.UpdateContext.Activate())
+            var oldContext = Context.Current;
+            Context.Current = component.UpdateContext;
+
+            try
+            {
                 return RunComponentSafe(game, component, asyncMethod);
+            }
+            finally
+            {
+                Context.Current = oldContext;
+            }
         }
 
         #region Private Methods

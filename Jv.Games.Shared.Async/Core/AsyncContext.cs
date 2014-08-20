@@ -11,33 +11,51 @@ namespace Jv.Games.Xna.Async
     {
         #region Attributes
         readonly List<IAsyncOperation> _timers;
-        readonly ConcurrentQueue<Action<GameTime>> _updateJobs;
-        readonly ConcurrentQueue<Action> _jobs;
+        readonly Queue<Action<GameTime>> _updateJobs;
+        readonly Queue<Action> _jobs;
+        object _jobsLock = new object();
+        volatile bool haveJobs = false;
         #endregion
 
         #region Constructors
         public AsyncContext()
         {
             _timers = new List<IAsyncOperation>();
-            _jobs = new ConcurrentQueue<Action>();
-            _updateJobs = new ConcurrentQueue<Action<GameTime>>();
+            _jobs = new Queue<Action>();
+            _updateJobs = new Queue<Action<GameTime>>();
         }
         #endregion
 
         #region Public Methods
         public void Update(GameTime gameTime)
         {
-            using (Activate())
+            var oldContext = Context.Current;
+            Context.Current = this;
+
+            try
             {
-                _timers.RemoveAll(t => !t.Continue(gameTime));
+                for (int i = _timers.Count - 1; i >= 0; i--)
+                {
+                    if (!_timers[i].Continue(gameTime))
+                        _timers.RemoveAt(i);
+                }
 
-                Action job;
-                while (_jobs.TryDequeue(out job))
-                    job();
+                if (haveJobs)
+                {
+                    lock (_jobsLock)
+                    {
+                        while (_jobs.Count > 0)
+                            _jobs.Dequeue()();
 
-                Action<GameTime> updateJob;
-                while (_updateJobs.TryDequeue(out updateJob))
-                    updateJob(gameTime);
+                        while (_updateJobs.Count > 0)
+                            _updateJobs.Dequeue()(gameTime);
+                        haveJobs = false;
+                    }
+                }
+            }
+            finally
+            {
+                Context.Current = oldContext;
             }
         }
 
@@ -55,39 +73,65 @@ namespace Jv.Games.Xna.Async
 
         public void Post(Action<GameTime> action)
         {
-            _updateJobs.Enqueue(action);
+            lock (_jobsLock)
+            {
+                _updateJobs.Enqueue(action);
+                haveJobs = true;
+            }
         }
 
         public void Post(Action action)
         {
-            _jobs.Enqueue(action);
+            lock (_jobsLock)
+            {
+                _jobs.Enqueue(action);
+                haveJobs = true;
+            }
         }
 
         public void Send(Action action)
         {
-            using (Activate())
+            var oldContext = Context.Current;
+            Context.Current = this;
+
+            try
+            {
                 action();
+            }
+            finally
+            {
+                Context.Current = oldContext;
+            }
         }
 
         public void Send(Action<AsyncContext> action)
         {
-            using (Activate())
+            var oldContext = Context.Current;
+            Context.Current = this;
+
+            try
+            {
                 action(this);
+            }
+            finally
+            {
+                Context.Current = oldContext;
+            }
         }
 
         public void Send(Action<GameTime> action, GameTime gameTime)
         {
-            using (Activate())
-                action(gameTime);
-        }
-        #endregion
-
-        #region Private Methods
-        internal IDisposable Activate()
-        {
             var oldContext = Context.Current;
             Context.Current = this;
-            return Disposable.Create(() => Context.Current = oldContext);
+
+            try
+            {
+                action(gameTime);
+            }
+            finally
+            {
+                Context.Current = oldContext;
+            }
         }
         #endregion
     }
