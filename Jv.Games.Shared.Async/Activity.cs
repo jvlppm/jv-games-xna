@@ -183,21 +183,10 @@ namespace Jv.Games.Xna.Async
         public ContextTaskAwaitable<TResult> RunNew<TActivity, TResult>(params object[] args)
             where TActivity : Activity<TResult>
         {
-            Type[] argTypes;
-            object[] ctorArgs;
-            GetConstructorInfo(args, out argTypes, out ctorArgs);
+            object[] ctorArgs = new[] { Game }.Concat(args).ToArray();
 
-            var ctor = typeof(TActivity).GetConstructor(argTypes);
-            var act = (TActivity)ctor.Invoke(ctorArgs);
+            var act = (TActivity)Activator.CreateInstance(typeof(TActivity), ctorArgs);
             return Run(act);
-        }
-        #endregion
-
-        #region Private Methods
-        void GetConstructorInfo(object[] args, out Type[] argTypes, out object[] ctorArgs)
-        {
-            argTypes = new[] { Game.GetType() }.Concat(args.Select(a => a == null ? typeof(object) : a.GetType())).ToArray();
-            ctorArgs = new[] { Game }.Concat(args).ToArray();
         }
         #endregion
     }
