@@ -11,47 +11,55 @@ namespace Jv.Games.Xna.Async
 
     public class ContextOperationAwaiter : INotifyCompletion
     {
-        readonly IAsyncOperation _operation;
-        readonly ISoftSynchronizationContext _context;
+        public readonly IAsyncOperation Operation;
+        public readonly ISoftSynchronizationContext Context;
+
+        public bool IsCompleted { get { return Operation.IsCompleted; } }
+        public bool IsFaulted { get { return Operation.IsFaulted; } }
+        public bool IsCanceled { get { return Operation.IsCanceled; } }
+        public Exception Error { get { return Operation.Error; } }
 
         public ContextOperationAwaiter(IAsyncOperation operation, ISoftSynchronizationContext context)
         {
-            _operation = operation;
-            _context = context;
+            Operation = operation;
+            Context = context;
         }
 
         #region INotifyCompletion implementation
-        public bool IsCompleted { get { return _operation.IsCompleted; } }
 
         public void OnCompleted(Action continuation)
         {
-            _operation.Completed += (s, e) => _context.Post(continuation);
+            Operation.Completed += (s, e) => Context.Post(continuation);
         }
 
-        public void GetResult() { _operation.GetResult(); }
+        public void GetResult() { Operation.GetResult(); }
         #endregion
     }
 
     public class ContextOperationAwaiter<T> : INotifyCompletion
     {
-        readonly IAsyncOperation<T> _operation;
-        readonly ISoftSynchronizationContext _context;
+        public readonly IAsyncOperation<T> Operation;
+        public readonly ISoftSynchronizationContext Context;
+
+        public bool IsCompleted { get { return Operation.IsCompleted; } }
+        public bool IsFaulted { get { return Operation.IsFaulted; } }
+        public bool IsCanceled { get { return Operation.IsCanceled; } }
+        public Exception Error { get { return Operation.Error; } }
 
         public ContextOperationAwaiter(IAsyncOperation<T> operation, ISoftSynchronizationContext context)
         {
-            _operation = operation;
-            _context = context;
+            Operation = operation;
+            Context = context;
         }
 
         #region INotifyCompletion implementation
-        public bool IsCompleted { get { return _operation.IsCompleted; } }
 
         public void OnCompleted(Action continuation)
         {
-            _operation.Completed += (s, e) => _context.Post(continuation);
+            Operation.Completed += (s, e) => Context.Post(continuation);
         }
 
-        public T GetResult() { return _operation.GetResult(); }
+        public T GetResult() { return Operation.GetResult(); }
         #endregion
     }
 
@@ -152,6 +160,21 @@ namespace Jv.Games.Xna.Async
         {
             return new ContextOperationAwaiter(Operation, Context);
         }
+
+        public Task AsTask()
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            Operation.Completed += (s, e) =>
+            {
+                if (Operation.IsFaulted)
+                    tcs.SetException(Operation.Error);
+                else if (Operation.IsCanceled)
+                    tcs.SetCanceled();
+                else
+                    tcs.SetResult(true);
+            };
+            return tcs.Task;
+        }
     }
 
     public class ContextOperationAwaitable<T> : ContextOperationAwaitable
@@ -161,9 +184,24 @@ namespace Jv.Games.Xna.Async
         {
         }
 
-        public new ContextOperationAwaitable<T> GetAwaiter()
+        public new ContextOperationAwaiter<T> GetAwaiter()
         {
-            return new ContextOperationAwaitable<T>((IAsyncOperation<T>)Operation, Context);
+            return new ContextOperationAwaiter<T>((IAsyncOperation<T>)Operation, Context);
+        }
+
+        public new Task<T> AsTask()
+        {
+            var tcs = new TaskCompletionSource<T>();
+            Operation.Completed += (s, e) =>
+            {
+                if (Operation.IsFaulted)
+                    tcs.SetException(Operation.Error);
+                else if (Operation.IsCanceled)
+                    tcs.SetCanceled();
+                else
+                    tcs.SetResult(((IAsyncOperation<T>)Operation).GetResult());
+            };
+            return tcs.Task;
         }
     }
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Jv.Games.Xna.Async
 {
-    class CompleteWhenOperation : AsyncOperation
+    public class CompleteWhenOperation : AsyncOperation
     {
         readonly Func<GameTime, bool> _checkCompletion;
 
@@ -32,7 +32,7 @@ namespace Jv.Games.Xna.Async
         }
     }
 
-    static class CompleteWhenExtensions
+    public static class CompleteWhenExtensions
     {
         public static ContextOperationAwaitable CompleteWhen(this AsyncContext context, Func<GameTime, bool> checkCompletion)
         {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -15,8 +15,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ActivityExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\AnimationExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ContextTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DummyOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\FloatAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WhenAllExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WhenAnyExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\Yield.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Activity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AsyncGameComponent.cs" />

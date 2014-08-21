@@ -20,6 +20,11 @@ namespace Jv.Games.Xna.Async
     public interface IAsyncOperation : IOperation
     {
         bool IsCompleted { get; }
+        bool IsFaulted { get; }
+        bool IsCanceled { get; }
+
+        Exception Error { get; }
+
         event EventHandler Completed;
         void GetResult();
     }
@@ -31,12 +36,11 @@ namespace Jv.Games.Xna.Async
 
     public abstract class AsyncOperation : IAsyncOperation
     {
-        #region Attributes
-        Exception _error;
-        #endregion
-
         #region Properties
         public bool IsCompleted { get; protected set; }
+        public bool IsFaulted { get; protected set; }
+        public bool IsCanceled { get; protected set; }
+        public Exception Error { get; protected set; }
         #endregion
 
         #region Events
@@ -57,18 +61,28 @@ namespace Jv.Games.Xna.Async
         #region Protected Methods
         protected void SetCompleted()
         {
+            IsCanceled = false;
+            IsFaulted = false;
             IsCompleted = true;
             NotifyCompletion();
         }
 
         public virtual void Cancel()
         {
-            SetError(new OperationCanceledException());
+            IsCanceled = true;
+            IsFaulted = false;
+            IsCompleted = true;
+            NotifyCompletion();
         }
 
         protected void SetError(Exception ex)
         {
-            _error = ex;
+            if (ex == null)
+                throw new ArgumentNullException("ex");
+
+            Error = ex;
+            IsCanceled = false;
+            IsFaulted = true;
             IsCompleted = true;
             NotifyCompletion();
         }
@@ -79,8 +93,10 @@ namespace Jv.Games.Xna.Async
         {
             if (!IsCompleted)
                 throw new InvalidOperationException();
-            if (_error != null)
-                ExceptionDispatchInfo.Capture(_error).Throw();
+            if (IsFaulted)
+                ExceptionDispatchInfo.Capture(Error).Throw();
+            if (IsCanceled)
+                throw new OperationCanceledException();
         }
 
         #endregion
