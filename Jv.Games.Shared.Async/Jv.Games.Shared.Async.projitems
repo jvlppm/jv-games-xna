@@ -9,21 +9,22 @@
     <Import_RootNamespace>Jv.Games.Xna.Async</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Core\AsyncContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\ContextAwaitable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\IAsyncOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ActivityExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\AnimationExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ContextTimer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DummyOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\FloatAnimation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WhenAllExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WhenAnyExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\Yield.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Activity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActivityExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AsyncBridge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AsyncGameComponent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\AsyncBridge.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\CompleteWhen.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AsyncOperations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContextAwaitable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AsyncContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\AnimationExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\ContextTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\DummyOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\FloatAnimation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\WhenAllExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\WhenAnyExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\Yield.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\CompleteWhen.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IAsyncOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TaskExtensions.cs" />
   </ItemGroup>
 </Project>

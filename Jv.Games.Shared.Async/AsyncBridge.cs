@@ -16,20 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-
-// OpenTK breaks under windows when the current synchronization context is changed,
-// even if the code is still running under the Main Thread, so, to avoid this issue,
-// ISoftSynchronizationContext was created, and a custom AsyncBridge is embedded into
-// this project.
-
-// Its modifications are:
-//     Custom TaskAwaiter, so it will enqueue continuation under TaskAwaiter.CurrentContext;
-//     Synchronous continuations, so no game frames are lost when concluding tasks.
-
-// As a limitation, games that want to use await need to target .Net Framework 4.0,
-// this will ensure that the extension method GetAwaiter() is called, instead of the
-// built in one.
-
 // This makes games compatible with .Net Framework 4.0 under Windows or Mono (2.10+).
 
 #if NET_40
@@ -562,7 +548,7 @@ namespace System.Threading.Tasks
     public class TaskAwaiter<T> : INotifyCompletion
     {
         protected readonly Task task;
-        readonly ISoftSynchronizationContext capturedContext;
+        readonly Jv.Games.Xna.Async.IAsyncContext capturedContext;
         readonly TaskScheduler capturedScheduler;
 
         public TaskAwaiter(Task<T> task)
@@ -573,8 +559,8 @@ namespace System.Threading.Tasks
         internal TaskAwaiter(Task task)
         {
             this.task = task;
-            this.capturedContext = Context.Current;
             this.capturedScheduler = TaskScheduler.Current;
+            this.capturedContext = Jv.Games.Xna.Async.Context.Current;
 
             if (capturedContext == null)
                 throw new InvalidOperationException("TaskAwaiter.CurrentContext must be set before await.");

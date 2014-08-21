@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-
-namespace Jv.Games.Xna.Async.Extensions
+﻿namespace Jv.Games.Xna.Async
 {
+    using Microsoft.Xna.Framework;
+    using System;
+    using System.Collections.Generic;
+
     public static class WhenAllExtensions
     {
-        public static ContextOperationAwaitable WhenAll(this AsyncContext context, params ContextOperationAwaitable[] operations)
+        public static ContextOperation WhenAll(this AsyncContext context, params ContextOperation[] operations)
         {
             var operation = new DummyOperation();
             if (operations.Length <= 0)
@@ -15,7 +15,7 @@ namespace Jv.Games.Xna.Async.Extensions
                 return context.Run(operation);
             }
 
-            var remaining = new List<ContextOperationAwaitable>(operations);
+            var remaining = new List<ContextOperation>(operations);
 
             List<Exception> errors = new List<Exception>();
             bool canceled = false;
@@ -49,7 +49,7 @@ namespace Jv.Games.Xna.Async.Extensions
             return context.Run(operation);
         }
 
-        public static ContextOperationAwaitable<T[]> WhenAll<T>(this AsyncContext context, params ContextOperationAwaitable<T>[] operations)
+        public static ContextOperation<T[]> WhenAll<T>(this AsyncContext context, params ContextOperation<T>[] operations)
         {
             var operation = new DummyOperation<T[]>();
             if (operations.Length <= 0)
@@ -58,7 +58,7 @@ namespace Jv.Games.Xna.Async.Extensions
                 return context.Run(operation);
             }
 
-            var remaining = new List<ContextOperationAwaitable>(operations);
+            var remaining = new List<ContextOperation>(operations);
 
             List<Exception> errors = new List<Exception>();
             bool canceled = false;

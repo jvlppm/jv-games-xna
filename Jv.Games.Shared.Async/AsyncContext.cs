@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Jv.Games.Xna.Base;
-using Microsoft.Xna.Framework;
-
-namespace Jv.Games.Xna.Async
+﻿namespace Jv.Games.Xna.Async
 {
-    public class AsyncContext : ISoftSynchronizationContext
+    using Microsoft.Xna.Framework;
+    using System;
+    using System.Collections.Generic;
+
+    public interface IAsyncContext
+    {
+        void Post(Action action);
+    }
+
+    public class AsyncContext : IAsyncContext
     {
         #region Attributes
-        readonly List<IAsyncOperation> _timers;
+        readonly List<IAsyncOperation> _runningOperations;
         readonly Queue<Action<GameTime>> _updateJobs;
-        readonly Queue<Action> _jobs;
-        object _jobsLock = new object();
         volatile bool haveJobs = false;
         #endregion
 
         #region Constructors
         public AsyncContext()
         {
-            _timers = new List<IAsyncOperation>();
-            _jobs = new Queue<Action>();
+            _runningOperations = new List<IAsyncOperation>();
             _updateJobs = new Queue<Action<GameTime>>();
         }
         #endregion
@@ -34,19 +33,16 @@ namespace Jv.Games.Xna.Async
 
             try
             {
-                for (int i = _timers.Count - 1; i >= 0; i--)
+                for (int i = _runningOperations.Count - 1; i >= 0; i--)
                 {
-                    if (!_timers[i].Continue(gameTime))
-                        _timers.RemoveAt(i);
+                    if (!_runningOperations[i].Continue(gameTime))
+                        _runningOperations.RemoveAt(i);
                 }
 
                 if (haveJobs)
                 {
-                    lock (_jobsLock)
+                    lock (_updateJobs)
                     {
-                        while (_jobs.Count > 0)
-                            _jobs.Dequeue()();
-
                         while (_updateJobs.Count > 0)
                             _updateJobs.Dequeue()(gameTime);
                         haveJobs = false;
@@ -59,21 +55,21 @@ namespace Jv.Games.Xna.Async
             }
         }
 
-        public ContextOperationAwaitable<T> Run<T>(IAsyncOperation<T> operation)
+        public ContextOperation<T> Run<T>(IAsyncOperation<T> operation)
         {
-            _timers.Add(operation);
+            _runningOperations.Add(operation);
             return operation.On(this);
         }
 
-        public ContextOperationAwaitable Run(IAsyncOperation operation)
+        public ContextOperation Run(IAsyncOperation operation)
         {
-            _timers.Add(operation);
+            _runningOperations.Add(operation);
             return operation.On(this);
         }
 
         public void Post(Action<GameTime> action)
         {
-            lock (_jobsLock)
+            lock (_updateJobs)
             {
                 _updateJobs.Enqueue(action);
                 haveJobs = true;
@@ -82,9 +78,9 @@ namespace Jv.Games.Xna.Async
 
         public void Post(Action action)
         {
-            lock (_jobsLock)
+            lock (_updateJobs)
             {
-                _jobs.Enqueue(action);
+                _updateJobs.Enqueue(gt => action());
                 haveJobs = true;
             }
         }

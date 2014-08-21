@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Threading.Tasks;
-
-namespace Jv.Games.Xna.Async
+﻿namespace Jv.Games.Xna.Async
 {
+    using Microsoft.Xna.Framework;
+    using System;
+    using System.Threading.Tasks;
+
     public static class ActivityExtensions
     {
         public static Task<TResult> RunComponent<T, TResult>(this Game game, T component, Func<T, Task<TResult>> asyncMethod)

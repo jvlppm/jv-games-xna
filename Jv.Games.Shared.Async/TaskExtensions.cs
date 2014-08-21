@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Jv.Games.Xna.Async
+﻿namespace Jv.Games.Xna.Async
 {
+    using System;
+    using System.Threading.Tasks;
+
     public static class TaskExtensions
     {
         public static Task<TResult> Select<T, TResult>(this Task<T> task, Func<T, TResult> selector)

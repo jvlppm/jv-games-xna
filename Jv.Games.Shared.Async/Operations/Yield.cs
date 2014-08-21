@@ -13,7 +13,7 @@ namespace Jv.Games.Xna.Async
 
     public static class YieldExtensions
     {
-        public static ContextOperationAwaitable<GameTime> Yield(this AsyncContext context)
+        public static ContextOperation<GameTime> Yield(this AsyncContext context)
         {
             return context.Run(new Yield());
         }

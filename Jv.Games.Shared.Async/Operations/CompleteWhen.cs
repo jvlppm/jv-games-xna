@@ -34,7 +34,7 @@ namespace Jv.Games.Xna.Async
 
     public static class CompleteWhenExtensions
     {
-        public static ContextOperationAwaitable CompleteWhen(this AsyncContext context, Func<GameTime, bool> checkCompletion)
+        public static ContextOperation CompleteWhen(this AsyncContext context, Func<GameTime, bool> checkCompletion)
         {
             return context.Run(new CompleteWhenOperation(checkCompletion));
         }

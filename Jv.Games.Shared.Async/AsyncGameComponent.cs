@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-
-namespace Jv.Games.Xna.Async
+﻿namespace Jv.Games.Xna.Async
 {
+    using System;
+    using Microsoft.Xna.Framework;
+
     public class AsyncGameComponent : IGameComponent, IDrawable, IUpdateable
     {
         #region Attributes

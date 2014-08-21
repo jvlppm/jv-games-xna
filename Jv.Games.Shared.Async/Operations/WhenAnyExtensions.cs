@@ -1,15 +1,17 @@
 ﻿using System;
 
-namespace Jv.Games.Xna.Async.Extensions
+namespace Jv.Games.Xna.Async
 {
+    using System;
+
     public static class WhenAnyExtensions
     {
-        public static ContextOperationAwaitable<ContextOperationAwaitable> WhenAny(this AsyncContext context, params ContextOperationAwaitable[] operations)
+        public static ContextOperation<ContextOperation> WhenAny(this AsyncContext context, params ContextOperation[] operations)
         {
             if (operations.Length <= 0)
                 throw new ArgumentException("No operations specified", "operations");
 
-            var operation = new DummyOperation<ContextOperationAwaitable>();
+            var operation = new DummyOperation<ContextOperation>();
 
             foreach (var op in operations)
                 op.GetAwaiter().OnCompleted(() => operation.SetResult(op));
@@ -17,12 +19,12 @@ namespace Jv.Games.Xna.Async.Extensions
             return context.Run(operation);
         }
 
-        public static ContextOperationAwaitable<ContextOperationAwaitable<T>> WhenAny<T>(this AsyncContext context, params ContextOperationAwaitable<T>[] operations)
+        public static ContextOperation<ContextOperation<T>> WhenAny<T>(this AsyncContext context, params ContextOperation<T>[] operations)
         {
             if (operations.Length <= 0)
                 throw new ArgumentException("No operations specified", "operations");
 
-            var operation = new DummyOperation<ContextOperationAwaitable<T>>();
+            var operation = new DummyOperation<ContextOperation<T>>();
 
             foreach (var op in operations)
                 op.GetAwaiter().OnCompleted(() => operation.SetResult(op));
