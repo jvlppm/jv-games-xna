@@ -28,6 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <DocumentationFile>bin\Release\Jv.Games.MonoGame.Async.XML</DocumentationFile>
+    <DefineConstants>NET_40</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
