@@ -22,11 +22,11 @@
 
         Exception Error { get; }
 
-        event EventHandler Completed;
+        void OnCompleted(Action continuation);
         void GetResult();
     }
 
-    public interface IAsyncOperation<T> : IAsyncOperation
+    public interface IAsyncOperation<out T> : IAsyncOperation
     {
         new T GetResult();
     }

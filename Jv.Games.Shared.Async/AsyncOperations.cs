@@ -1,4 +1,6 @@
-﻿namespace Jv.Games.Xna.Async
+﻿using System.Collections.Generic;
+
+namespace Jv.Games.Xna.Async
 {
     using Microsoft.Xna.Framework;
     using System;
@@ -6,26 +8,15 @@
 
     public abstract class AsyncOperation : IAsyncOperation
     {
+        #region Attributes
+        Action _waitingForCompletion;
+        #endregion
+
         #region Properties
         public bool IsCompleted { get; protected set; }
         public bool IsFaulted { get; protected set; }
         public bool IsCanceled { get; protected set; }
         public Exception Error { get; protected set; }
-        #endregion
-
-        #region Events
-        event EventHandler _waitingForCompletion;
-        public event EventHandler Completed
-        {
-            add { _waitingForCompletion += value; }
-            remove
-            {
-                if (IsCompleted)
-                    value(this, EventArgs.Empty);
-                else
-                    _waitingForCompletion -= value;
-            }
-        }
         #endregion
 
         #region Protected Methods
@@ -75,6 +66,13 @@
                 throw new OperationCanceledException();
         }
 
+        public void OnCompleted(Action continuation)
+        {
+            if (IsCompleted)
+                continuation();
+            else
+                _waitingForCompletion += continuation;
+        }
         #endregion
 
         #region IOperation implementation
@@ -88,7 +86,7 @@
         {
             if (_waitingForCompletion == null)
                 return;
-            _waitingForCompletion(this, EventArgs.Empty);
+            _waitingForCompletion();
             _waitingForCompletion = null;
         }
         #endregion

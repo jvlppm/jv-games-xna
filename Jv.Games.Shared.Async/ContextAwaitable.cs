@@ -25,7 +25,7 @@
 
         public void OnCompleted(Action continuation)
         {
-            _operation.Completed += (s, e) => _context.Post(continuation);
+            _operation.OnCompleted(() => _context.Post(continuation));
         }
 
         public void GetResult() { _operation.GetResult(); }
@@ -52,7 +52,7 @@
 
         public void OnCompleted(Action continuation)
         {
-            _operation.Completed += (s, e) => _context.Post(continuation);
+            _operation.OnCompleted(() => _context.Post(continuation));
         }
 
         public T GetResult() { return _operation.GetResult(); }
@@ -78,7 +78,7 @@
         public Task AsTask()
         {
             var tcs = new TaskCompletionSource<bool>();
-            Operation.Completed += (s, e) =>
+            Operation.OnCompleted(() =>
             {
                 if (Operation.IsFaulted)
                     tcs.SetException(Operation.Error);
@@ -86,7 +86,7 @@
                     tcs.SetCanceled();
                 else
                     tcs.SetResult(true);
-            };
+            });
             return tcs.Task;
         }
     }
@@ -106,7 +106,7 @@
         public new Task<T> AsTask()
         {
             var tcs = new TaskCompletionSource<T>();
-            Operation.Completed += (s, e) =>
+            Operation.OnCompleted(() =>
             {
                 if (Operation.IsFaulted)
                     tcs.SetException(Operation.Error);
@@ -114,7 +114,7 @@
                     tcs.SetCanceled();
                 else
                     tcs.SetResult(((IAsyncOperation<T>)Operation).GetResult());
-            };
+            });
             return tcs.Task;
         }
     }
