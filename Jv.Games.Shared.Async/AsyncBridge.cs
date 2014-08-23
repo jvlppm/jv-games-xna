@@ -46,16 +46,6 @@ namespace System.Threading.Tasks
 {
     public static class AsyncBridge
     {
-        public static TaskAwaiter GetAwaiter(this Task task)
-        {
-            return new TaskAwaiter(task);
-        }
-
-        public static TaskAwaiter<T> GetAwaiter<T>(this Task<T> task)
-        {
-            return new TaskAwaiter<T>(task);
-        }
-
         /// <summary>
         /// An already completed task.
         /// </summary>
@@ -522,73 +512,6 @@ namespace System.Threading.Tasks
                 targetList.Add(aggregateException.InnerExceptions.Count == 1 ? exception.InnerException : exception);
             else
                 targetList.Add(exception);
-        }
-    }
-
-    public class TaskAwaiter : TaskAwaiter<bool>
-    {
-        public TaskAwaiter(Task task)
-            : base(task)
-        {
-        }
-
-        new public void GetResult()
-        {
-            try
-            {
-                task.Wait();
-            }
-            catch (AggregateException ex)
-            {
-                throw ex.InnerExceptions[0];
-            }
-        }
-    }
-
-    public class TaskAwaiter<T> : INotifyCompletion
-    {
-        protected readonly Task task;
-        readonly Jv.Games.Xna.Async.IAsyncContext capturedContext;
-        readonly TaskScheduler capturedScheduler;
-
-        public TaskAwaiter(Task<T> task)
-            : this((Task)task)
-        {
-        }
-
-        internal TaskAwaiter(Task task)
-        {
-            this.task = task;
-            this.capturedScheduler = TaskScheduler.Current;
-            this.capturedContext = Jv.Games.Xna.Async.Context.Current;
-
-            if (capturedContext == null)
-                throw new InvalidOperationException("TaskAwaiter.CurrentContext must be set before await.");
-        }
-
-        public bool IsCompleted
-        {
-            get { return task.IsCompleted; }
-        }
-
-        public void OnCompleted(Action continuation)
-        {
-            this.task.ContinueWith(delegate
-            {
-                capturedContext.Post(continuation);
-            }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, this.capturedScheduler);
-        }
-
-        public T GetResult()
-        {
-            try
-            {
-                return ((Task<T>)task).Result;
-            }
-            catch (AggregateException ex)
-            {
-                throw ex.InnerExceptions[0];
-            }
         }
     }
 }

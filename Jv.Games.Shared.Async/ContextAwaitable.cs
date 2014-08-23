@@ -123,43 +123,43 @@
     #region Context Tasks
     public class ContextTaskAwaiter : INotifyCompletion
     {
-        readonly TaskAwaiter _taskAwaiter;
+        readonly Task _task;
         readonly IAsyncContext _context;
 
-        public bool IsCompleted { get { return _taskAwaiter.IsCompleted; } }
+        public bool IsCompleted { get { return _task.IsCompleted; } }
 
         public ContextTaskAwaiter(Task task, IAsyncContext context)
         {
-            _taskAwaiter = task.GetAwaiter();
+            _task = task;
             _context = context;
         }
 
-        public void GetResult() { _taskAwaiter.GetResult(); }
+        public void GetResult() { _task.Wait(); }
 
         public void OnCompleted(Action continuation)
         {
-            _taskAwaiter.OnCompleted(() => _context.Post(continuation));
+            _task.ContinueWith(t => _context.Post(continuation), TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 
     public class ContextTaskAwaiter<T> : INotifyCompletion
     {
         readonly IAsyncContext _context;
-        readonly TaskAwaiter<T> _taskAwaiter;
+        readonly Task<T> _task;
 
-        public bool IsCompleted { get { return _taskAwaiter.IsCompleted; } }
+        public bool IsCompleted { get { return _task.IsCompleted; } }
 
         public ContextTaskAwaiter(Task<T> task, IAsyncContext context)
         {
-            _taskAwaiter = task.GetAwaiter();
+            _task = task;
             _context = context;
         }
 
-        public T GetResult() { return _taskAwaiter.GetResult(); }
+        public T GetResult() { return _task.Result; }
 
         public void OnCompleted(Action continuation)
         {
-            _taskAwaiter.OnCompleted(() => _context.Post(continuation));
+            _task.ContinueWith(t => _context.Post(continuation), TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 
@@ -205,10 +205,8 @@
     #endregion
 
     #region Extensions
-    public static class Context
+    public static class ContextExtensions
     {
-        public static IAsyncContext Current;
-
         public static ContextOperation On(this IAsyncOperation operation, IAsyncContext context)
         {
             return new ContextOperation(operation, context);

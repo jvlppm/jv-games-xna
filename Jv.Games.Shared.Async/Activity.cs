@@ -30,7 +30,7 @@
         {
             if (SubActivity == null || SubActivity.AllTransparent())
             {
-                UpdateContext.Send(Update, gameTime);
+                Update(gameTime);
                 UpdateContext.Update(gameTime);
             }
             if (SubActivity != null)
@@ -45,7 +45,7 @@
         {
             if (SubActivity == null || SubActivity.AllTransparent())
             {
-                DrawContext.Send(Draw, gameTime);
+                Draw(gameTime);
                 DrawContext.Update(gameTime);
             }
 
@@ -58,7 +58,7 @@
         }
         #endregion
 
-        protected ContextTask<TResult> Run<TResult>(ActivityBase activity, Func<Task<TResult>> runActivity)
+        protected Task<TResult> Run<TResult>(ActivityBase activity, Func<Task<TResult>> runActivity)
         {
             if (runActivity == null)
                 throw new ArgumentNullException("runActivity");
@@ -66,98 +66,60 @@
             if (SubActivity != null)
                 throw new InvalidOperationException("Activity is already running another sub-activity");
 
-            var capturedContext = Context.Current;
-            if (capturedContext == null)
-                throw new InvalidOperationException("Run must be called from inside a context.");
-
             SubActivity = activity;
 
-            Context.Current = UpdateContext;
+            Deactivating();
+
+            ((IGameComponent)activity).Initialize();
+
+            var tcs = new TaskCompletionSource<TResult>();
+
+            Task<TResult> runTask;
+            bool started = false, activated = false;
+
             try
             {
-                Deactivating();
+                activity.Starting();
+                started = true;
+                activity.Activating();
+                activated = true;
+                runTask = runActivity();
             }
-            finally
+            catch (Exception ex)
             {
-                Context.Current = capturedContext;
+                tcs.TrySetException(ex);
+                runTask = tcs.Task;
             }
 
-            Context.Current = activity.UpdateContext;
-            try
+            runTask.ContinueWith(t =>
             {
-                ((IGameComponent)activity).Initialize();
+                List<Exception> errors = new List<Exception>();
+                if (t.IsFaulted)
+                    errors.AddRange(t.Exception.InnerExceptions);
 
-                var tcs = new TaskCompletionSource<TResult>();
-
-                Task<TResult> runTask;
-                bool started = false, activated = false;
-
-                try
+                if (activated)
                 {
-                    activity.Starting();
-                    started = true;
-                    activity.Activating();
-                    activated = true;
-                    runTask = runActivity();
-                }
-                catch (Exception ex)
-                {
-                    tcs.TrySetException(ex);
-                    runTask = tcs.Task;
+                    try { activity.Deactivating(); }
+                    catch (Exception ex) { errors.Add(ex); }
                 }
 
-                runTask.ContinueWith(t =>
+                if (started)
                 {
-                    List<Exception> errors = new List<Exception>();
-                    if (t.IsFaulted)
-                        errors.AddRange(t.Exception.InnerExceptions);
+                    try { activity.Completing(); }
+                    catch (Exception ex) { errors.Add(ex); }
+                }
 
-                    var oldC = Context.Current;
+                SubActivity = null;
 
-                    Context.Current = activity.UpdateContext;
-                    try
-                    {
-                        if (activated)
-                        {
-                            try { activity.Deactivating(); }
-                            catch (Exception ex) { errors.Add(ex); }
-                        }
+                Activating();
 
-                        if (started)
-                        {
-                            try { activity.Completing(); }
-                            catch (Exception ex) { errors.Add(ex); }
-                        }
-                    }
-                    finally
-                    {
-                        Context.Current = oldC;
-                    }
+                if (errors.Any())
+                    tcs.TrySetException(new AggregateException(errors));
+                else
+                    tcs.TrySetResult(t.Result);
+            }, TaskContinuationOptions.ExecuteSynchronously);
 
-                    SubActivity = null;
-
-                    Context.Current = UpdateContext;
-                    try
-                    {
-                        Activating();
-                    }
-                    finally
-                    {
-                        Context.Current = oldC;
-                    }
-
-                    if (errors.Any())
-                        tcs.TrySetException(new AggregateException(errors));
-                    else
-                        tcs.TrySetResult(t.Result);
-                }, TaskContinuationOptions.ExecuteSynchronously);
-
-                return tcs.Task.On(capturedContext);
-            }
-            finally
-            {
-                Context.Current = capturedContext;
-            }
+            return tcs.Task;
         }
 
         #region Life Cycle
@@ -204,7 +166,7 @@
         #region Public Methods
         public ContextTask<TResult> Run<TResult>(Activity<TResult> subActivity)
         {
-            return Run(subActivity, subActivity.RunActivity);
+            return Run(subActivity, subActivity.RunActivity).On(UpdateContext);
         }
 
         public ContextTask<TResult> RunNew<TActivity, TResult>(params object[] args)

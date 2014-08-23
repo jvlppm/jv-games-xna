@@ -106,19 +106,19 @@
             if (!_initialized)
             {
                 _initialized = true;
-                UpdateContext.Send(Initialize);
+                Initialize();
             }
         }
 
         void IDrawable.Draw(GameTime gameTime)
         {
-            DrawContext.Send(Draw, gameTime);
+            Draw(gameTime);
             DrawContext.Update(gameTime);
         }
 
         void IUpdateable.Update(GameTime gameTime)
         {
-            UpdateContext.Send(Update, gameTime);
+            Update(gameTime);
             UpdateContext.Update(gameTime);
         }
     }

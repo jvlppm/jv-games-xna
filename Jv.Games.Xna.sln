@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
 VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{9AFF3E13-6E8B-4067-8B77-52503AFFB72F}"
@@ -28,23 +28,22 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Jv.Games.Shared.Sprites", "Jv.Games.Shared.Sprites\Jv.Games.Shared.Sprites.shproj", "{40128E4E-F366-4A9C-8523-89AF802B1B2C}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems*{4048a83c-597e-4bfb-ad20-85d6fa3873c9}*SharedItemsImports = 13
+		Jv.Games.Shared.Base\Jv.Games.Shared.Base.projitems*{e0196c1b-647b-4fe0-879a-2a62f98f73d1}*SharedItemsImports = 13
+		Jv.Games.Shared.Sprites\Jv.Games.Shared.Sprites.projitems*{40128e4e-f366-4a9c-8523-89af802b1b2c}*SharedItemsImports = 13
+		Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems*{b14a1db7-5608-4046-ac3b-a9acbe601c27}*SharedItemsImports = 4
+		Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems*{2819e425-9455-4d47-b24f-f26886599efe}*SharedItemsImports = 4
+		Jv.Games.Shared.Base\Jv.Games.Shared.Base.projitems*{8db26d63-bbb7-4a46-87fd-65b7df7a612c}*SharedItemsImports = 4
+		Jv.Games.Shared.Sprites\Jv.Games.Shared.Sprites.projitems*{deba5313-e2d0-46f6-943d-626b039a70f0}*SharedItemsImports = 4
+		Jv.Games.Shared.Sprites\Jv.Games.Shared.Sprites.projitems*{49399725-1d74-4a4e-a3d9-2c5c178246a3}*SharedItemsImports = 4
+		Jv.Games.Shared.Base\Jv.Games.Shared.Base.projitems*{6560b0af-7391-47f0-9716-6ada58531ed1}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2819E425-9455-4D47-B24F-F26886599EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2819E425-9455-4D47-B24F-F26886599EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2819E425-9455-4D47-B24F-F26886599EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2819E425-9455-4D47-B24F-F26886599EFE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,33 +52,37 @@ Global
 		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49399725-1D74-4A4E-A3D9-2C5C178246A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6560B0AF-7391-47F0-9716-6ADA58531ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2819E425-9455-4D47-B24F-F26886599EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2819E425-9455-4D47-B24F-F26886599EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2819E425-9455-4D47-B24F-F26886599EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2819E425-9455-4D47-B24F-F26886599EFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FA5AB381-3DE9-4429-B1C3-D34E61ECF629} = {9AFF3E13-6E8B-4067-8B77-52503AFFB72F}
-		{E51F4226-C6FB-44A4-9F03-E0644A736A9B} = {9AFF3E13-6E8B-4067-8B77-52503AFFB72F}
 		{8DB26D63-BBB7-4A46-87FD-65B7DF7A612C} = {FA5AB381-3DE9-4429-B1C3-D34E61ECF629}
 		{B14A1DB7-5608-4046-AC3B-A9ACBE601C27} = {FA5AB381-3DE9-4429-B1C3-D34E61ECF629}
 		{49399725-1D74-4A4E-A3D9-2C5C178246A3} = {FA5AB381-3DE9-4429-B1C3-D34E61ECF629}
+		{E51F4226-C6FB-44A4-9F03-E0644A736A9B} = {9AFF3E13-6E8B-4067-8B77-52503AFFB72F}
 		{6560B0AF-7391-47F0-9716-6ADA58531ED1} = {E51F4226-C6FB-44A4-9F03-E0644A736A9B}
 		{2819E425-9455-4D47-B24F-F26886599EFE} = {E51F4226-C6FB-44A4-9F03-E0644A736A9B}
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0} = {E51F4226-C6FB-44A4-9F03-E0644A736A9B}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Platforms\Jv.Games.MonoGame.Base\Jv.Games.MonoGame.Base.csproj
-	EndGlobalSection
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems*{4048a83c-597e-4bfb-ad20-85d6fa3873c9}*SharedItemsImports = 13
-		Jv.Games.Shared.Base\Jv.Games.Shared.Base.projitems*{e0196c1b-647b-4fe0-879a-2a62f98f73d1}*SharedItemsImports = 13
-		Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems*{b14a1db7-5608-4046-ac3b-a9acbe601c27}*SharedItemsImports = 4
-		Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems*{2819e425-9455-4d47-b24f-f26886599efe}*SharedItemsImports = 4
-		Jv.Games.Shared.Base\Jv.Games.Shared.Base.projitems*{8db26d63-bbb7-4a46-87fd-65b7df7a612c}*SharedItemsImports = 4
-		Jv.Games.Shared.Base\Jv.Games.Shared.Base.projitems*{6560b0af-7391-47f0-9716-6ada58531ed1}*SharedItemsImports = 4
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

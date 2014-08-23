@@ -15,11 +15,13 @@
         readonly List<IAsyncOperation> _runningOperations;
         readonly Queue<Action<GameTime>> _updateJobs;
         volatile bool haveJobs = false;
+        int _lastOperationIndex;
         #endregion
 
         #region Constructors
         public AsyncContext()
         {
+            _lastOperationIndex = -1;
             _runningOperations = new List<IAsyncOperation>();
             _updateJobs = new Queue<Action<GameTime>>();
         }
@@ -28,42 +30,44 @@
         #region Public Methods
         public void Update(GameTime gameTime)
         {
-            var oldContext = Context.Current;
-            Context.Current = this;
+            if (_lastOperationIndex >= 0)
+                ContinueOperations(gameTime);
 
-            try
-            {
-                for (int i = _runningOperations.Count - 1; i >= 0; i--)
-                {
-                    if (!_runningOperations[i].Continue(gameTime))
-                        _runningOperations.RemoveAt(i);
-                }
-
-                if (haveJobs)
-                {
-                    lock (_updateJobs)
-                    {
-                        while (_updateJobs.Count > 0)
-                            _updateJobs.Dequeue()(gameTime);
-                        haveJobs = false;
-                    }
-                }
-            }
-            finally
-            {
-                Context.Current = oldContext;
-            }
+            if (haveJobs)
+                RunPendingJobs(gameTime);
         }
 
+        void ContinueOperations(GameTime gameTime)
+        {
+            for (int i = _lastOperationIndex; i >= 0; i--)
+            {
+                if (!_runningOperations[i].Continue(gameTime))
+                {
+                    _runningOperations.RemoveAt(i);
+                    _lastOperationIndex--;
+                }
+            }
+        }
+        void RunPendingJobs(GameTime gameTime)
+        {
+            lock (_updateJobs)
+            {
+                while (_updateJobs.Count > 0)
+                    _updateJobs.Dequeue()(gameTime);
+                haveJobs = false;
+            }
+        }
         public ContextOperation<T> Run<T>(IAsyncOperation<T> operation)
         {
             _runningOperations.Add(operation);
+            _lastOperationIndex++;
             return operation.On(this);
         }
 
         public ContextOperation Run(IAsyncOperation operation)
         {
             _runningOperations.Add(operation);
+            _lastOperationIndex++;
             return operation.On(this);
         }
 
@@ -82,51 +86,6 @@
             {
                 _updateJobs.Enqueue(gt => action());
                 haveJobs = true;
-            }
-        }
-
-        public void Send(Action action)
-        {
-            var oldContext = Context.Current;
-            Context.Current = this;
-
-            try
-            {
-                action();
-            }
-            finally
-            {
-                Context.Current = oldContext;
-            }
-        }
-
-        public void Send(Action<AsyncContext> action)
-        {
-            var oldContext = Context.Current;
-            Context.Current = this;
-
-            try
-            {
-                action(this);
-            }
-            finally
-            {
-                Context.Current = oldContext;
-            }
-        }
-
-        public void Send(Action<GameTime> action, GameTime gameTime)
-        {
-            var oldContext = Context.Current;
-            Context.Current = this;
-
-            try
-            {
-                action(gameTime);
-            }
-            finally
-            {
-                Context.Current = oldContext;
             }
         }
         #endregion
