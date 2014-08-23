@@ -15,11 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.MonoGame.Sprites",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Portable", "Portable", "{E51F4226-C6FB-44A4-9F03-E0644A736A9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Portable.Base", "Jv.Games.Portable.Base\Jv.Games.Portable.Base.csproj", "{6560B0AF-7391-47F0-9716-6ADA58531ED1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Portable.Base", "Platforms\Jv.Games.Portable.Base\Jv.Games.Portable.Base.csproj", "{6560B0AF-7391-47F0-9716-6ADA58531ED1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Portable.Async", "Jv.Games.Portable.Async\Jv.Games.Portable.Async.csproj", "{2819E425-9455-4D47-B24F-F26886599EFE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Portable.Async", "Platforms\Jv.Games.Portable.Async\Jv.Games.Portable.Async.csproj", "{2819E425-9455-4D47-B24F-F26886599EFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Portable.Sprites", "Jv.Games.Portable.Sprites\Jv.Games.Portable.Sprites.csproj", "{DEBA5313-E2D0-46F6-943D-626B039A70F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.Portable.Sprites", "Platforms\Jv.Games.Portable.Sprites\Jv.Games.Portable.Sprites.csproj", "{DEBA5313-E2D0-46F6-943D-626B039A70F0}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Jv.Games.Shared.Base", "Jv.Games.Shared.Base\Jv.Games.Shared.Base.shproj", "{E0196C1B-647B-4FE0-879A-2A62F98F73D1}"
 EndProject
