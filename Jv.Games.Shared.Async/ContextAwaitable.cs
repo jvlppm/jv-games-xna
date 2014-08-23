@@ -207,22 +207,22 @@
     #region Extensions
     public static class ContextExtensions
     {
-        public static ContextOperation On(this IAsyncOperation operation, IAsyncContext context)
+        public static ContextOperation Wait(this IAsyncContext context, IAsyncOperation operation)
         {
             return new ContextOperation(operation, context);
         }
 
-        public static ContextOperation<T> On<T>(this IAsyncOperation<T> operation, IAsyncContext context)
+        public static ContextOperation<T> Wait<T>(this IAsyncContext context, IAsyncOperation<T> operation)
         {
             return new ContextOperation<T>(operation, context);
         }
 
-        public static ContextTask On(this Task task, IAsyncContext context)
+        public static ContextTask Wait(this IAsyncContext context, Task task)
         {
             return new ContextTask(task, context);
         }
 
-        public static ContextTask<T> On<T>(this Task<T> task, IAsyncContext context)
+        public static ContextTask<T> Wait<T>(this IAsyncContext context, Task<T> task)
         {
             return new ContextTask<T>(task, context);
         }
@@ -230,36 +230,36 @@
         public static ContextTask<Task<T>> WhenAny<T>(this IAsyncContext context, params Task<T>[] tasks)
         {
 #if NET_40
-            return AsyncBridge.WhenAny(tasks).On(context);
+            return context.Wait(AsyncBridge.WhenAny(tasks));
 #else
-            return Task.WhenAny(tasks).On(context);
+            return context.Wait(Task.WhenAny(tasks));
 #endif
         }
 
         public static ContextTask<Task> WhenAny(this IAsyncContext context, params Task[] tasks)
         {
 #if NET_40
-            return AsyncBridge.WhenAny(tasks).On(context);
+            return context.Wait(AsyncBridge.WhenAny(tasks));
 #else
-            return Task.WhenAny(tasks).On(context);
+            return context.Wait(Task.WhenAny(tasks));
 #endif
         }
 
         public static ContextTask<T[]> WhenAll<T>(this IAsyncContext context, params Task<T>[] tasks)
         {
 #if NET_40
-            return AsyncBridge.WhenAll(tasks).On(context);
+            return context.Wait(AsyncBridge.WhenAll(tasks));
 #else
-            return Task.WhenAll(tasks).On(context);
+            return context.Wait(Task.WhenAll(tasks));
 #endif
         }
 
         public static ContextTask WhenAll(this IAsyncContext context, params Task[] tasks)
         {
 #if NET_40
-            return AsyncBridge.WhenAll(tasks).On(context);
+            return context.Wait(AsyncBridge.WhenAll(tasks));
 #else
-            return Task.WhenAll(tasks).On(context);
+            return context.Wait(Task.WhenAll(tasks));
 #endif
         }
     }

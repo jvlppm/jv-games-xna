@@ -10,7 +10,7 @@
             where T : AsyncGameComponent
         {
             game.Components.Add(component);
-            var result = await asyncMethod(component).On(component.UpdateContext);
+            var result = await component.UpdateContext.Wait(asyncMethod(component));
             game.Components.Remove(component);
             return result;
         }

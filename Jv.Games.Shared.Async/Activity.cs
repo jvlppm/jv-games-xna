@@ -58,10 +58,10 @@
         }
         #endregion
 
-        protected Task<TResult> Run<TResult>(ActivityBase activity, Func<Task<TResult>> runActivity)
+        protected Task<TResult> Run<TResult>(ActivityBase activity, Func<Task<TResult>> activityRun)
         {
-            if (runActivity == null)
-                throw new ArgumentNullException("runActivity");
+            if (activityRun == null)
+                throw new ArgumentNullException("activityRun");
 
             if (SubActivity != null)
                 throw new InvalidOperationException("Activity is already running another sub-activity");
@@ -83,7 +83,7 @@
                 started = true;
                 activity.Activating();
                 activated = true;
-                runTask = runActivity();
+                runTask = activityRun();
             }
             catch (Exception ex)
             {
@@ -152,7 +152,7 @@
         }
 
         #region Life Cycle
-        internal protected virtual Task<T> RunActivity()
+        protected virtual Task<T> Run()
         {
             return ActivityCompletion.Task;
         }
@@ -166,7 +166,7 @@
         #region Public Methods
         public ContextTask<TResult> Run<TResult>(Activity<TResult> subActivity)
         {
-            return Run(subActivity, subActivity.RunActivity).On(UpdateContext);
+            return UpdateContext.Wait(Run(subActivity, subActivity.Run));
         }
 
         public ContextTask<TResult> RunNew<TActivity, TResult>(params object[] args)

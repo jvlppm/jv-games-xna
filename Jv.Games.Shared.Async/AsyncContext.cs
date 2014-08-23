@@ -61,14 +61,14 @@
         {
             _runningOperations.Add(operation);
             _lastOperationIndex++;
-            return operation.On(this);
+            return new ContextOperation<T>(operation, this);
         }
 
         public ContextOperation Run(IAsyncOperation operation)
         {
             _runningOperations.Add(operation);
             _lastOperationIndex++;
-            return operation.On(this);
+            return new ContextOperation(operation, this);
         }
 
         public void Post(Action<GameTime> action)
