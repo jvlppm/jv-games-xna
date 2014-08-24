@@ -28,6 +28,11 @@
         #region Game Loop
         void IUpdateable.Update(GameTime gameTime)
         {
+            UpdateActivity(gameTime);
+        }
+
+        protected virtual void UpdateActivity(GameTime gameTime)
+        {
             if (SubActivity == null || SubActivity.AllTransparent())
             {
                 Update(gameTime);
@@ -42,6 +47,11 @@
         }
 
         void IDrawable.Draw(GameTime gameTime)
+        {
+            DrawActivity(gameTime);
+        }
+
+        protected virtual void DrawActivity(GameTime gameTime)
         {
             if (SubActivity == null || SubActivity.AllTransparent())
             {
@@ -134,7 +144,7 @@
                 Activating();
 
                 if (errors.Any())
-                    tcs.TrySetException(new AggregateException(errors));
+                    tcs.TrySetException(new AggregateException(errors).Flatten());
                 else
                     tcs.TrySetResult(t.Result);
             }, TaskContinuationOptions.ExecuteSynchronously);
