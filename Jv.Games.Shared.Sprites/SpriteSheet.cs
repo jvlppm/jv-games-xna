@@ -36,7 +36,6 @@
                 throw new ArgumentNullException("texture");
             if (frameSize.X <= 0 || frameSize.Y <= 0)
                 throw new ArgumentOutOfRangeException("frameSize", "Frame size cannot be negative");
-
             if (texture.Width % frameSize.X != 0 || texture.Height % frameSize.Y != 0)
                 throw new ArgumentException("Texture size does not match rows / columns");
 
@@ -46,17 +45,33 @@
             FrameSize = frameSize;
         }
 
-        public Animation GetAnimation(string name, Rectangle[] frameRects, TimeSpan duration, bool repeat = true)
+        public Animation GetAnimation(string name, Rectangle[] frameRects, TimeSpan frameDuration, bool repeat = true)
         {
+            if (frameRects.Length <= 0 ||
+                frameRects.Any(r => r.Width <= 0 || r.Height <= 0) ||
+                frameRects.Any(r => r.X + r.Width > Texture.Width || r.Y + r.Height > Texture.Height))
+                throw new ArgumentOutOfRangeException("frameRects");
+
+            if (frameDuration <= TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException("frameDuration");
+
             var frames = frameRects.Select(r => new Frame(Texture, r)).ToArray();
+            var duration = TimeSpan.FromSeconds(frameDuration.TotalSeconds * frames.Length);
             if (repeat)
                 return new LoopedAnimation(name, frames, duration, 0, null);
             return new Animation(name, frames, duration);
         }
 
-        public Animation GetAnimation(string name, int[] frameIndexes, TimeSpan duration, bool repeat = true)
+        public Animation GetAnimation(string name, int[] frameIndexes, TimeSpan frameDuration, bool repeat = true)
         {
+            if (frameIndexes.Length <= 0 || frameIndexes.Any(index => index < 0 || index >= Columns * Rows))
+                throw new ArgumentOutOfRangeException("frameIndexes");
+
+            if (frameDuration <= TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException("frameDuration");
+
             var frames = frameIndexes.Select(GetFrame).ToArray();
+            var duration = TimeSpan.FromSeconds(frameDuration.TotalSeconds * frames.Length);
             if (repeat)
                 return new LoopedAnimation(name, frames, duration, 0, null);
             return new Animation(name, frames, duration);
@@ -64,8 +79,14 @@
 
         public Animation GetAnimation(string name, int line, int count, TimeSpan frameDuration, bool repeat = true, int skipFrames = 0)
         {
-            if (FrameSize == default(Point))
-                throw new InvalidOperationException("No FrameSize was specified");
+            if (line < 0 || line > Rows)
+                throw new ArgumentOutOfRangeException("line");
+
+            if (count <= 0 || count > Columns)
+                throw new ArgumentOutOfRangeException("count");
+
+            if (skipFrames < 0)
+                throw new ArgumentOutOfRangeException("skipFrames");
 
             var startIndex = (Texture.Width / FrameSize.X) * line + skipFrames;
             var indexes = Enumerable.Range(startIndex, count - skipFrames).ToArray();
@@ -75,8 +96,8 @@
 
         public Frame GetFrame(int index)
         {
-            if (FrameSize == default(Point))
-                throw new InvalidOperationException("No FrameSize was specified");
+            if (index < 0 || index >= Columns * Rows)
+                throw new ArgumentOutOfRangeException("index");
 
             return new Frame
             (
