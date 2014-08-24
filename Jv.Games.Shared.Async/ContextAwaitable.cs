@@ -2,6 +2,7 @@
 {
     using System;
     using System.Runtime.CompilerServices;
+    using System.Runtime.ExceptionServices;
     using System.Threading.Tasks;
 
     #region Context Operations
@@ -134,7 +135,17 @@
             _context = context;
         }
 
-        public void GetResult() { _task.Wait(); }
+        public void GetResult()
+        {
+            try
+            {
+                _task.Wait();
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.Flatten();
+            }
+        }
 
         public void OnCompleted(Action continuation)
         {
@@ -155,7 +166,17 @@
             _context = context;
         }
 
-        public T GetResult() { return _task.Result; }
+        public T GetResult()
+        {
+            try
+            {
+                return _task.Result;
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.Flatten();
+            }
+        }
 
         public void OnCompleted(Action continuation)
         {
