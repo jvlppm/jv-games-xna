@@ -66,11 +66,31 @@
             if (SubActivity != null)
                 throw new InvalidOperationException("Activity is already running another sub-activity");
 
-            SubActivity = activity;
+            bool deactivated = false;
+            try
+            {
+                SubActivity = activity;
 
-            Deactivating();
+                Deactivating();
+                deactivated = true;
 
-            ((IGameComponent)activity).Initialize();
+                ((IGameComponent)activity).Initialize();
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    if (deactivated)
+                        Activating();
+                }
+                catch (Exception reactivateEx)
+                {
+                    throw new AggregateException(ex, reactivateEx);
+                }
+
+                SubActivity = null;
+                throw;
+            }
 
             var tcs = new TaskCompletionSource<TResult>();
 
