@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Jv.Games.Xna.Async
+﻿namespace Jv.Games.Xna.Async
 {
     using Microsoft.Xna.Framework;
     using System;
