@@ -334,10 +334,10 @@ namespace System.Threading.Tasks
         public static Task<TResult[]> WhenAll<TResult>(IEnumerable<Task<TResult>> tasks)
         {
             return WhenAllCore<TResult[]>(tasks.Cast<Task>(), (completedTasks, tcs) =>
-                                          tcs.TrySetResult(completedTasks
-                             .Cast<Task<TResult>>()
-                             .Select(t => t.Result)
-                             .ToArray()));
+tcs.TrySetResult(completedTasks
+.Cast<Task<TResult>>()
+.Select(t => t.Result)
+.ToArray()));
         }
 
         /// <summary>
@@ -420,44 +420,44 @@ namespace System.Threading.Tasks
             return tcs.Task;
         }
         /*/// <summary>
-        /// Creates a Task that will complete when any of the tasks in the provided collection completes.
-        /// </summary>
-        /// <param name="tasks">The Tasks to be monitored.</param>
-        /// <returns>
-        /// A Task that represents the completion of any of the provided Tasks.  The completed Task is this Task's result.
-        /// 
-        /// </returns>
-        /// 
-        /// <remarks>
-        /// Any Tasks that fault will need to have their exceptions observed elsewhere.
-        /// </remarks>
-        /// <exception cref="T:System.ArgumentNullException">The <paramref name="tasks"/> argument is null.</exception><exception cref="T:System.ArgumentException">The <paramref name="tasks"/> argument contains a null reference.</exception>
-        public static Task<Task<TResult>> WhenAny<TResult>(params Task<TResult>[] tasks)
-        {
-            return WhenAny((IEnumerable<Task<TResult>>)tasks);
-        }
+/// Creates a Task that will complete when any of the tasks in the provided collection completes.
+/// </summary>
+/// <param name="tasks">The Tasks to be monitored.</param>
+/// <returns>
+/// A Task that represents the completion of any of the provided Tasks.  The completed Task is this Task's result.
+/// 
+/// </returns>
+/// 
+/// <remarks>
+/// Any Tasks that fault will need to have their exceptions observed elsewhere.
+/// </remarks>
+/// <exception cref="T:System.ArgumentNullException">The <paramref name="tasks"/> argument is null.</exception><exception cref="T:System.ArgumentException">The <paramref name="tasks"/> argument contains a null reference.</exception>
+public static Task<Task<TResult>> WhenAny<TResult>(params Task<TResult>[] tasks)
+{
+return WhenAny((IEnumerable<Task<TResult>>)tasks);
+}
 
-        /// <summary>
-        /// Creates a Task that will complete when any of the tasks in the provided collection completes.
-        /// </summary>
-        /// <param name="tasks">The Tasks to be monitored.</param>
-        /// <returns>
-        /// A Task that represents the completion of any of the provided Tasks.  The completed Task is this Task's result.
-        /// 
-        /// </returns>
-        /// 
-        /// <remarks>
-        /// Any Tasks that fault will need to have their exceptions observed elsewhere.
-        /// </remarks>
-        /// <exception cref="T:System.ArgumentNullException">The <paramref name="tasks"/> argument is null.</exception><exception cref="T:System.ArgumentException">The <paramref name="tasks"/> argument contains a null reference.</exception>
-        public static Task<Task<TResult>> WhenAny<TResult>(IEnumerable<Task<TResult>> tasks)
-        {
-            if (tasks == null)
-                throw new ArgumentNullException("tasks");
-            var tcs = new TaskCompletionSource<Task<TResult>>();
-            Task.Factory.ContinueWhenAny<TResult, bool>(tasks as Task<TResult>[] ?? tasks.ToArray(), tcs.TrySetResult, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
-            return tcs.Task;
-        }*/
+/// <summary>
+/// Creates a Task that will complete when any of the tasks in the provided collection completes.
+/// </summary>
+/// <param name="tasks">The Tasks to be monitored.</param>
+/// <returns>
+/// A Task that represents the completion of any of the provided Tasks.  The completed Task is this Task's result.
+/// 
+/// </returns>
+/// 
+/// <remarks>
+/// Any Tasks that fault will need to have their exceptions observed elsewhere.
+/// </remarks>
+/// <exception cref="T:System.ArgumentNullException">The <paramref name="tasks"/> argument is null.</exception><exception cref="T:System.ArgumentException">The <paramref name="tasks"/> argument contains a null reference.</exception>
+public static Task<Task<TResult>> WhenAny<TResult>(IEnumerable<Task<TResult>> tasks)
+{
+if (tasks == null)
+throw new ArgumentNullException("tasks");
+var tcs = new TaskCompletionSource<Task<TResult>>();
+Task.Factory.ContinueWhenAny<TResult, bool>(tasks as Task<TResult>[] ?? tasks.ToArray(), tcs.TrySetResult, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
+return tcs.Task;
+}*/
         public static Task<Task<T>> WhenAny<T>(params Task<T>[] tasks)
         {
             var tcs = new TaskCompletionSource<Task<T>>();
@@ -486,19 +486,19 @@ namespace System.Threading.Tasks
             return completionSource.Task;
         }
         /*/// <summary>
-        /// Creates an awaitable that asynchronously yields back to the current context when awaited.
-        /// </summary>
-        /// 
-        /// <returns>
-        /// A context that, when awaited, will asynchronously transition back into the current context.
-        ///             If SynchronizationContext.Current is non-null, that is treated as the current context.
-        ///             Otherwise, TaskScheduler.Current is treated as the current context.
-        /// 
-        /// </returns>
-        public static YieldAwaitable Yield()
-        {
-            return new YieldAwaitable();
-        }*/
+/// Creates an awaitable that asynchronously yields back to the current context when awaited.
+/// </summary>
+/// 
+/// <returns>
+/// A context that, when awaited, will asynchronously transition back into the current context.
+///             If SynchronizationContext.Current is non-null, that is treated as the current context.
+///             Otherwise, TaskScheduler.Current is treated as the current context.
+/// 
+/// </returns>
+public static YieldAwaitable Yield()
+{
+return new YieldAwaitable();
+}*/
         /// <summary>
         /// Adds the target exception to the list, initializing the list if it's null.
         /// </summary>
@@ -554,7 +554,7 @@ namespace System.Runtime.CompilerServices
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
-            // Should not get called as we don't implement the optimization that this method is used for.
+// Should not get called as we don't implement the optimization that this method is used for.
             throw new NotImplementedException();
         }
 
@@ -564,15 +564,15 @@ namespace System.Runtime.CompilerServices
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : INotifyCompletion
-            where TStateMachine : IAsyncStateMachine
+where TAwaiter : INotifyCompletion
+where TStateMachine : IAsyncStateMachine
         {
             awaiter.OnCompleted(stateMachine.MoveNext);
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : ICriticalNotifyCompletion
-            where TStateMachine : IAsyncStateMachine
+where TAwaiter : ICriticalNotifyCompletion
+where TStateMachine : IAsyncStateMachine
         {
             awaiter.OnCompleted(stateMachine.MoveNext);
         }
@@ -598,20 +598,20 @@ namespace System.Runtime.CompilerServices
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
-            // Should not get called as we don't implement the optimization that this method is used for.
+// Should not get called as we don't implement the optimization that this method is used for.
             throw new NotImplementedException();
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : INotifyCompletion
-            where TStateMachine : IAsyncStateMachine
+where TAwaiter : INotifyCompletion
+where TStateMachine : IAsyncStateMachine
         {
             awaiter.OnCompleted(stateMachine.MoveNext);
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : ICriticalNotifyCompletion
-            where TStateMachine : IAsyncStateMachine
+where TAwaiter : ICriticalNotifyCompletion
+where TStateMachine : IAsyncStateMachine
         {
             awaiter.OnCompleted(stateMachine.MoveNext);
         }
@@ -647,20 +647,20 @@ namespace System.Runtime.CompilerServices
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
-            // Should not get called as we don't implement the optimization that this method is used for.
+// Should not get called as we don't implement the optimization that this method is used for.
             throw new NotImplementedException();
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : INotifyCompletion
-            where TStateMachine : IAsyncStateMachine
+where TAwaiter : INotifyCompletion
+where TStateMachine : IAsyncStateMachine
         {
             awaiter.OnCompleted(stateMachine.MoveNext);
         }
 
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : ICriticalNotifyCompletion
-            where TStateMachine : IAsyncStateMachine
+where TAwaiter : ICriticalNotifyCompletion
+where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompleted(ref awaiter, ref stateMachine);
         }

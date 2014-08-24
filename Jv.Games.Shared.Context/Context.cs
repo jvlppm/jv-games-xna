@@ -1,33 +1,33 @@
-﻿namespace Jv.Games.Xna.Async
+﻿namespace Jv.Games.Xna.Context
 {
     using Microsoft.Xna.Framework;
     using System;
     using System.Collections.Generic;
 
-    public interface IAsyncContext
-    {
-        void Post(Action action);
-    }
-
-    public class AsyncContext : IAsyncContext
+    public class Context : IContext
     {
         #region Attributes
-        readonly List<IAsyncOperation> _runningOperations;
+
+        readonly List<IGameOperation> _runningOperations;
         readonly Queue<Action<GameTime>> _updateJobs;
-        volatile bool haveJobs = false;
+        volatile bool haveJobs;
         int _lastOperationIndex;
+
         #endregion
 
         #region Constructors
-        public AsyncContext()
+
+        public Context()
         {
             _lastOperationIndex = -1;
-            _runningOperations = new List<IAsyncOperation>();
+            _runningOperations = new List<IGameOperation>();
             _updateJobs = new Queue<Action<GameTime>>();
         }
+
         #endregion
 
         #region Public Methods
+
         public void Update(GameTime gameTime)
         {
             if (_lastOperationIndex >= 0)
@@ -48,6 +48,7 @@
                 }
             }
         }
+
         void RunPendingJobs(GameTime gameTime)
         {
             lock (_updateJobs)
@@ -57,14 +58,15 @@
                 haveJobs = false;
             }
         }
-        public ContextOperation<T> Run<T>(IAsyncOperation<T> operation)
+
+        public ContextOperation<T> Run<T>(IGameOperation<T> operation)
         {
             _runningOperations.Add(operation);
             _lastOperationIndex++;
             return new ContextOperation<T>(operation, this);
         }
 
-        public ContextOperation Run(IAsyncOperation operation)
+        public ContextOperation Run(IGameOperation operation)
         {
             _runningOperations.Add(operation);
             _lastOperationIndex++;
@@ -88,6 +90,7 @@
                 haveJobs = true;
             }
         }
+
         #endregion
     }
 }

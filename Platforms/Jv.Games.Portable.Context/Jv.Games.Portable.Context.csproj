@@ -4,10 +4,10 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{1DB9CEED-D872-4938-9E91-D087E8DCB1A8}</ProjectGuid>
+    <ProjectGuid>{8DDA2D87-ABAC-469C-B6F2-50833C94D429}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Jv.Games.Portable.Async</RootNamespace>
-    <AssemblyName>Jv.Games.Portable.Async</AssemblyName>
+    <RootNamespace>Jv.Games.Portable.Context</RootNamespace>
+    <AssemblyName>Jv.Games.Portable.Context</AssemblyName>
     <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -32,7 +32,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <Import Project="..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems" Label="Shared" Condition="Exists('..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems')" />
+  <Import Project="..\..\Jv.Games.Shared.Context\Jv.Games.Shared.Context.projitems" Label="Shared" Condition="Exists('..\..\Jv.Games.Shared.Context\Jv.Games.Shared.Context.projitems')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -43,9 +43,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Jv.Games.Portable.Context\Jv.Games.Portable.Context.csproj">
-      <Project>{8DDA2D87-ABAC-469C-B6F2-50833C94D429}</Project>
-      <Name>Jv.Games.Portable.Context</Name>
+    <ProjectReference Include="..\Jv.Games.Portable.Base\Jv.Games.Portable.Base.csproj">
+      <Project>{6560B0AF-7391-47F0-9716-6ADA58531ED1}</Project>
+      <Name>Jv.Games.Portable.Base</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

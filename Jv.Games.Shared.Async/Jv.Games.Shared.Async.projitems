@@ -1,30 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>{4048A83C-597E-4BFB-AD20-85D6FA3873C9}</SharedGUID>
+    <SharedGUID>{86AB1ED0-EA5E-46BF-B23C-F59573CEBF6C}</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>Jv.Games.Xna.Async</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Activity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ActivityExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContextOperationExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContextOperationAwaiter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContextExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContextTask.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContextTaskAwaiter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AsyncBridge.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AsyncGameComponent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AsyncOperations.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ContextAwaitable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AsyncContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\AnimationExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\ContextTimer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\DummyOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\FloatAnimation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\WhenAllExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\WhenAnyExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\Yield.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Operations\CompleteWhen.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IAsyncOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TaskExtensions.cs" />
   </ItemGroup>
 </Project>
