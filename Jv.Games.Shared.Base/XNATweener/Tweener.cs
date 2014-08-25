@@ -2,7 +2,11 @@ using System;
 
 namespace XNATweener
 {
-    public delegate float TweeningFunction(float timeElapsed, float start, float change, float duration);
+    #if !NET_40
+    using System.Reflection;
+    #endif
+
+    public delegate float TweeningFunction(float timeElapsed,float start,float change,float duration);
 
     public class Tweener
     {
@@ -21,7 +25,9 @@ namespace XNATweener
         }
 
         #region Properties
+
         private float _position;
+
         public float Position
         {
             get
@@ -35,6 +41,7 @@ namespace XNATweener
         }
 
         private float _from;
+
         protected float from
         {
             get
@@ -48,6 +55,7 @@ namespace XNATweener
         }
 
         private float _change;
+
         protected float change
         {
             get
@@ -61,6 +69,7 @@ namespace XNATweener
         }
 
         private float _duration;
+
         protected float duration
         {
             get
@@ -70,6 +79,7 @@ namespace XNATweener
         }
 
         private float _elapsed = 0.0f;
+
         protected float elapsed
         {
             get
@@ -83,6 +93,7 @@ namespace XNATweener
         }
 
         private bool _running = true;
+
         public bool Running
         {
             get { return _running; }
@@ -90,6 +101,7 @@ namespace XNATweener
         }
 
         private TweeningFunction _tweeningFunction;
+
         protected TweeningFunction tweeningFunction
         {
             get
@@ -99,10 +111,13 @@ namespace XNATweener
         }
 
         public delegate void EndHandler();
+
         public event EndHandler Ended;
+
         #endregion
 
         #region Methods
+
         public void Update(TimeSpan elapsedTime)
         {
             if (!Running || (elapsed == duration))
@@ -159,13 +174,19 @@ namespace XNATweener
         public override string ToString()
         {
             return String.Format("{0}.{1}. Tween {2} -> {3} in {4}s. Elapsed {5:##0.##}s",
+                #if !NET_40
+                tweeningFunction.GetMethodInfo().DeclaringType.Name,
+                tweeningFunction.GetMethodInfo().Name,
+                #else
                 tweeningFunction.Method.DeclaringType.Name,
                 tweeningFunction.Method.Name,
+                #endif
                 from, 
                 from + change, 
                 duration, 
                 elapsed);
         }
+
         #endregion
     }
 }
