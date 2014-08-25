@@ -35,8 +35,14 @@
         {
             if (SubActivity == null || SubActivity.AllTransparent())
             {
-                Update(gameTime);
-                UpdateContext.Update(gameTime);
+                try
+                {
+                    Update(gameTime);
+                }
+                finally
+                {
+                    UpdateContext.Update(gameTime);
+                }
             }
             if (SubActivity != null)
             {
@@ -55,8 +61,14 @@
         {
             if (SubActivity == null || SubActivity.AllTransparent())
             {
-                Draw(gameTime);
-                DrawContext.Update(gameTime);
+                try
+                {
+                    Draw(gameTime);
+                }
+                finally
+                {
+                    DrawContext.Update(gameTime);
+                }
             }
 
             if (SubActivity != null)
