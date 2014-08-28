@@ -3,13 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{1DB9CEED-D872-4938-9E91-D087E8DCB1A8}</ProjectGuid>
+    <ProjectGuid>{49399725-1D74-4A4E-A3D9-2C5C178246A3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Jv.Games.Portable.Async</RootNamespace>
-    <AssemblyName>Jv.Games.Portable.Async</AssemblyName>
-    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>Jv.Games.MonoGame.Sprites</RootNamespace>
+    <AssemblyName>Jv.Games.MonoGame.Sprites</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,22 +27,24 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <Import Project="..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems" Label="Shared" Condition="Exists('..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems')" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="OpenTK">
+      <HintPath>..\..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Sdl">
+      <HintPath>..\..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\Tao.Sdl.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework">
-      <HintPath>..\..\packages\MonoGame-Portable.3.2.1\lib\portable-net45+wp8+win8\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\AnyCPU\MonoGame.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <Import Project="..\..\..\Jv.Games.Shared.Sprites\Jv.Games.Shared.Sprites.projitems" Label="Shared" Condition="Exists('..\..\..\Jv.Games.Shared.Sprites\Jv.Games.Shared.Sprites.projitems')" />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\MonoGame.Binaries.targets" Condition="Exists('..\..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\MonoGame.Binaries.targets')" />
   <ItemGroup>
-    <ProjectReference Include="..\Jv.Games.Portable.Context\Jv.Games.Portable.Context.csproj">
-      <Project>{8DDA2D87-ABAC-469C-B6F2-50833C94D429}</Project>
-      <Name>Jv.Games.Portable.Context</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -33,7 +33,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <Import Project="..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems" Label="Shared" Condition="Exists('..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems')" />
+  <Import Project="..\..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems" Label="Shared" Condition="Exists('..\..\..\Jv.Games.Shared.Async\Jv.Games.Shared.Async.projitems')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\Jv.Games.MonoGame.Context\Jv.Games.MonoGame.Context.csproj">
