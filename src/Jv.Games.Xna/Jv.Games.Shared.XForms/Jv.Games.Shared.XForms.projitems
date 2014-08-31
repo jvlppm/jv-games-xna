@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{75D8D223-4DE4-48F9-96D3-5891D8FF1332}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Jv.Games.Xna.XForms</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ExportRendererAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Forms.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IControlRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IsolatedStorageFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatformServices.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatformTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RenderFactory.cs" />
+  </ItemGroup>
+</Project>

@@ -37,6 +37,46 @@
                 RunPendingJobs(gameTime);
         }
 
+        public ContextOperation<T> Run<T>(IGameOperation<T> operation)
+        {
+            _runningOperations.Add(operation);
+            _lastOperationIndex++;
+            return new ContextOperation<T>(operation, this);
+        }
+
+        public ContextOperation Run(IGameOperation operation)
+        {
+            _runningOperations.Add(operation);
+            _lastOperationIndex++;
+            return new ContextOperation(operation, this);
+        }
+
+        public void Remove(IGameOperation operation)
+        {
+            _runningOperations.Remove(operation);
+        }
+
+        public void Post(Action<GameTime> action)
+        {
+            lock (_updateJobs)
+            {
+                _updateJobs.Enqueue(action);
+                haveJobs = true;
+            }
+        }
+
+        public void Post(Action action)
+        {
+            lock (_updateJobs)
+            {
+                _updateJobs.Enqueue(gt => action());
+                haveJobs = true;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
         void ContinueOperations(GameTime gameTime)
         {
             for (int i = _lastOperationIndex; i >= 0; i--)
@@ -58,39 +98,6 @@
                 haveJobs = false;
             }
         }
-
-        public ContextOperation<T> Run<T>(IGameOperation<T> operation)
-        {
-            _runningOperations.Add(operation);
-            _lastOperationIndex++;
-            return new ContextOperation<T>(operation, this);
-        }
-
-        public ContextOperation Run(IGameOperation operation)
-        {
-            _runningOperations.Add(operation);
-            _lastOperationIndex++;
-            return new ContextOperation(operation, this);
-        }
-
-        public void Post(Action<GameTime> action)
-        {
-            lock (_updateJobs)
-            {
-                _updateJobs.Enqueue(action);
-                haveJobs = true;
-            }
-        }
-
-        public void Post(Action action)
-        {
-            lock (_updateJobs)
-            {
-                _updateJobs.Enqueue(gt => action());
-                haveJobs = true;
-            }
-        }
-
         #endregion
     }
 }
