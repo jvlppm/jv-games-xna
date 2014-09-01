@@ -29,6 +29,14 @@ namespace Jv.Games.Xna.XForms.Renderers
             base.Initialize(game);
         }
 
+        public override void Measure(Vector2 availableSize)
+        {
+            if (_font != null)
+                DesiredSize = _font.MeasureString(Model.Text);
+            else
+                base.Measure(availableSize);
+        }
+
         protected virtual bool HandleFont(BindableProperty prop)
         {
             if (Model.Font.FontFamily == null)
@@ -47,7 +55,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, Microsoft.Xna.Framework.Rectangle area)
         {
             spriteBatch.DrawString(_font, Model.Text, Translation, TextColor);
         }

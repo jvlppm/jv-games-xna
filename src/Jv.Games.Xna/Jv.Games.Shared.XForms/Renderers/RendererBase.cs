@@ -6,13 +6,10 @@
 
     public class RendererBase : BindableObject, IControlRenderer
     {
-        #region Model
+        #region Static
+
         static BindableProperty ModelProperty = BindableProperty.Create<RendererBase, Element>(p => p.Model, null, propertyChanged: ModelPropertyChanged);
-        public Element Model
-        {
-            get { return (Element)GetValue(ModelProperty); }
-            set { SetValue(ModelProperty, value); }
-        }
+
         static void ModelPropertyChanged(BindableObject bindable, Element oldValue, Element newValue)
         {
             var rend = bindable as RendererBase;
@@ -20,12 +17,22 @@
                 rend.OnModelChanged(oldValue, newValue);
         }
 
+        #endregion
+
         protected virtual void OnModelChanged(Element oldValue, Element newValue)
         {
         }
-        #endregion
 
         #region IControlRenderer
+
+        public Element Model
+        {
+            get { return (Element)GetValue(ModelProperty); }
+            set { SetValue(ModelProperty, value); }
+        }
+
+        public Vector2 DesiredSize { get; protected set; }
+
         public virtual void Initialize(Game game)
         {
         }
@@ -34,10 +41,15 @@
         {
         }
 
-        void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public virtual void Measure(Vector2 availableSize)
+        {
+            DesiredSize = Vector2.Zero;
+        }
+
+        void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime, Microsoft.Xna.Framework.Rectangle area)
         {
             BeginDraw(spriteBatch);
-            Draw(spriteBatch, gameTime);
+            Draw(spriteBatch, gameTime, area);
             EndDraw(spriteBatch);
         }
 
@@ -46,7 +58,7 @@
             spriteBatch.Begin(SpriteSortMode.Deferred, null);
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime, Microsoft.Xna.Framework.Rectangle area)
         {
         }
 
@@ -54,6 +66,7 @@
         {
             spriteBatch.End();
         }
+
         #endregion
     }
 }
