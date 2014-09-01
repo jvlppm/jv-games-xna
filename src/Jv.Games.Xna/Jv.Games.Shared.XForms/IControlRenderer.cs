@@ -8,6 +8,8 @@
     {
         Element Model { get; set; }
 
+        void Initialize(Game game);
+
         void Draw(SpriteBatch spriteBatch, GameTime gameTime);
         void Update(GameTime gameTime);
     }

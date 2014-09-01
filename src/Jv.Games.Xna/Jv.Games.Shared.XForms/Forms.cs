@@ -1,5 +1,4 @@
-﻿#if !PORTABLE
-namespace Jv.Games.Xna.XForms
+﻿namespace Jv.Games.Xna.XForms
 {
     using Microsoft.Xna.Framework;
     using Xamarin.Forms;
@@ -7,9 +6,13 @@ namespace Jv.Games.Xna.XForms
     public static class Forms
     {
         internal static bool IsInitialized;
+        public static Game Game { get; private set; }
 
         public static void Init(Game game)
         {
+#if PORTABLE
+            throw new System.NotImplementedException();
+#else
             if (IsInitialized)
                 return;
 
@@ -20,8 +23,9 @@ namespace Jv.Games.Xna.XForms
 
             RendererFactory.ScanForRenderers();
 
+            Game = game;
             IsInitialized = true;
+#endif
         }
     }
 }
-#endif

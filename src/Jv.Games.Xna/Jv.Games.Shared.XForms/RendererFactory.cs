@@ -18,7 +18,10 @@
 
             var renderer = Registrar.Registered.GetHandler<IControlRenderer>(element.GetType());
             if (renderer != null)
+            {
                 renderer.Model = element;
+                renderer.Initialize(Forms.Game);
+            }
             return renderer;
 #endif
         }

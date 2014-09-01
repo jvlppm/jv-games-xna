@@ -10,11 +10,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ExportRendererAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Forms.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IControlRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\StackDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IsolatedStorageFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformTimer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RenderFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RendererFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\ElementRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\VisualElementRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\ViewRenderer.cs" />
   </ItemGroup>
 </Project>
