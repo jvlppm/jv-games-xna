@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -58,6 +58,15 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\..\packages\Xamarin.Forms.1.2.3.6246-pre1\lib\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Sdl">
+      <HintPath>..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\Tao.Sdl.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\AnyCPU\MonoGame.Framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,13 +75,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Jv.Games.MonoGame\Jv.Games.MonoGame.csproj">
-      <Project>{1844ae6c-dc19-4446-b5cd-2b6fe3c14aa6}</Project>
-      <Name>Jv.Games.MonoGame</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="..\..\Jv.Games.Shared.XForms\Jv.Games.Shared.XForms.projitems" Label="Shared" Condition="Exists('..\..\Jv.Games.Shared.XForms\Jv.Games.Shared.XForms.projitems')" />
   <Import Project="..\..\Jv.Games.Shared.XForms\Jv.Games.Shared.XForms.projitems" Label="Shared" Condition="Exists('..\..\Jv.Games.Shared.XForms\Jv.Games.Shared.XForms.projitems')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\MonoGame.Binaries.targets" Condition="Exists('..\..\packages\MonoGame.Binaries.3.2.2-alpha\build\net40\MonoGame.Binaries.targets')" />
@@ -96,4 +98,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Jv.Games.Portable\Jv.Games.Portable.csproj">
+      <Project>{D25D6E60-905C-44CD-815C-23A50A5A1190}</Project>
+      <Name>Jv.Games.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
