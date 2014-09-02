@@ -19,19 +19,24 @@
 
         #endregion
 
-        protected virtual void OnModelChanged(Element oldValue, Element newValue)
-        {
-        }
+        #region Attributes
+        Vector2? _lastAvailableSize;
+        #endregion
 
-        #region IControlRenderer
-
+        #region Properties
         public Element Model
         {
             get { return (Element)GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
 
-        public Vector2 DesiredSize { get; protected set; }
+        public Vector2 DesiredSize { get; private set; }
+        #endregion
+
+        #region Methods
+        protected virtual void OnModelChanged(Element oldValue, Element newValue)
+        {
+        }
 
         public virtual void Initialize(Game game)
         {
@@ -41,19 +46,28 @@
         {
         }
 
-        public virtual void Measure(Vector2 availableSize)
+        public void Measure(Vector2 availableSize)
         {
-            DesiredSize = Vector2.Zero;
+            if (_lastAvailableSize != availableSize)
+            {
+                DesiredSize = MeasureOverride(availableSize);
+                _lastAvailableSize = availableSize;
+            }
+        }
+
+        protected virtual Vector2 MeasureOverride(Vector2 availableSize)
+        {
+            return Vector2.Zero;
         }
 
         void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime, Microsoft.Xna.Framework.Rectangle area)
         {
-            BeginDraw(spriteBatch);
+            BeginDraw(spriteBatch, area);
             Draw(spriteBatch, gameTime, area);
-            EndDraw(spriteBatch);
+            EndDraw(spriteBatch, area);
         }
 
-        protected virtual void BeginDraw(SpriteBatch spriteBatch)
+        protected virtual void BeginDraw(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle area)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, null);
         }
@@ -62,11 +76,10 @@
         {
         }
 
-        protected virtual void EndDraw(SpriteBatch spriteBatch)
+        protected virtual void EndDraw(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle area)
         {
             spriteBatch.End();
         }
-
         #endregion
     }
 }

@@ -15,6 +15,8 @@ namespace Jv.Games.Xna.XForms.Renderers
     public class VisualElementRenderer<TModel> : ElementRenderer<TModel>
         where TModel : VisualElement
     {
+        bool _validTransformationMatrix;
+        Vector2 _transformationMatrixLastSize;
         protected Vector2 Translation;
         protected Matrix TransformationMatrix = Matrix.Identity;
 
@@ -25,18 +27,13 @@ namespace Jv.Games.Xna.XForms.Renderers
             HandleProperty(VisualElement.RotationYProperty, HandleTransformation);
             HandleProperty(VisualElement.RotationXProperty, HandleTransformation);
             HandleProperty(VisualElement.RotationProperty, HandleTransformation);
+            HandleProperty(VisualElement.AnchorXProperty, HandleTransformation);
+            HandleProperty(VisualElement.AnchorYProperty, HandleTransformation);
         }
 
         protected virtual bool HandleTransformation(BindableProperty prop)
         {
-            TransformationMatrix = Matrix.Identity;
-            // TODO: Change projection to perspective
-            // TODO: Translate Left, according to anchorY, then translate back
-            //TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)Model.TranslationX, (float)Model.TranslationY, 0));
-            TransformationMatrix *= Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation));
-            TransformationMatrix *= Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY));
-            TransformationMatrix *= Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX));
-            TransformationMatrix *= Matrix.CreateScale(1, 1, 0);
+            _validTransformationMatrix = false;
             return true;
         }
 
@@ -46,8 +43,27 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        protected override void BeginDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
+        protected override void BeginDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle area)
         {
+            if (!_validTransformationMatrix || _transformationMatrixLastSize != DesiredSize)
+            {
+                TransformationMatrix = Matrix.Identity;
+                // TODO: Change projection to perspective
+
+                var absAnchorX = Model.AnchorX * DesiredSize.X;
+                var absAnchorY = Model.AnchorY * DesiredSize.Y;
+
+                TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)-absAnchorX, (float)-absAnchorY, 0));
+                TransformationMatrix *= Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation));
+                TransformationMatrix *= Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY));
+                TransformationMatrix *= Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX));
+                TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)absAnchorX, (float)absAnchorY, 0));
+                TransformationMatrix *= Matrix.CreateScale(1, 1, 0);
+
+                _transformationMatrixLastSize = DesiredSize;
+                _validTransformationMatrix = true;
+            }
+
             spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, TransformationMatrix);
         }
     }

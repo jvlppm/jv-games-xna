@@ -29,12 +29,11 @@ namespace Jv.Games.Xna.XForms.Renderers
             base.Initialize(game);
         }
 
-        public override void Measure(Vector2 availableSize)
+        protected override Vector2 MeasureOverride(Vector2 availableSize)
         {
             if (_font != null)
-                DesiredSize = _font.MeasureString(Model.Text);
-            else
-                base.Measure(availableSize);
+                return _font.MeasureString(Model.Text);
+            return base.MeasureOverride(availableSize);
         }
 
         protected virtual bool HandleFont(BindableProperty prop)
