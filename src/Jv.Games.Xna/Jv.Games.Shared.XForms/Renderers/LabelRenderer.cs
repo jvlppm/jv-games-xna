@@ -21,27 +21,26 @@ namespace Jv.Games.Xna.XForms.Renderers
         SpriteFont _font;
         Microsoft.Xna.Framework.Color TextColor;
 
+        Vector2 _textOffset;
+
         public override void Initialize(Game game)
         {
             _content = game.Content;
             HandleProperty(Label.FontProperty, HandleFont);
             HandleProperty(Label.TextColorProperty, HandleTextColor);
+            HandleProperty(Label.TextProperty, HandleMeasureChange);
+            HandleProperty(Label.XAlignProperty, HandleArrangeChange);
+            HandleProperty(Label.YAlignProperty, HandleArrangeChange);
             base.Initialize(game);
-        }
-
-        protected override Vector2 MeasureOverride(Vector2 availableSize)
-        {
-            if (_font != null)
-                return _font.MeasureString(Model.Text);
-            return base.MeasureOverride(availableSize);
         }
 
         protected virtual bool HandleFont(BindableProperty prop)
         {
-            if (Model.Font.FontFamily == null)
-                _font = LabelRenderer.DefaultFont;
+            if (Model.Font.FontFamily != null)
+                _font = _content.Load<SpriteFont>(Model.Font.FontFamily);
             else
-                _font = _content.Load<SpriteFont>(Model.Font.FontFamily) ?? LabelRenderer.DefaultFont;
+                _font = null;
+            InvalidateMeasure();
             return true;
         }
 
@@ -54,9 +53,45 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime, Microsoft.Xna.Framework.Rectangle area)
+        protected override Size MeasureOverride(Size availableSize)
         {
-            spriteBatch.DrawString(_font, Model.Text, Translation, TextColor);
+            if (_font == null)
+                _font = LabelRenderer.DefaultFont;
+            if (_font == null)
+                return base.MeasureOverride(availableSize);
+            var textMeasure = _font.MeasureString(Model.Text);
+
+            return new Size(textMeasure.X, textMeasure.Y);
+        }
+
+        protected override Xamarin.Forms.Rectangle ArrangeOverride(Xamarin.Forms.Rectangle finalRect)
+        {
+            var renderArea = base.ArrangeOverride(finalRect);
+
+            _textOffset = new Vector2(
+                (float)renderArea.Left + GetAlignOffset(Model.XAlign, (float)MeasuredSize.Width, (float)renderArea.Width),
+                (float)renderArea.Top + GetAlignOffset(Model.YAlign, (float)MeasuredSize.Height, (float)renderArea.Height));
+
+            return renderArea;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            spriteBatch.DrawString(_font, Model.Text, _textOffset + Translation, TextColor);
+        }
+
+        static float GetAlignOffset(TextAlignment alignment, float textSize, float renderSize)
+        {
+            switch (alignment)
+            {
+                case TextAlignment.Start:
+                    return 0;
+                case TextAlignment.Center:
+                    return (renderSize - textSize) * 0.5f;
+                case TextAlignment.End:
+                    return (renderSize - textSize);
+            }
+            throw new System.NotImplementedException("Unsupported TextAlignment");
         }
     }
 }

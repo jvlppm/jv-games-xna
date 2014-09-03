@@ -20,7 +20,8 @@
         #endregion
 
         #region Attributes
-        Vector2? _lastAvailableSize;
+        Size? _lastAvailableSize;
+        Xamarin.Forms.Rectangle? _lastArrangeArea;
         #endregion
 
         #region Properties
@@ -30,7 +31,8 @@
             set { SetValue(ModelProperty, value); }
         }
 
-        public Vector2 DesiredSize { get; private set; }
+        public Size MeasuredSize { get; private set; }
+        public Xamarin.Forms.Rectangle RenderArea { get; private set; }
         #endregion
 
         #region Methods
@@ -46,37 +48,62 @@
         {
         }
 
-        public void Measure(Vector2 availableSize)
+        public void Measure(Size availableSize)
         {
             if (_lastAvailableSize != availableSize)
             {
-                DesiredSize = MeasureOverride(availableSize);
+                MeasuredSize = MeasureOverride(availableSize);
                 _lastAvailableSize = availableSize;
             }
         }
 
-        protected virtual Vector2 MeasureOverride(Vector2 availableSize)
+        protected virtual Size MeasureOverride(Size availableSize)
         {
-            return Vector2.Zero;
+            return Size.Zero;
         }
 
-        void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime, Microsoft.Xna.Framework.Rectangle area)
+        public void Arrange(Xamarin.Forms.Rectangle finalRect)
         {
-            BeginDraw(spriteBatch, area);
-            Draw(spriteBatch, gameTime, area);
-            EndDraw(spriteBatch, area);
+            if(_lastArrangeArea != finalRect)
+            {
+                RenderArea = ArrangeOverride(finalRect);
+                _lastArrangeArea = finalRect;
+            }
         }
 
-        protected virtual void BeginDraw(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle area)
+        protected virtual Xamarin.Forms.Rectangle ArrangeOverride(Xamarin.Forms.Rectangle finalRect)
+        {
+            return Xamarin.Forms.Rectangle.Zero;
+        }
+
+        protected virtual void InvalidateMeasure()
+        {
+            _lastAvailableSize = null;
+            InvalidateArrange();
+        }
+
+        protected virtual void InvalidateArrange()
+        {
+            _lastArrangeArea = null;
+        }
+
+        void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            BeginDraw(spriteBatch);
+            Draw(spriteBatch, gameTime);
+            EndDraw(spriteBatch);
+        }
+
+        protected virtual void BeginDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, null);
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime, Microsoft.Xna.Framework.Rectangle area)
+        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
         }
 
-        protected virtual void EndDraw(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle area)
+        protected virtual void EndDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.End();
         }

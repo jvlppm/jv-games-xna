@@ -16,53 +16,67 @@ namespace Jv.Games.Xna.XForms.Renderers
         where TModel : VisualElement
     {
         bool _validTransformationMatrix;
-        Vector2 _transformationMatrixLastSize;
+        Xamarin.Forms.Rectangle _transformationMatrixLastArea;
         protected Vector2 Translation;
         protected Matrix TransformationMatrix = Matrix.Identity;
 
         public VisualElementRenderer()
         {
-            HandleProperty(VisualElement.TranslationXProperty, HandleTranslation);
-            HandleProperty(VisualElement.TranslationYProperty, HandleTranslation);
-            HandleProperty(VisualElement.RotationYProperty, HandleTransformation);
-            HandleProperty(VisualElement.RotationXProperty, HandleTransformation);
-            HandleProperty(VisualElement.RotationProperty, HandleTransformation);
-            HandleProperty(VisualElement.AnchorXProperty, HandleTransformation);
-            HandleProperty(VisualElement.AnchorYProperty, HandleTransformation);
+            HandleProperty(VisualElement.TranslationXProperty, HandleTranslationChange);
+            HandleProperty(VisualElement.TranslationYProperty, HandleTranslationChange);
+            HandleProperty(VisualElement.RotationYProperty, HandleTransformationChange);
+            HandleProperty(VisualElement.RotationXProperty, HandleTransformationChange);
+            HandleProperty(VisualElement.RotationProperty, HandleTransformationChange);
+            HandleProperty(VisualElement.AnchorXProperty, HandleTransformationChange);
+            HandleProperty(VisualElement.AnchorYProperty, HandleTransformationChange);
+            HandleProperty(VisualElement.WidthProperty, HandleMeasureChange);
+            HandleProperty(VisualElement.HeightProperty, HandleMeasureChange);
         }
 
-        protected virtual bool HandleTransformation(BindableProperty prop)
+        protected virtual bool HandleTransformationChange(BindableProperty prop)
         {
             _validTransformationMatrix = false;
             return true;
         }
 
-        protected virtual bool HandleTranslation(BindableProperty prop)
+        protected virtual bool HandleTranslationChange(BindableProperty prop)
         {
             Translation = new Vector2((float)Model.TranslationX, (float)Model.TranslationY);
             return true;
         }
 
-        protected override void BeginDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Rectangle area)
+        protected virtual bool HandleMeasureChange(BindableProperty arg)
         {
-            if (!_validTransformationMatrix || _transformationMatrixLastSize != DesiredSize)
-            {
-                TransformationMatrix = Matrix.Identity;
-                // TODO: Change projection to perspective
+            InvalidateMeasure();
+            return true;
+        }
 
-                var absAnchorX = Model.AnchorX * DesiredSize.X;
-                var absAnchorY = Model.AnchorY * DesiredSize.Y;
+        protected override void InvalidateArrange()
+        {
+            _validTransformationMatrix = false;
+            base.InvalidateArrange();
+        }
 
-                TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)-absAnchorX, (float)-absAnchorY, 0));
-                TransformationMatrix *= Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation));
-                TransformationMatrix *= Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY));
-                TransformationMatrix *= Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX));
-                TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)absAnchorX, (float)absAnchorY, 0));
-                TransformationMatrix *= Matrix.CreateScale(1, 1, 0);
+        void UpdateTransformationMatrix()
+        {
+            TransformationMatrix = Matrix.Identity;
+            // TODO: Change projection to perspective
+            var absAnchorX = RenderArea.X + RenderArea.Width * Model.AnchorX;
+            var absAnchorY = RenderArea.Y + RenderArea.Height * Model.AnchorY;
+            TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)-absAnchorX, (float)-absAnchorY, 0));
+            TransformationMatrix *= Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation));
+            TransformationMatrix *= Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY));
+            TransformationMatrix *= Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX));
+            TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)absAnchorX, (float)absAnchorY, 0));
+            TransformationMatrix *= Matrix.CreateScale(1, 1, 0);
+            _transformationMatrixLastArea = RenderArea;
+            _validTransformationMatrix = true;
+        }
 
-                _transformationMatrixLastSize = DesiredSize;
-                _validTransformationMatrix = true;
-            }
+        protected override void BeginDraw(SpriteBatch spriteBatch)
+        {
+            if (!_validTransformationMatrix || _transformationMatrixLastArea != RenderArea)
+                UpdateTransformationMatrix();
 
             spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, TransformationMatrix);
         }
