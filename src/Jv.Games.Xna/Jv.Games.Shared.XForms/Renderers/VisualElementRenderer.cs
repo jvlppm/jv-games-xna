@@ -27,6 +27,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             HandleProperty(VisualElement.RotationYProperty, HandleTransformationChange);
             HandleProperty(VisualElement.RotationXProperty, HandleTransformationChange);
             HandleProperty(VisualElement.RotationProperty, HandleTransformationChange);
+            HandleProperty(VisualElement.ScaleProperty, HandleTransformationChange);
             HandleProperty(VisualElement.AnchorXProperty, HandleTransformationChange);
             HandleProperty(VisualElement.AnchorYProperty, HandleTransformationChange);
             HandleProperty(VisualElement.WidthProperty, HandleMeasureChange);
@@ -67,8 +68,8 @@ namespace Jv.Games.Xna.XForms.Renderers
             TransformationMatrix *= Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation));
             TransformationMatrix *= Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY));
             TransformationMatrix *= Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX));
+            TransformationMatrix *= Matrix.CreateScale((float)Model.Scale, (float)Model.Scale, 0);
             TransformationMatrix *= Matrix.CreateTranslation(new Vector3((float)absAnchorX, (float)absAnchorY, 0));
-            TransformationMatrix *= Matrix.CreateScale(1, 1, 0);
             _transformationMatrixLastArea = RenderArea;
             _validTransformationMatrix = true;
         }
