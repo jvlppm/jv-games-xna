@@ -22,6 +22,7 @@
         #region Attributes
         Size? _lastAvailableSize;
         Xamarin.Forms.Rectangle? _lastArrangeArea;
+        protected Game Game { get; private set; }
         #endregion
 
         #region Properties
@@ -42,6 +43,7 @@
 
         public virtual void Initialize(Game game)
         {
+            Game = game;
         }
 
         public virtual void Update(GameTime gameTime)

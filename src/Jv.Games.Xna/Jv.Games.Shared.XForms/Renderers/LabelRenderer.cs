@@ -69,15 +69,15 @@ namespace Jv.Games.Xna.XForms.Renderers
             var renderArea = base.ArrangeOverride(finalRect);
 
             _textOffset = new Vector2(
-                (float)renderArea.Left + GetAlignOffset(Model.XAlign, (float)MeasuredSize.Width, (float)renderArea.Width),
-                (float)renderArea.Top + GetAlignOffset(Model.YAlign, (float)MeasuredSize.Height, (float)renderArea.Height));
+                (float)GetAlignOffset(Model.XAlign, (float)MeasuredSize.Width, (float)renderArea.Width),
+                (float)GetAlignOffset(Model.YAlign, (float)MeasuredSize.Height, (float)renderArea.Height));
 
             return renderArea;
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.DrawString(_font, Model.Text, _textOffset + Translation, TextColor);
+            spriteBatch.DrawString(_font, Model.Text, Vector2.Zero, TextColor, 0, Vector2.Zero, 1, 0, 0);
         }
 
         static float GetAlignOffset(TextAlignment alignment, float textSize, float renderSize)
