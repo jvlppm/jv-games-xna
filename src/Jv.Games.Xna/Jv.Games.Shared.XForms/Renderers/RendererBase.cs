@@ -50,7 +50,7 @@
         {
         }
 
-        public void Measure(Size availableSize)
+        public virtual void Measure(Size availableSize)
         {
             if (_lastAvailableSize != availableSize)
             {
@@ -64,7 +64,7 @@
             return Size.Zero;
         }
 
-        public void Arrange(Xamarin.Forms.Rectangle finalRect)
+        public virtual void Arrange(Xamarin.Forms.Rectangle finalRect)
         {
             if(_lastArrangeArea != finalRect)
             {
@@ -81,12 +81,14 @@
         protected virtual void InvalidateMeasure()
         {
             _lastAvailableSize = null;
+            MeasuredSize = Size.Zero;
             InvalidateArrange();
         }
 
         protected virtual void InvalidateArrange()
         {
             _lastArrangeArea = null;
+            RenderArea = Xamarin.Forms.Rectangle.Zero;
         }
 
         void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime)

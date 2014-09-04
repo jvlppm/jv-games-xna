@@ -12,7 +12,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
     }
 
-    public class VisualElementRenderer<TModel> : ElementRenderer<TModel>
+    public class VisualElementRenderer<TModel> : ElementRenderer<TModel>, IControlRenderer
         where TModel : VisualElement
     {
         bool _validTransformationMatrix;
@@ -21,6 +21,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public VisualElementRenderer()
         {
+            HandleProperty(VisualElement.IsVisibleProperty, HandleMeasureChange);
             HandleProperty(VisualElement.TranslationXProperty, HandleTranslationChange);
             HandleProperty(VisualElement.TranslationYProperty, HandleTranslationChange);
             HandleProperty(VisualElement.RotationYProperty, HandleTransformationChange);
@@ -67,6 +68,38 @@ namespace Jv.Games.Xna.XForms.Renderers
             base.InvalidateArrange();
         }
 
+        void IControlRenderer.Measure(Size availableSize)
+        {
+            if (!Model.IsVisible)
+                return;
+            Measure(availableSize);
+        }
+
+        void IControlRenderer.Arrange(Xamarin.Forms.Rectangle finalRect)
+        {
+            if (!Model.IsVisible)
+                return;
+
+            Arrange(finalRect);
+        }
+
+        void IControlRenderer.Update(GameTime gameTime)
+        {
+            if (!Model.IsVisible)
+                return;
+            Update(gameTime);
+        }
+
+        void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            if (!Model.IsVisible)
+                return;
+
+            BeginDraw(spriteBatch);
+            Draw(spriteBatch, gameTime);
+            EndDraw(spriteBatch);
+        }
+
         void UpdateTransformationMatrix()
         {
             var viewport = Game.GraphicsDevice.Viewport;
@@ -82,7 +115,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                                * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
                                * Matrix.CreateScale(1, -1, 1);
 
-            var dist = 160;
+            const float dist = 160;
             var angle = (float)System.Math.Atan(((float)RenderArea.Height / 2) / dist) * 2;
 
             _basicEffect.View = Matrix.CreateTranslation(-(float)RenderArea.Width / 2, (float)RenderArea.Height / 2, -dist);
