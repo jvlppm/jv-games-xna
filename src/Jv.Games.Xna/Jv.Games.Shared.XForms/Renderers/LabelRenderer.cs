@@ -77,7 +77,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.DrawString(_font, Model.Text, Vector2.Zero, TextColor, 0, Vector2.Zero, 1, 0, 0);
+            spriteBatch.DrawString(_font, Model.Text, _textOffset, TextColor, 0, Vector2.Zero, 1, 0, 0);
         }
 
         static float GetAlignOffset(TextAlignment alignment, float textSize, float renderSize)
