@@ -102,31 +102,39 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         void UpdateTransformationMatrix()
         {
+            _basicEffect.World = ComputeTransformationMatrix();
+
+            _transformationMatrixLastArea = RenderArea;
+            _validTransformationMatrix = true;
+        }
+
+        private Matrix ComputeTransformationMatrix()
+        {
             var viewport = Game.GraphicsDevice.Viewport;
 
             var absAnchorX = (float)(RenderArea.Width * Model.AnchorX);
             var absAnchorY = (float)(RenderArea.Height * Model.AnchorY);
 
-            _basicEffect.World = Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
-                               * Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
-                               * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
-                               * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
-                               * Matrix.CreateScale((float)Model.Scale)
-                               * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
-                               * Matrix.CreateScale(1, -1, 1);
-
             const float dist = 160;
             var angle = (float)System.Math.Atan(((float)RenderArea.Height / 2) / dist) * 2;
 
-            _basicEffect.View = Matrix.CreateTranslation(-(float)RenderArea.Width / 2, (float)RenderArea.Height / 2, -dist);
-            _basicEffect.Projection
-                = Matrix.CreatePerspectiveFieldOfView(angle, (float)(RenderArea.Width / RenderArea.Height), 0.001f, dist + MathHelper.Max((float)RenderArea.Width, (float)RenderArea.Height))
-                * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 1)
-                * Matrix.CreateTranslation(-1, 1, 0)
-                * Matrix.CreateTranslation((float)(RenderArea.Width / 2 + RenderArea.X + Model.TranslationX - 0.5f) * 2 / viewport.Width, -(float)(RenderArea.Height / 2 + RenderArea.Y + Model.TranslationY - 0.5f) * 2 / viewport.Height, 0);
+            // Aplicando transformações do Model
+            return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
+                 * Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
+                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
+                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
+                 * Matrix.CreateScale((float)Model.Scale)
+                 * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
 
-            _transformationMatrixLastArea = RenderArea;
-            _validTransformationMatrix = true;
+                 // Calculando projeção do elemento
+                 * Matrix.CreateTranslation(-(float)RenderArea.Width / 2, -(float)RenderArea.Height / 2, -dist)
+                 * Matrix.CreatePerspectiveFieldOfView(angle, (float)(RenderArea.Width / RenderArea.Height), 0.001f, dist + MathHelper.Max((float)RenderArea.Width, (float)RenderArea.Height))
+                 * Matrix.CreateTranslation((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 0)
+
+                 // Posicionando em RenderArea
+                 * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, -(float)RenderArea.Height / viewport.Height, 1)
+                 * Matrix.CreateTranslation(-1, 1, 0)
+                 * Matrix.CreateTranslation((float)(RenderArea.Width / 2 + RenderArea.X + Model.TranslationX - 0.5f) / (viewport.Width / 2), -(float)(RenderArea.Height / 2 + RenderArea.Y + Model.TranslationY - 0.5f) / (viewport.Height / 2), 0);
         }
 
         protected override void BeginDraw(SpriteBatch spriteBatch)
