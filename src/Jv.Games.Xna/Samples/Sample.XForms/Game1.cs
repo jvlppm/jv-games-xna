@@ -15,12 +15,13 @@ namespace Sample.XForms
         SpriteBatch spriteBatch;
 
         IControlRenderer _uiRenderer;
-        Xamarin.Forms.Label _lbl;
+        Xamarin.Forms.View _lbl;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -53,8 +54,8 @@ namespace Sample.XForms
             _uiRenderer = RendererFactory.Create(
                 new Xamarin.Forms.StackLayout
                 {
-                    HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
-                    VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
+                    HorizontalOptions = Xamarin.Forms.LayoutOptions.FillAndExpand,
+                    VerticalOptions = Xamarin.Forms.LayoutOptions.FillAndExpand,
                     Orientation = Xamarin.Forms.StackOrientation.Vertical,
 
                     Children =
@@ -65,11 +66,11 @@ namespace Sample.XForms
                             VerticalOptions = Xamarin.Forms.LayoutOptions.Center,
                             Text = "Title",
                         },
-                        (_lbl = new Xamarin.Forms.Label
+                        (_lbl = new ImageButton
                         {
-                            HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
+                            HorizontalOptions = Xamarin.Forms.LayoutOptions.Center,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
-                            Text = "Hello Xamarin.Forms!",
+                            Image = "TestImage"
                         })
                     }
                 });
@@ -103,6 +104,8 @@ namespace Sample.XForms
                 _lbl.RotationX = (_lbl.RotationX + diffSpeed) % 360;
             else if (Keyboard.GetState().IsKeyDown(Keys.Down))
                 _lbl.RotationX = (_lbl.RotationX - diffSpeed) % 360;
+
+            _uiRenderer.Update(gameTime);
 
             base.Update(gameTime);
         }
