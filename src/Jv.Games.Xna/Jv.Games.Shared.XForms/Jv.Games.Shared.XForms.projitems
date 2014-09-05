@@ -20,6 +20,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)RendererFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\ElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\LayoutRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\StackLayoutRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\VisualElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\ViewRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\RendererBase.cs" />
