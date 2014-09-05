@@ -8,15 +8,13 @@ namespace Jv.Games.Xna.XForms.Renderers
     using Microsoft.Xna.Framework.Graphics;
     using Xamarin.Forms;
 
-    public class LabelRenderer : LabelRenderer<Label>
+    public class LabelRenderer : ViewRenderer
     {
+        public new Label Model { get { return (Label)base.Model; } }
+
         public static SpriteFont DefaultFont;
         public static Microsoft.Xna.Framework.Color DefaultTextColor = Microsoft.Xna.Framework.Color.Black;
-    }
 
-    public class LabelRenderer<TModel> : ViewRenderer<TModel>
-        where TModel : Label
-    {
         ContentManager _content;
         SpriteFont _font;
         Microsoft.Xna.Framework.Color TextColor;
@@ -28,7 +26,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             _content = game.Content;
             HandleProperty(Label.FontProperty, HandleFont);
             HandleProperty(Label.TextColorProperty, HandleTextColor);
-            HandleProperty(Label.TextProperty, HandleMeasureChange);
+            HandleProperty(Label.TextProperty, MeasurePropertyChanged);
             HandleProperty(Label.XAlignProperty, HandleArrangeChange);
             HandleProperty(Label.YAlignProperty, HandleArrangeChange);
             base.Initialize(game);

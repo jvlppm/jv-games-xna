@@ -4,20 +4,27 @@
 namespace Jv.Games.Xna.XForms.Renderers
 {
     using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Content;
     using Microsoft.Xna.Framework.Graphics;
     using System.Collections.Generic;
     using System.Linq;
     using Xamarin.Forms;
 
-    public class LayoutRenderer : LayoutRenderer<Layout>
+    public class LayoutRenderer : ViewRenderer
     {
-    }
-
-    public class LayoutRenderer<TModel> : ViewRenderer<TModel>
-        where TModel : Layout
-    {
+        public new Layout Model { get { return (Layout)base.Model; } }
         protected Dictionary<Element, IControlRenderer> ChildrenRenderers;
+
+        public IEnumerable<IControlRenderer> Children
+        {
+            get
+            {
+                if (Model == null)
+                    return Enumerable.Empty<IControlRenderer>();
+
+                return from View c in Model.InternalChildren
+                       select ChildrenRenderers[c];
+            }
+        }
 
         public LayoutRenderer()
         {
@@ -31,16 +38,16 @@ namespace Jv.Games.Xna.XForms.Renderers
             base.Initialize(game);
         }
 
-        protected override void LoadModel(TModel model)
+        protected override void LoadModel(Element model)
         {
+            base.LoadModel(model);
             foreach (var c in Model.LogicalChildren)
                 Model_ChildAdded(this, new ElementEventArgs(c));
             Model.ChildAdded += Model_ChildAdded;
             Model.ChildRemoved += Model_ChildRemoved;
-            base.LoadModel(model);
         }
 
-        protected override void UnloadModel(TModel model)
+        protected override void UnloadModel(Element model)
         {
             ChildrenRenderers.Clear();
             Model.ChildAdded -= Model_ChildAdded;
@@ -50,14 +57,14 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         void Model_ChildRemoved(object sender, ElementEventArgs e)
         {
-            ChildrenRenderers.Remove(e.Element);
+            ChildrenRenderers.Remove((View)e.Element);
         }
 
         void Model_ChildAdded(object sender, ElementEventArgs e)
         {
-            var renderer = RendererFactory.Create(e.Element);
+            var renderer = (ViewRenderer)RendererFactory.Create(e.Element);
             renderer.Parent = this;
-            ChildrenRenderers[e.Element] = renderer;
+            ChildrenRenderers[(View)e.Element] = renderer;
             if (Game != null)
                 renderer.Initialize(Game);
         }
@@ -72,14 +79,14 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public override void Update(GameTime gameTime)
         {
-            foreach (var it in ChildrenRenderers)
-                it.Value.Update(gameTime);
+            foreach (var it in ChildrenRenderers.Values)
+                it.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (var it in ChildrenRenderers)
-                it.Value.Draw(spriteBatch, gameTime);
+            foreach (var it in ChildrenRenderers.Values)
+                it.Draw(spriteBatch, gameTime);
         }
 
         public override void InvalidateMeasure()

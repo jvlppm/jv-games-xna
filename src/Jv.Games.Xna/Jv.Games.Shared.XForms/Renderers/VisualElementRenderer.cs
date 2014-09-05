@@ -10,35 +10,32 @@ namespace Jv.Games.Xna.XForms.Renderers
 
     public interface I3DRenderer
     {
-        Matrix CreateWorldMatrix();
-        Matrix CreateViewMatrix();
+        Matrix GetControlTransformation();
+        Matrix GetControlProjection();
+        Matrix GetGUITransformation();
     }
 
-    public class VisualElementRenderer : VisualElementRenderer<VisualElement>
-    {
-
-    }
-
-    public class VisualElementRenderer<TModel> : ElementRenderer<TModel>, IControlRenderer, I3DRenderer
-        where TModel : VisualElement
+    public class VisualElementRenderer : ElementRenderer, IControlRenderer, I3DRenderer
     {
         bool _validTransformationMatrix;
         Matrix _transformationMatrix;
         Xamarin.Forms.Rectangle _transformationMatrixLastArea;
 
+        public new VisualElement Model { get { return (VisualElement)base.Model; } }
+
         public VisualElementRenderer()
         {
-            HandleProperty(VisualElement.IsVisibleProperty, HandleMeasureChange);
-            HandleProperty(VisualElement.TranslationXProperty, HandleTranslationChange);
-            HandleProperty(VisualElement.TranslationYProperty, HandleTranslationChange);
+            HandleProperty(VisualElement.IsVisibleProperty, MeasurePropertyChanged);
+            HandleProperty(VisualElement.TranslationXProperty, ArrangePropertyChanged);
+            HandleProperty(VisualElement.TranslationYProperty, ArrangePropertyChanged);
             HandleProperty(VisualElement.RotationYProperty, HandleTransformationChange);
             HandleProperty(VisualElement.RotationXProperty, HandleTransformationChange);
             HandleProperty(VisualElement.RotationProperty, HandleTransformationChange);
             HandleProperty(VisualElement.ScaleProperty, HandleTransformationChange);
             HandleProperty(VisualElement.AnchorXProperty, HandleTransformationChange);
             HandleProperty(VisualElement.AnchorYProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.WidthProperty, HandleMeasureChange);
-            HandleProperty(VisualElement.HeightProperty, HandleMeasureChange);
+            HandleProperty(VisualElement.WidthProperty, MeasurePropertyChanged);
+            HandleProperty(VisualElement.HeightProperty, MeasurePropertyChanged);
         }
 
         public override void Initialize(Game game)
@@ -52,13 +49,13 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        protected virtual bool HandleTranslationChange(BindableProperty prop)
+        protected virtual bool ArrangePropertyChanged(BindableProperty prop)
         {
             InvalidateArrange();
             return true;
         }
 
-        protected virtual bool HandleMeasureChange(BindableProperty arg)
+        protected virtual bool MeasurePropertyChanged(BindableProperty arg)
         {
             InvalidateMeasure();
             return true;
@@ -111,33 +108,32 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         Matrix ComputeTransformationMatrix()
         {
-            Stack<Matrix> parentMatrices = new Stack<Matrix>();
-            var parent = Parent;
+            Matrix world = Matrix.Identity;
+            Matrix view = Matrix.Identity;
+            var parent = (IControlRenderer)this;
             while (parent != null)
             {
-                var visualParent = parent as I3DRenderer;
-                if (visualParent != null)
-                    parentMatrices.Push(visualParent.CreateWorldMatrix());
+                var worldParent = parent as I3DRenderer;
+                if (worldParent != null)
+                {
+                    world = worldParent.GetControlTransformation() * world;
+                    view = worldParent.GetGUITransformation() * view;
+                }
 
                 parent = parent.Parent;
             }
 
-            Matrix baseTransformations = Matrix.Identity;
-            while (parentMatrices.Count > 0)
-                baseTransformations = baseTransformations * parentMatrices.Pop();
-
             var absAnchorX = (float)(RenderArea.Width * Model.AnchorX);
             var absAnchorY = (float)(RenderArea.Height * Model.AnchorY);
 
-            // Aplicando transformações do Model
             return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
-                 * baseTransformations * CreateWorldMatrix()
+                 * world
                  * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
-
-                 * CreateViewMatrix();
+                 * GetControlProjection()
+                 * view;
         }
 
-        public Matrix CreateWorldMatrix()
+        public Matrix GetControlTransformation()
         {
             return Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
                  * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
@@ -145,7 +141,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                  * Matrix.CreateScale((float)Model.Scale);
         }
 
-        public Matrix CreateViewMatrix()
+        public Matrix GetControlProjection()
         {
             var viewport = Game.GraphicsDevice.Viewport;
 
@@ -157,8 +153,13 @@ namespace Jv.Games.Xna.XForms.Renderers
                  * Matrix.CreateTranslation(1, 1, 0)
                  * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 0)
                  * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 1)
-                 * Matrix.CreateTranslation((float)Model.TranslationX, (float)Model.TranslationY, 0)
-                 * Matrix.CreateTranslation(new Vector3((float)RenderArea.X, (float)RenderArea.Y, 0));
+                 * Matrix.CreateTranslation(new Vector3((float)RenderArea.X, (float)RenderArea.Y, 0))
+                 * Matrix.CreateTranslation((float)Model.TranslationX, (float)Model.TranslationY, 0);
+        }
+
+        public Matrix GetGUITransformation()
+        {
+            return Matrix.CreateTranslation(new Vector3((float)Model.TranslationX, (float)Model.TranslationY, 0));
         }
 
         protected override void BeginDraw(SpriteBatch spriteBatch)

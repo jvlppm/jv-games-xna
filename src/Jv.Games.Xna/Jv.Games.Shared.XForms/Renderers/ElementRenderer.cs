@@ -1,6 +1,6 @@
 ﻿[assembly: Jv.Games.Xna.XForms.ExportRenderer(
     typeof(Xamarin.Forms.Element),
-    typeof(Jv.Games.Xna.XForms.Renderers.ElementRenderer<Xamarin.Forms.Element>))]
+    typeof(Jv.Games.Xna.XForms.Renderers.ElementRenderer))]
 namespace Jv.Games.Xna.XForms.Renderers
 {
     using System;
@@ -8,17 +8,8 @@ namespace Jv.Games.Xna.XForms.Renderers
     using System.Collections.Generic;
     using Xamarin.Forms;
 
-    public class ElementRenderer<TModel> : RendererBase
-        where TModel : Element
+    public class ElementRenderer : RendererBase
     {
-        #region Properties
-        public new TModel Model
-        {
-            get { return (TModel)base.Model; }
-            set { base.Model = value; }
-        }
-        #endregion
-
         #region Handle Properties
         MultiValueDictionary<BindableProperty, Func<BindableProperty, bool>> Handlers;
         MultiValueDictionary<string, BindableProperty> HandledProperties;
@@ -38,20 +29,20 @@ namespace Jv.Games.Xna.XForms.Renderers
             base.OnModelChanged(oldValue, newValue);
 
             if (oldValue != null)
-                UnloadModel((TModel)oldValue);
+                UnloadModel(oldValue);
 
             if (newValue != null)
-                LoadModel((TModel)newValue);
+                LoadModel(newValue);
         }
 
-        protected virtual void LoadModel(TModel model)
+        protected virtual void LoadModel(Element model)
         {
             model.PropertyChanged += OnPropertyChanged;
             foreach (var prop in Handlers)
                 prop.Value.FirstOrDefault(handle => handle(prop.Key));
         }
 
-        protected virtual void UnloadModel(TModel model)
+        protected virtual void UnloadModel(Element model)
         {
             model.PropertyChanged -= OnPropertyChanged;
         }

@@ -5,14 +5,10 @@ namespace Jv.Games.Xna.XForms.Renderers
 {
     using Xamarin.Forms;
 
-    public class ViewRenderer : ViewRenderer<View>
+    public class ViewRenderer : VisualElementRenderer
     {
+        public new View Model { get { return (View)base.Model; } }
 
-    }
-
-    public class ViewRenderer<TModel> : VisualElementRenderer<TModel>
-        where TModel : View
-    {
         public ViewRenderer()
         {
             HandleProperty(View.HorizontalOptionsProperty, HandleArrangeChange);
