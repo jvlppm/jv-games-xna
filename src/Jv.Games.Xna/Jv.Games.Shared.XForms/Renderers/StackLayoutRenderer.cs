@@ -3,7 +3,6 @@
     typeof(Jv.Games.Xna.XForms.Renderers.StackLayoutRenderer))]
 namespace Jv.Games.Xna.XForms.Renderers
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Xamarin.Forms;
 
@@ -13,8 +12,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public StackLayoutRenderer()
         {
-            HandleProperty(StackLayout.SpacingProperty, MeasurePropertyChanged);
-            HandleProperty(StackLayout.OrientationProperty, MeasurePropertyChanged);
+            HandleProperty(StackLayout.SpacingProperty, HandleMeasurePropertyChanged);
+            HandleProperty(StackLayout.OrientationProperty, HandleMeasurePropertyChanged);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -48,14 +47,14 @@ namespace Jv.Games.Xna.XForms.Renderers
             return measuredSize;
         }
 
-        protected override Xamarin.Forms.Rectangle ArrangeOverride(Xamarin.Forms.Rectangle finalRect)
+        protected override Rectangle ArrangeOverride(Rectangle finalRect)
         {
             if (Model.Orientation == StackOrientation.Horizontal)
                 return ArrangeHorizontally(ref finalRect);
             return ArrangeVertically(ref finalRect);
         }
 
-        Xamarin.Forms.Rectangle ArrangeVertically(ref Xamarin.Forms.Rectangle finalRect)
+        Rectangle ArrangeVertically(ref Rectangle finalRect)
         {
             var expandableChildrenCount = Model.Children.Count(c => c.VerticalOptions.Expands);
             var extraSpace = finalRect.Height - MeasuredSize.Height;
@@ -70,7 +69,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             {
                 var childExtraSpace = child.VerticalOptions.Expands ? itemExtraSpace : 0;
                 var rend = ChildrenRenderers[child];
-                rend.Arrange(new Xamarin.Forms.Rectangle(
+                rend.Arrange(new Rectangle(
                     x,
                     y,
                     containerArea.Width,
@@ -82,7 +81,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             return containerArea;
         }
 
-        Xamarin.Forms.Rectangle ArrangeHorizontally(ref Xamarin.Forms.Rectangle finalRect)
+        Rectangle ArrangeHorizontally(ref Rectangle finalRect)
         {
             var expandableChildrenCount = Model.Children.Count(c => c.HorizontalOptions.Expands);
             var extraSpace = finalRect.Width - MeasuredSize.Width;
@@ -97,7 +96,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             {
                 var childExtraSpace = child.VerticalOptions.Expands ? itemExtraSpace : 0;
                 var rend = ChildrenRenderers[child];
-                rend.Arrange(new Xamarin.Forms.Rectangle(
+                rend.Arrange(new Rectangle(
                     x,
                     y,
                     rend.MeasuredSize.Width + childExtraSpace,

@@ -11,17 +11,11 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public ViewRenderer()
         {
-            HandleProperty(View.HorizontalOptionsProperty, HandleArrangeChange);
-            HandleProperty(View.VerticalOptionsProperty, HandleArrangeChange);
+            HandleProperty(View.HorizontalOptionsProperty, HandleArrangePropertyChanged);
+            HandleProperty(View.VerticalOptionsProperty, HandleArrangePropertyChanged);
         }
 
-        protected virtual bool HandleArrangeChange(BindableProperty prop)
-        {
-            InvalidateArrange();
-            return true;
-        }
-
-        protected override Xamarin.Forms.Rectangle ArrangeOverride(Xamarin.Forms.Rectangle finalRect)
+        protected override Rectangle ArrangeOverride(Rectangle finalRect)
         {
             var xDiff = finalRect.Width - MeasuredSize.Width;
             switch (Model.HorizontalOptions.Alignment)

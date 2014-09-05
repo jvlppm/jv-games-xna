@@ -11,7 +11,9 @@ namespace Jv.Games.Xna.XForms.Renderers
 
     public class LayoutRenderer : ViewRenderer
     {
+        #region Properties
         public new Layout Model { get { return (Layout)base.Model; } }
+
         protected Dictionary<Element, IControlRenderer> ChildrenRenderers;
 
         public IEnumerable<IControlRenderer> Children
@@ -25,12 +27,16 @@ namespace Jv.Games.Xna.XForms.Renderers
                        select ChildrenRenderers[c];
             }
         }
+        #endregion
 
+        #region Constructors
         public LayoutRenderer()
         {
             ChildrenRenderers = new Dictionary<Element, IControlRenderer>();
         }
+        #endregion
 
+        #region Overrides
         public override void Initialize(Game game)
         {
             foreach (var c in ChildrenRenderers.Values)
@@ -53,20 +59,6 @@ namespace Jv.Games.Xna.XForms.Renderers
             Model.ChildAdded -= Model_ChildAdded;
             Model.ChildRemoved -= Model_ChildRemoved;
             base.UnloadModel(model);
-        }
-
-        void Model_ChildRemoved(object sender, ElementEventArgs e)
-        {
-            ChildrenRenderers.Remove((View)e.Element);
-        }
-
-        void Model_ChildAdded(object sender, ElementEventArgs e)
-        {
-            var renderer = (ViewRenderer)RendererFactory.Create(e.Element);
-            renderer.Parent = this;
-            ChildrenRenderers[(View)e.Element] = renderer;
-            if (Game != null)
-                renderer.Initialize(Game);
         }
 
         protected override void BeginDraw(SpriteBatch spriteBatch)
@@ -92,15 +84,32 @@ namespace Jv.Games.Xna.XForms.Renderers
         public override void InvalidateMeasure()
         {
             base.InvalidateMeasure();
-            foreach (var it in ChildrenRenderers)
-                it.Value.InvalidateMeasure();
+            foreach (var it in ChildrenRenderers.Values)
+                it.InvalidateMeasure();
         }
 
         public override void InvalidateArrange()
         {
             base.InvalidateArrange();
-            foreach (var it in ChildrenRenderers)
-                it.Value.InvalidateArrange();
+            foreach (var it in ChildrenRenderers.Values)
+                it.InvalidateArrange();
         }
+        #endregion
+
+        #region Private Methods
+        void Model_ChildRemoved(object sender, ElementEventArgs e)
+        {
+            ChildrenRenderers.Remove((View)e.Element);
+        }
+
+        void Model_ChildAdded(object sender, ElementEventArgs e)
+        {
+            var renderer = (ViewRenderer)RendererFactory.Create(e.Element);
+            renderer.Parent = this;
+            ChildrenRenderers[(View)e.Element] = renderer;
+            if (Game != null)
+                renderer.Initialize(Game);
+        }
+        #endregion
     }
 }

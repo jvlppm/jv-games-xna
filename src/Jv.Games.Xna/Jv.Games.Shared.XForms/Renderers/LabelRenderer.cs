@@ -26,9 +26,9 @@ namespace Jv.Games.Xna.XForms.Renderers
             _content = game.Content;
             HandleProperty(Label.FontProperty, HandleFont);
             HandleProperty(Label.TextColorProperty, HandleTextColor);
-            HandleProperty(Label.TextProperty, MeasurePropertyChanged);
-            HandleProperty(Label.XAlignProperty, HandleArrangeChange);
-            HandleProperty(Label.YAlignProperty, HandleArrangeChange);
+            HandleProperty(Label.TextProperty, HandleMeasurePropertyChanged);
+            HandleProperty(Label.XAlignProperty, HandleArrangePropertyChanged);
+            HandleProperty(Label.YAlignProperty, HandleArrangePropertyChanged);
             base.Initialize(game);
         }
 

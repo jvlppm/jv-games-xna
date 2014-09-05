@@ -5,8 +5,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-    using System.Collections.Generic;
     using Xamarin.Forms;
+    using Rectangle=Xamarin.Forms.Rectangle;
 
     public interface I3DRenderer
     {
@@ -17,54 +17,66 @@ namespace Jv.Games.Xna.XForms.Renderers
 
     public class VisualElementRenderer : ElementRenderer, IControlRenderer, I3DRenderer
     {
+        #region Attributes
         bool _validTransformationMatrix;
-        Matrix _transformationMatrix;
-        Xamarin.Forms.Rectangle _transformationMatrixLastArea;
+        public Matrix TransformationMatrix { get; private set; }
+        Rectangle _transformationMatrixLastArea;
+        #endregion
 
+        #region Properties
         public new VisualElement Model { get { return (VisualElement)base.Model; } }
+        #endregion
 
+        #region Constructors
         public VisualElementRenderer()
         {
-            HandleProperty(VisualElement.IsVisibleProperty, MeasurePropertyChanged);
-            HandleProperty(VisualElement.TranslationXProperty, ArrangePropertyChanged);
-            HandleProperty(VisualElement.TranslationYProperty, ArrangePropertyChanged);
+            HandleProperty(VisualElement.IsVisibleProperty, HandleMeasurePropertyChanged);
+            HandleProperty(VisualElement.TranslationXProperty, HandleArrangePropertyChanged);
+            HandleProperty(VisualElement.TranslationYProperty, HandleArrangePropertyChanged);
             HandleProperty(VisualElement.RotationYProperty, HandleTransformationChange);
             HandleProperty(VisualElement.RotationXProperty, HandleTransformationChange);
             HandleProperty(VisualElement.RotationProperty, HandleTransformationChange);
             HandleProperty(VisualElement.ScaleProperty, HandleTransformationChange);
             HandleProperty(VisualElement.AnchorXProperty, HandleTransformationChange);
             HandleProperty(VisualElement.AnchorYProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.WidthProperty, MeasurePropertyChanged);
-            HandleProperty(VisualElement.HeightProperty, MeasurePropertyChanged);
+            HandleProperty(VisualElement.WidthProperty, HandleMeasurePropertyChanged);
+            HandleProperty(VisualElement.HeightProperty, HandleMeasurePropertyChanged);
         }
+        #endregion
 
-        public override void Initialize(Game game)
-        {
-            base.Initialize(game);
-        }
-
+        #region Property Handlers
         protected virtual bool HandleTransformationChange(BindableProperty prop)
         {
             _validTransformationMatrix = false;
             return true;
         }
 
-        protected virtual bool ArrangePropertyChanged(BindableProperty prop)
+        protected virtual bool HandleArrangePropertyChanged(BindableProperty prop)
         {
             InvalidateArrange();
             return true;
         }
 
-        protected virtual bool MeasurePropertyChanged(BindableProperty arg)
+        protected virtual bool HandleMeasurePropertyChanged(BindableProperty prop)
         {
             InvalidateMeasure();
             return true;
         }
+        #endregion
 
+        #region Overrides
         public override void InvalidateArrange()
         {
             _validTransformationMatrix = false;
             base.InvalidateArrange();
+        }
+
+        protected override void BeginDraw(SpriteBatch spriteBatch)
+        {
+            if (!_validTransformationMatrix || _transformationMatrixLastArea != RenderArea)
+                UpdateTransformationMatrix();
+
+            spriteBatch.Begin(0, null, null, DepthStencilState.None, RasterizerState.CullNone, null, TransformationMatrix);
         }
 
         void IControlRenderer.Measure(Size availableSize)
@@ -74,11 +86,10 @@ namespace Jv.Games.Xna.XForms.Renderers
             Measure(availableSize);
         }
 
-        void IControlRenderer.Arrange(Xamarin.Forms.Rectangle finalRect)
+        void IControlRenderer.Arrange(Rectangle finalRect)
         {
             if (!Model.IsVisible)
                 return;
-
             Arrange(finalRect);
         }
 
@@ -98,11 +109,42 @@ namespace Jv.Games.Xna.XForms.Renderers
             Draw(spriteBatch, gameTime);
             EndDraw(spriteBatch);
         }
+        #endregion
+
+        #region I3DRenderer
+        public Matrix GetControlTransformation()
+        {
+            return Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
+                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
+                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
+                 * Matrix.CreateScale((float)Model.Scale);
+        }
+
+        public Matrix GetControlProjection()
+        {
+            var viewport = Game.GraphicsDevice.Viewport;
+
+            const float dist = 160;
+            var angle = (float)System.Math.Atan(((float)RenderArea.Height / 2) / dist) * 2;
+
+            return Matrix.CreateTranslation(-(float)RenderArea.Width / 2, -(float)RenderArea.Height / 2, -dist)
+                 * Matrix.CreatePerspectiveFieldOfView(angle, (float)(RenderArea.Width / RenderArea.Height), 0.001f, dist + MathHelper.Max((float)RenderArea.Width, (float)RenderArea.Height))
+                 * Matrix.CreateTranslation(1, 1, 0)
+                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 1)
+                 * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 1)
+                 * Matrix.CreateTranslation(new Vector3((float)RenderArea.X, (float)RenderArea.Y, 0))
+                 * Matrix.CreateTranslation((float)Model.TranslationX, (float)Model.TranslationY, 0);
+        }
+
+        public Matrix GetGUITransformation()
+        {
+            return Matrix.CreateTranslation(new Vector3((float)Model.TranslationX, (float)Model.TranslationY, 0));
+        }
 
         void UpdateTransformationMatrix()
         {
             _transformationMatrixLastArea = RenderArea;
-            _transformationMatrix = ComputeTransformationMatrix();
+            TransformationMatrix = ComputeTransformationMatrix();
             _validTransformationMatrix = true;
         }
 
@@ -127,47 +169,11 @@ namespace Jv.Games.Xna.XForms.Renderers
             var absAnchorY = (float)(RenderArea.Height * Model.AnchorY);
 
             return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
-                 * world
-                 * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
-                 * GetControlProjection()
-                 * view;
+                * world
+                * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
+                * GetControlProjection()
+                * view;
         }
-
-        public Matrix GetControlTransformation()
-        {
-            return Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
-                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
-                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
-                 * Matrix.CreateScale((float)Model.Scale);
-        }
-
-        public Matrix GetControlProjection()
-        {
-            var viewport = Game.GraphicsDevice.Viewport;
-
-            const float dist = 160;
-            var angle = (float)System.Math.Atan(((float)RenderArea.Height / 2) / dist) * 2;
-
-            return Matrix.CreateTranslation(-(float)RenderArea.Width / 2, -(float)RenderArea.Height / 2, -dist)
-                 * Matrix.CreatePerspectiveFieldOfView(angle, (float)(RenderArea.Width / RenderArea.Height), 0.001f, dist + MathHelper.Max((float)RenderArea.Width, (float)RenderArea.Height))
-                 * Matrix.CreateTranslation(1, 1, 0)
-                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 0)
-                 * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 1)
-                 * Matrix.CreateTranslation(new Vector3((float)RenderArea.X, (float)RenderArea.Y, 0))
-                 * Matrix.CreateTranslation((float)Model.TranslationX, (float)Model.TranslationY, 0);
-        }
-
-        public Matrix GetGUITransformation()
-        {
-            return Matrix.CreateTranslation(new Vector3((float)Model.TranslationX, (float)Model.TranslationY, 0));
-        }
-
-        protected override void BeginDraw(SpriteBatch spriteBatch)
-        {
-            if (!_validTransformationMatrix || _transformationMatrixLastArea != RenderArea)
-                UpdateTransformationMatrix();
-
-            spriteBatch.Begin(0, null, null, DepthStencilState.None, RasterizerState.CullNone, null, _transformationMatrix);
-        }
+        #endregion
     }
 }

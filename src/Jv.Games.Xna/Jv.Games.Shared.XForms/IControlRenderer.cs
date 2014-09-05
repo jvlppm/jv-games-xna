@@ -3,19 +3,20 @@
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Xamarin.Forms;
+    using Rectangle=Xamarin.Forms.Rectangle;
 
     public interface IControlRenderer : IRegisterable
     {
         Element Model { get; set; }
         IControlRenderer Parent { get; set; }
 
-        Xamarin.Forms.Size MeasuredSize { get; }
-        Xamarin.Forms.Rectangle RenderArea { get; }
+        Size MeasuredSize { get; }
+        Rectangle RenderArea { get; }
 
         void Initialize(Game game);
 
-        void Measure(Xamarin.Forms.Size availableSize);
-        void Arrange(Xamarin.Forms.Rectangle givenArea);
+        void Measure(Size availableSize);
+        void Arrange(Rectangle givenArea);
         void InvalidateMeasure();
         void InvalidateArrange();
 
