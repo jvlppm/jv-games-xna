@@ -5,19 +5,26 @@ namespace Jv.Games.Xna.XForms.Renderers
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System.Collections.Generic;
     using Xamarin.Forms;
+
+    public interface I3DRenderer
+    {
+        Matrix CreateWorldMatrix();
+        Matrix CreateViewMatrix();
+    }
 
     public class VisualElementRenderer : VisualElementRenderer<VisualElement>
     {
 
     }
 
-    public class VisualElementRenderer<TModel> : ElementRenderer<TModel>, IControlRenderer
+    public class VisualElementRenderer<TModel> : ElementRenderer<TModel>, IControlRenderer, I3DRenderer
         where TModel : VisualElement
     {
         bool _validTransformationMatrix;
+        Matrix _transformationMatrix;
         Xamarin.Forms.Rectangle _transformationMatrixLastArea;
-        BasicEffect _basicEffect;
 
         public VisualElementRenderer()
         {
@@ -36,11 +43,6 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public override void Initialize(Game game)
         {
-            _basicEffect = new BasicEffect(game.GraphicsDevice)
-            {
-                TextureEnabled = true,
-                VertexColorEnabled = true
-            };
             base.Initialize(game);
         }
 
@@ -62,7 +64,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        protected override void InvalidateArrange()
+        public override void InvalidateArrange()
         {
             _validTransformationMatrix = false;
             base.InvalidateArrange();
@@ -102,39 +104,61 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         void UpdateTransformationMatrix()
         {
-            _basicEffect.World = ComputeTransformationMatrix();
-
             _transformationMatrixLastArea = RenderArea;
+            _transformationMatrix = ComputeTransformationMatrix();
             _validTransformationMatrix = true;
         }
 
-        private Matrix ComputeTransformationMatrix()
+        Matrix ComputeTransformationMatrix()
         {
-            var viewport = Game.GraphicsDevice.Viewport;
+            Stack<Matrix> parentMatrices = new Stack<Matrix>();
+            var parent = Parent;
+            while (parent != null)
+            {
+                var visualParent = parent as I3DRenderer;
+                if (visualParent != null)
+                    parentMatrices.Push(visualParent.CreateWorldMatrix());
+
+                parent = parent.Parent;
+            }
+
+            Matrix baseTransformations = Matrix.Identity;
+            while (parentMatrices.Count > 0)
+                baseTransformations = baseTransformations * parentMatrices.Pop();
 
             var absAnchorX = (float)(RenderArea.Width * Model.AnchorX);
             var absAnchorY = (float)(RenderArea.Height * Model.AnchorY);
 
+            // Aplicando transformações do Model
+            return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
+                 * baseTransformations * CreateWorldMatrix()
+                 * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
+
+                 * CreateViewMatrix();
+        }
+
+        public Matrix CreateWorldMatrix()
+        {
+            return Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
+                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
+                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
+                 * Matrix.CreateScale((float)Model.Scale);
+        }
+
+        public Matrix CreateViewMatrix()
+        {
+            var viewport = Game.GraphicsDevice.Viewport;
+
             const float dist = 160;
             var angle = (float)System.Math.Atan(((float)RenderArea.Height / 2) / dist) * 2;
 
-            // Aplicando transformações do Model
-            return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
-                 * Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
-                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
-                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
-                 * Matrix.CreateScale((float)Model.Scale)
-                 * Matrix.CreateTranslation(absAnchorX, absAnchorY, 0f)
-
-                 // Calculando projeção do elemento
-                 * Matrix.CreateTranslation(-(float)RenderArea.Width / 2, -(float)RenderArea.Height / 2, -dist)
+            return Matrix.CreateTranslation(-(float)RenderArea.Width / 2, -(float)RenderArea.Height / 2, -dist)
                  * Matrix.CreatePerspectiveFieldOfView(angle, (float)(RenderArea.Width / RenderArea.Height), 0.001f, dist + MathHelper.Max((float)RenderArea.Width, (float)RenderArea.Height))
-                 * Matrix.CreateTranslation((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 0)
-
-                 // Posicionando em RenderArea
-                 * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, -(float)RenderArea.Height / viewport.Height, 1)
-                 * Matrix.CreateTranslation(-1, 1, 0)
-                 * Matrix.CreateTranslation((float)(RenderArea.Width / 2 + RenderArea.X + Model.TranslationX - 0.5f) / (viewport.Width / 2), -(float)(RenderArea.Height / 2 + RenderArea.Y + Model.TranslationY - 0.5f) / (viewport.Height / 2), 0);
+                 * Matrix.CreateTranslation(1, 1, 0)
+                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 0)
+                 * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 1)
+                 * Matrix.CreateTranslation((float)Model.TranslationX, (float)Model.TranslationY, 0)
+                 * Matrix.CreateTranslation(new Vector3((float)RenderArea.X, (float)RenderArea.Y, 0));
         }
 
         protected override void BeginDraw(SpriteBatch spriteBatch)
@@ -142,7 +166,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (!_validTransformationMatrix || _transformationMatrixLastArea != RenderArea)
                 UpdateTransformationMatrix();
 
-            spriteBatch.Begin(0, null, null, DepthStencilState.None, RasterizerState.CullNone, _basicEffect);
+            spriteBatch.Begin(0, null, null, DepthStencilState.None, RasterizerState.CullNone, null, _transformationMatrix);
         }
     }
 }

@@ -55,9 +55,11 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         void Model_ChildAdded(object sender, ElementEventArgs e)
         {
-            ChildrenRenderers[e.Element] = RendererFactory.Create(e.Element);
+            var renderer = RendererFactory.Create(e.Element);
+            renderer.Parent = this;
+            ChildrenRenderers[e.Element] = renderer;
             if (Game != null)
-                ChildrenRenderers[e.Element].Initialize(Game);
+                renderer.Initialize(Game);
         }
 
         protected override void BeginDraw(SpriteBatch spriteBatch)
@@ -78,6 +80,20 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             foreach (var it in ChildrenRenderers)
                 it.Value.Draw(spriteBatch, gameTime);
+        }
+
+        public override void InvalidateMeasure()
+        {
+            base.InvalidateMeasure();
+            foreach (var it in ChildrenRenderers)
+                it.Value.InvalidateMeasure();
+        }
+
+        public override void InvalidateArrange()
+        {
+            base.InvalidateArrange();
+            foreach (var it in ChildrenRenderers)
+                it.Value.InvalidateArrange();
         }
     }
 }

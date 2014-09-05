@@ -32,6 +32,8 @@
             set { SetValue(ModelProperty, value); }
         }
 
+        public IControlRenderer Parent { get; set; }
+
         public Size MeasuredSize { get; private set; }
         public Xamarin.Forms.Rectangle RenderArea { get; private set; }
         #endregion
@@ -78,14 +80,14 @@
             return Xamarin.Forms.Rectangle.Zero;
         }
 
-        protected virtual void InvalidateMeasure()
+        public virtual void InvalidateMeasure()
         {
             _lastAvailableSize = null;
             MeasuredSize = Size.Zero;
             InvalidateArrange();
         }
 
-        protected virtual void InvalidateArrange()
+        public virtual void InvalidateArrange()
         {
             _lastArrangeArea = null;
             RenderArea = Xamarin.Forms.Rectangle.Zero;

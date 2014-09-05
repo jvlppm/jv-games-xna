@@ -94,7 +94,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                 y += rend.RenderArea.Height + Model.Spacing;
             }
 
-            return new Xamarin.Forms.Rectangle(finalRect.X, finalRect.Y, x, y);
+            return base.ArrangeOverride(finalRect);
         }
 
         private Xamarin.Forms.Rectangle ArrangeHorizontally(ref Xamarin.Forms.Rectangle finalRect)
@@ -117,7 +117,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                 x += rend.RenderArea.Width + Model.Spacing;
             }
 
-            return new Xamarin.Forms.Rectangle(finalRect.X, finalRect.Y, x, y);
+            return base.ArrangeOverride(finalRect);
         }
     }
 }
