@@ -16,7 +16,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             HandleProperty(StackLayout.OrientationProperty, HandleMeasurePropertyChanged);
         }
 
-        protected override Size MeasureOverride(Size availableSize)
+        protected override Size MeasureContentOverride(Size availableSize)
         {
             Size measuredSize = Size.Zero;
             if (Model.Orientation == StackOrientation.Horizontal)
@@ -58,7 +58,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             var expandableChildrenCount = Model.Children.Count(c => c.VerticalOptions.Expands);
             var extraSpace = finalRect.Height - MeasuredSize.Height;
-            var itemExtraSpace = expandableChildrenCount == 0 ? 0 : extraSpace / expandableChildrenCount;
+            var itemExtraSpace = expandableChildrenCount == 0 || extraSpace < 0 ? 0 : extraSpace / expandableChildrenCount;
 
             var containerArea = base.ArrangeOverride(finalRect);
 
@@ -85,7 +85,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             var expandableChildrenCount = Model.Children.Count(c => c.HorizontalOptions.Expands);
             var extraSpace = finalRect.Width - MeasuredSize.Width;
-            var itemExtraSpace = expandableChildrenCount == 0 ? 0 : extraSpace / expandableChildrenCount;
+            var itemExtraSpace = expandableChildrenCount == 0 || extraSpace < 0 ? 0 : extraSpace / expandableChildrenCount;
 
             var containerArea = base.ArrangeOverride(finalRect);
 

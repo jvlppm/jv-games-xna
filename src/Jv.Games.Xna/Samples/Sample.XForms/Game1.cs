@@ -15,7 +15,7 @@ namespace Sample.XForms
         SpriteBatch spriteBatch;
 
         IControlRenderer _uiRenderer;
-        Xamarin.Forms.View _lbl;
+        Xamarin.Forms.View _rotatingView;
 
         public Game1()
         {
@@ -64,11 +64,13 @@ namespace Sample.XForms
                         {
                             HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.Center,
+                            YAlign = Xamarin.Forms.TextAlignment.Center,
                             Text = "Title",
+                            HeightRequest = 80
                         },
-                        (_lbl = new ImageButton
+                        (_rotatingView = new ImageButton
                         {
-                            HorizontalOptions = Xamarin.Forms.LayoutOptions.Center,
+                            HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             Image = "TestImage"
                         })
@@ -96,14 +98,14 @@ namespace Sample.XForms
 
             // TODO: Add your update logic here
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                _lbl.RotationY = (_lbl.RotationY + diffSpeed) % 360;
+                _rotatingView.RotationY = (_rotatingView.RotationY + diffSpeed) % 360;
             else if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                _lbl.RotationY = (_lbl.RotationY - diffSpeed) % 360;
+                _rotatingView.RotationY = (_rotatingView.RotationY - diffSpeed) % 360;
 
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                _lbl.RotationX = (_lbl.RotationX + diffSpeed) % 360;
+                _rotatingView.RotationX = (_rotatingView.RotationX + diffSpeed) % 360;
             else if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                _lbl.RotationX = (_lbl.RotationX - diffSpeed) % 360;
+                _rotatingView.RotationX = (_rotatingView.RotationX - diffSpeed) % 360;
 
             _uiRenderer.Update(gameTime);
 

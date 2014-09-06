@@ -27,7 +27,7 @@ namespace Sample.XForms.Renderers
             return true;
         }
 
-        protected override Size MeasureOverride(Size availableSize)
+        protected override Size MeasureContentOverride(Size availableSize)
         {
             if (_image == null)
                 return base.MeasureOverride(availableSize);
@@ -37,7 +37,8 @@ namespace Sample.XForms.Renderers
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(_image, Vector2.Zero, Microsoft.Xna.Framework.Color.White);
+            var drawArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)RenderArea.Width, (int)RenderArea.Height);
+            spriteBatch.Draw(_image, drawArea, Microsoft.Xna.Framework.Color.White);
         }
 
         public override void Update(GameTime gameTime)

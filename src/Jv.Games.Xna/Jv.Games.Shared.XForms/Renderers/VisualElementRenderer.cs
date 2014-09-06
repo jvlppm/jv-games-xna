@@ -5,8 +5,9 @@ namespace Jv.Games.Xna.XForms.Renderers
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System;
     using Xamarin.Forms;
-    using Rectangle=Xamarin.Forms.Rectangle;
+    using Rectangle = Xamarin.Forms.Rectangle;
 
     public interface I3DRenderer
     {
@@ -21,10 +22,13 @@ namespace Jv.Games.Xna.XForms.Renderers
         bool _validTransformationMatrix;
         public Matrix TransformationMatrix { get; private set; }
         Rectangle _transformationMatrixLastArea;
+        Microsoft.Xna.Framework.Rectangle _originalClipArea;
+        public bool Clip;
         #endregion
 
         #region Properties
         public new VisualElement Model { get { return (VisualElement)base.Model; } }
+        protected Size ContentMeasuredSize { get; private set; }
         #endregion
 
         #region Constructors
@@ -76,14 +80,72 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (!_validTransformationMatrix || _transformationMatrixLastArea != RenderArea)
                 UpdateTransformationMatrix();
 
-            spriteBatch.Begin(0, null, null, DepthStencilState.None, RasterizerState.CullNone, null, TransformationMatrix);
+            RasterizerState state= null;
+            if(Clip)
+            {
+#if IOS || ANDROID
+                Game.GraphicsDevice.RasterizerState.ScissorTestEnable = Clip;
+#endif
+                state = new RasterizerState { ScissorTestEnable = Clip };
+                _originalClipArea = spriteBatch.GraphicsDevice.ScissorRectangle;
+                spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)RenderArea.X, (int)RenderArea.Y, (int)RenderArea.Width, (int)RenderArea.Height);
+            }
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, DepthStencilState.None, state, null, TransformationMatrix);
         }
 
-        void IControlRenderer.Measure(Size availableSize)
+        protected override void EndDraw(SpriteBatch spriteBatch)
+        {
+            base.EndDraw(spriteBatch);
+
+            if (Clip)
+            {
+#if IOS || ANDROID
+                Game.GraphicsDevice.RasterizerState.ScissorTestEnable = false;
+#endif
+                spriteBatch.GraphicsDevice.ScissorRectangle = _originalClipArea;
+            }
+        }
+
+        protected virtual Size MeasureContentOverride(Size availableSize)
+        {
+            return Size.Zero;
+        }
+
+        sealed protected override Size MeasureOverride(Size availableSize)
         {
             if (!Model.IsVisible)
-                return;
-            Measure(availableSize);
+                return MeasuredSize;
+
+            var ignore = new Size(-1, -1);
+            var minRequestSize = new Size(Model.MinimumWidthRequest, Model.MinimumHeightRequest);
+            var requestSize = new Size(Model.WidthRequest, Model.HeightRequest);
+
+            var constrainedAvailableSize = RespectSize(availableSize, minRequestSize, requestSize, availableSize);
+
+            ContentMeasuredSize = MeasureContentOverride(constrainedAvailableSize);
+
+            return RespectSize(ContentMeasuredSize, minRequestSize, requestSize, availableSize);
+        }
+
+        static Size RespectSize(Size original, Size minimum, Size specified, Size maximum)
+        {
+            original = new Size(
+                specified.Width < 0 ? original.Width : specified.Width,
+                specified.Height < 0 ? original.Height : specified.Height
+            );
+
+            original = new Size(
+                minimum.Width < 0 ? original.Width : Math.Max(minimum.Width, original.Width),
+                minimum.Height < 0 ? original.Height : Math.Max(minimum.Height, original.Height)
+            );
+
+            original = new Size(
+                maximum.Width < 0 ? original.Width : Math.Min(maximum.Width, original.Width),
+                maximum.Height < 0 ? original.Height : Math.Min(maximum.Height, original.Height)
+            );
+
+            return original;
         }
 
         void IControlRenderer.Arrange(Rectangle finalRect)

@@ -7,17 +7,19 @@ namespace Jv.Games.Xna.XForms.Renderers
     using Microsoft.Xna.Framework.Content;
     using Microsoft.Xna.Framework.Graphics;
     using Xamarin.Forms;
+    using Color = Microsoft.Xna.Framework.Color;
+    using Rectangle = Xamarin.Forms.Rectangle;
 
     public class LabelRenderer : ViewRenderer
     {
         public new Label Model { get { return (Label)base.Model; } }
 
         public static SpriteFont DefaultFont;
-        public static Microsoft.Xna.Framework.Color DefaultTextColor = Microsoft.Xna.Framework.Color.Black;
+        public static Color DefaultTextColor = Color.Black;
 
         ContentManager _content;
         SpriteFont _font;
-        Microsoft.Xna.Framework.Color TextColor;
+        Color TextColor;
 
         Vector2 _textOffset;
 
@@ -51,7 +53,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        protected override Size MeasureOverride(Size availableSize)
+        protected override Size MeasureContentOverride(Size availableSize)
         {
             if (_font == null)
                 _font = LabelRenderer.DefaultFont;
@@ -62,13 +64,13 @@ namespace Jv.Games.Xna.XForms.Renderers
             return new Size(textMeasure.X, textMeasure.Y);
         }
 
-        protected override Xamarin.Forms.Rectangle ArrangeOverride(Xamarin.Forms.Rectangle finalRect)
+        protected override Rectangle ArrangeOverride(Rectangle finalRect)
         {
             var renderArea = base.ArrangeOverride(finalRect);
 
             _textOffset = new Vector2(
-                (float)GetAlignOffset(Model.XAlign, (float)MeasuredSize.Width, (float)renderArea.Width),
-                (float)GetAlignOffset(Model.YAlign, (float)MeasuredSize.Height, (float)renderArea.Height));
+                (float)GetAlignOffset(Model.XAlign, (float)ContentMeasuredSize.Width, (float)renderArea.Width),
+                (float)GetAlignOffset(Model.YAlign, (float)ContentMeasuredSize.Height, (float)renderArea.Height));
 
             return renderArea;
         }
