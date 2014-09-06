@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)PlatformServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformTimer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RendererGameComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\ElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\LayoutRenderer.cs" />

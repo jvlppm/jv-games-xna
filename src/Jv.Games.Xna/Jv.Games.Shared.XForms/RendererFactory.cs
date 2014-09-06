@@ -26,6 +26,11 @@
 #endif
         }
 
+        public static RendererGameComponent AsGameComponent(this Element element)
+        {
+            return new RendererGameComponent(Forms.Game, Create(element));
+        }
+
         internal static void ScanForRenderers()
         {
             Registrar.RegisterAll(new []{

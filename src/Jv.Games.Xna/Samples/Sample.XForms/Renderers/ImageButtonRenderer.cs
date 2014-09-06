@@ -30,7 +30,7 @@ namespace Sample.XForms.Renderers
         protected override Size MeasureContentOverride(Size availableSize)
         {
             if (_image == null)
-                return base.MeasureOverride(availableSize);
+                return base.MeasureContentOverride(availableSize);
 
             return new Size(_image.Width, _image.Height);
         }

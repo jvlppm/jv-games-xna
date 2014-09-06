@@ -14,7 +14,6 @@ namespace Sample.XForms
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        IControlRenderer _uiRenderer;
         Xamarin.Forms.View _rotatingView;
 
         public Game1()
@@ -49,20 +48,17 @@ namespace Sample.XForms
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
             Jv.Games.Xna.XForms.Renderers.LabelRenderer.DefaultFont = Content.Load<SpriteFont>("DefaultFont");
+            var ui = new Xamarin.Forms.StackLayout
+            {
+                Orientation = Xamarin.Forms.StackOrientation.Vertical,
 
-            _uiRenderer = RendererFactory.Create(
-                new Xamarin.Forms.StackLayout
-                {
-                    HorizontalOptions = Xamarin.Forms.LayoutOptions.FillAndExpand,
-                    VerticalOptions = Xamarin.Forms.LayoutOptions.FillAndExpand,
-                    Orientation = Xamarin.Forms.StackOrientation.Vertical,
-
-                    Children =
+                Children =
                     {
                         new Xamarin.Forms.Label
                         {
-                            HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
+                            HorizontalOptions = Xamarin.Forms.LayoutOptions.Center,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.Center,
                             YAlign = Xamarin.Forms.TextAlignment.Center,
                             Text = "Title",
@@ -75,7 +71,8 @@ namespace Sample.XForms
                             Image = "TestImage"
                         })
                     }
-                });
+            }.AsGameComponent();
+            Components.Add(ui);
         }
 
         /// <summary>
@@ -107,8 +104,6 @@ namespace Sample.XForms
             else if (Keyboard.GetState().IsKeyDown(Keys.Down))
                 _rotatingView.RotationX = (_rotatingView.RotationX - diffSpeed) % 360;
 
-            _uiRenderer.Update(gameTime);
-
             base.Update(gameTime);
         }
 
@@ -119,9 +114,6 @@ namespace Sample.XForms
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _uiRenderer.Measure(new Xamarin.Forms.Size(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height));
-            _uiRenderer.Arrange(new Xamarin.Forms.Rectangle(graphics.GraphicsDevice.Viewport.X, graphics.GraphicsDevice.Viewport.Y, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height));
-            _uiRenderer.Draw(spriteBatch, gameTime);
 
             base.Draw(gameTime);
         }

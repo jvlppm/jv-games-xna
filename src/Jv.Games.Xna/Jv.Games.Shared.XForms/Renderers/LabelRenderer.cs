@@ -58,7 +58,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (_font == null)
                 _font = LabelRenderer.DefaultFont;
             if (_font == null)
-                return base.MeasureOverride(availableSize);
+                return base.MeasureContentOverride(availableSize);
             var textMeasure = _font.MeasureString(Model.Text);
 
             return new Size(textMeasure.X, textMeasure.Y);
@@ -77,6 +77,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            if (_font == null)
+                return;
             spriteBatch.DrawString(_font, Model.Text, _textOffset, TextColor, 0, Vector2.Zero, 1, 0, 0);
         }
 
