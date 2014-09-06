@@ -94,6 +94,13 @@ namespace Jv.Games.Xna.XForms.Renderers
             foreach (var it in ChildrenRenderers.Values)
                 it.InvalidateArrange();
         }
+
+        public override void InvalidateTransform()
+        {
+            base.InvalidateTransform();
+            foreach (VisualElementRenderer it in ChildrenRenderers.Values)
+                it.InvalidateTransform();
+        }
         #endregion
 
         #region Private Methods

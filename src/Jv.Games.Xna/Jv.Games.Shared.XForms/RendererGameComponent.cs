@@ -36,6 +36,7 @@
 
         public override void Update(GameTime gameTime)
         {
+            Renderer.Update(gameTime);
             base.Update(gameTime);
         }
     }

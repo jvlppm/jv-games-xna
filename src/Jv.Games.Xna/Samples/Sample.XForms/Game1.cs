@@ -50,7 +50,7 @@ namespace Sample.XForms
             // TODO: use this.Content to load your game content here
 
             Jv.Games.Xna.XForms.Renderers.LabelRenderer.DefaultFont = Content.Load<SpriteFont>("DefaultFont");
-            var ui = new Xamarin.Forms.StackLayout
+            var ui = (_rotatingView = new Xamarin.Forms.StackLayout
             {
                 Orientation = Xamarin.Forms.StackOrientation.Vertical,
 
@@ -62,16 +62,16 @@ namespace Sample.XForms
                             VerticalOptions = Xamarin.Forms.LayoutOptions.Center,
                             YAlign = Xamarin.Forms.TextAlignment.Center,
                             Text = "Title",
-                            HeightRequest = 80
                         },
-                        (_rotatingView = new ImageButton
+
+                        new ImageButton
                         {
                             HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             Image = "TestImage"
-                        })
+                        }
                     }
-            }.AsGameComponent();
+            }).AsGameComponent();
             Components.Add(ui);
         }
 
