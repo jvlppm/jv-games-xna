@@ -62,7 +62,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
             var containerArea = base.ArrangeOverride(finalRect);
 
-            double x = containerArea.X;
+            double x = 0;
             double y = 0;
 
             foreach (var child in Model.Children)
@@ -90,7 +90,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             var containerArea = base.ArrangeOverride(finalRect);
 
             double x = 0;
-            double y = containerArea.Y;
+            double y = 0;
 
             foreach (var child in Model.Children)
             {

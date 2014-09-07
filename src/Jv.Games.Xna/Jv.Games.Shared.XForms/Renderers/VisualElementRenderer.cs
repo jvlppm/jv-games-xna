@@ -214,14 +214,13 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             var viewport = Game.GraphicsDevice.Viewport;
 
-            float dist = (float)Math.Max(RenderArea.Width, RenderArea.Height);
-            var angle = (float)System.Math.Atan(((float)RenderArea.Height / 2) / dist) * 2;
+            float dist = (float)Math.Max(viewport.Width, viewport.Height);
+            var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
 
-            return Matrix.CreateTranslation(-(float)RenderArea.Width / 2, -(float)RenderArea.Height / 2, -dist)
-                 * Matrix.CreatePerspectiveFieldOfView(angle, (float)(RenderArea.Width / RenderArea.Height), 0.001f, dist * 2)
+            return Matrix.CreateTranslation(-(float)viewport.Width / 2, -(float)viewport.Height / 2, -dist)
+                 * Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), 0.001f, dist * 2)
                  * Matrix.CreateTranslation(1, 1, 0)
-                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 1)
-                 * Matrix.CreateScale((float)RenderArea.Width / viewport.Width, (float)RenderArea.Height / viewport.Height, 1);
+                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 1);
         }
 
         public Matrix GetControlTransformation()
