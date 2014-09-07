@@ -9,12 +9,7 @@ namespace Jv.Games.Xna.XForms.Renderers
     using Xamarin.Forms;
     using Rectangle = Xamarin.Forms.Rectangle;
 
-    public interface I3DRenderer
-    {
-        Matrix GetControlTransformation();
-    }
-
-    public class VisualElementRenderer : ElementRenderer, IControlRenderer, I3DRenderer
+    public class VisualElementRenderer : ElementRenderer, IControlRenderer
     {
         #region Attributes
         bool _validTransformationMatrix;
@@ -183,7 +178,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             var currentRenderer = (IControlRenderer)this;
             while (currentRenderer != null)
             {
-                var currentVisual = currentRenderer as I3DRenderer;
+                var currentVisual = currentRenderer as VisualElementRenderer;
                 if (currentVisual != null)
                     world *= currentVisual.GetControlTransformation();
 
@@ -193,19 +188,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             return world;
         }
 
-        I3DRenderer GetFirst3dRenderer()
-        {
-            I3DRenderer first3dParent = (I3DRenderer)this;
-            var currentRenderer = (IControlRenderer)this;
-            while (currentRenderer.Parent != null)
-            {
-                currentRenderer = currentRenderer.Parent;
-                first3dParent = currentRenderer as I3DRenderer ?? first3dParent;
-            }
-            return first3dParent;
-        }
-
-        static Matrix GetControlProjection()
+        static Matrix GetProjectionMatrix()
         {
             var viewport = Forms.Game.GraphicsDevice.Viewport;
 
@@ -240,7 +223,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         void UpdateTransformationMatrix()
         {
             _transformationMatrixLastArea = RenderArea;
-            TransformationMatrix = GetWorldTransformation() * GetControlProjection();
+            TransformationMatrix = GetWorldTransformation() * GetProjectionMatrix();
             _validTransformationMatrix = true;
         }
         #endregion
