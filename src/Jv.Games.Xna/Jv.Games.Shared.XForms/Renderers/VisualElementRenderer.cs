@@ -12,8 +12,6 @@ namespace Jv.Games.Xna.XForms.Renderers
     public interface I3DRenderer
     {
         Matrix GetControlTransformation();
-        Matrix GetControlProjection();
-        Matrix GetGUITransformation();
     }
 
     public class VisualElementRenderer : ElementRenderer, IControlRenderer, I3DRenderer
@@ -187,10 +185,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             {
                 var currentVisual = currentRenderer as I3DRenderer;
                 if (currentVisual != null)
-                {
-                    world = world * currentVisual.GetControlTransformation();
-                    world = world * currentVisual.GetGUITransformation();
-                }
+                    world *= currentVisual.GetControlTransformation();
 
                 currentRenderer = currentRenderer.Parent;
             }
@@ -210,9 +205,9 @@ namespace Jv.Games.Xna.XForms.Renderers
             return first3dParent;
         }
 
-        public Matrix GetControlProjection()
+        static Matrix GetControlProjection()
         {
-            var viewport = Game.GraphicsDevice.Viewport;
+            var viewport = Forms.Game.GraphicsDevice.Viewport;
 
             float dist = (float)Math.Max(viewport.Width, viewport.Height);
             var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
@@ -228,27 +223,24 @@ namespace Jv.Games.Xna.XForms.Renderers
             var absAnchorX = (float)(RenderArea.Width * Model.AnchorX);
             var absAnchorY = (float)(RenderArea.Height * Model.AnchorY);
 
+            var offset = new Vector2(
+                (float)(RenderArea.X + Model.TranslationX - (absAnchorX * Model.Scale - absAnchorX)),
+                (float)(RenderArea.Y + Model.TranslationY - (absAnchorY * Model.Scale - absAnchorY))
+            );
+
             return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
                  * Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
                  * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
                  * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
                  * Matrix.CreateScale((float)Model.Scale)
-                 * Matrix.CreateTranslation(absAnchorX * (float)Model.Scale, absAnchorY * (float)Model.Scale, 0f);
-        }
-
-        public Matrix GetGUITransformation()
-        {
-            var offset = new Vector2 (
-                (float)(RenderArea.X + Model.TranslationX),
-                (float)(RenderArea.Y + Model.TranslationY)
-            );
-            return Matrix.CreateTranslation(new Vector3(offset, 0));
+                 * Matrix.CreateTranslation(absAnchorX * (float)Model.Scale, absAnchorY * (float)Model.Scale, 0f)
+                 * Matrix.CreateTranslation(new Vector3(offset, 0));
         }
 
         void UpdateTransformationMatrix()
         {
             _transformationMatrixLastArea = RenderArea;
-            TransformationMatrix = GetWorldTransformation() * GetFirst3dRenderer().GetControlProjection();
+            TransformationMatrix = GetWorldTransformation() * GetControlProjection();
             _validTransformationMatrix = true;
         }
         #endregion
