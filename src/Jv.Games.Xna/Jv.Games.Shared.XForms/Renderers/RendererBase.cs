@@ -82,15 +82,24 @@
 
         public virtual void InvalidateMeasure()
         {
+            if (_lastAvailableSize == null)
+                return;
             _lastAvailableSize = null;
             MeasuredSize = Size.Zero;
             InvalidateArrange();
+            if (Parent != null)
+                Parent.InvalidateMeasure();
         }
 
         public virtual void InvalidateArrange()
         {
+            if (_lastArrangeArea == null)
+                return;
+
             _lastArrangeArea = null;
             RenderArea = Xamarin.Forms.Rectangle.Zero;
+            if (Parent != null)
+                Parent.InvalidateArrange();
         }
 
         void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime)
