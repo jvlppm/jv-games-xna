@@ -57,6 +57,8 @@ namespace Jv.Games.Xna.XForms.Renderers
                 try
                 {
                     _image = Game.Content.Load<Texture2D>(fileSource.File);
+                    InvalidateMeasure();
+                    _imageLoadCancellation = null;
                     return true;
                 }
                 catch
@@ -94,6 +96,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                             _image = Texture2D.FromStream(Game.GraphicsDevice, t.Result);
                         InvalidateMeasure();
                         Model.IsLoading = false;
+                        _imageLoadCancellation = null;
                     });
                 });
             }
