@@ -11,7 +11,7 @@
         IControlRenderer Parent { get; set; }
 
         Size MeasuredSize { get; }
-        Rectangle RenderArea { get; }
+        Rectangle ArrangedArea { get; }
 
         void Initialize(Game game);
 

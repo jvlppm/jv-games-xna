@@ -64,11 +64,11 @@ namespace Sample.XForms
                             Text = "Title",
                         },
 
-                        new ImageButton
+                        new Xamarin.Forms.Image
                         {
                             HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
-                            Image = "TestImage"
+                            Source = "TestImage"
                         }
                     }
             }).AsGameComponent();

@@ -75,7 +75,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                     containerArea.Width,
                     rend.MeasuredSize.Height + childExtraSpace
                 ));
-                y += rend.RenderArea.Height + childExtraSpace + Model.Spacing;
+                y += rend.ArrangedArea.Height + childExtraSpace + Model.Spacing;
             }
 
             return containerArea;
@@ -102,7 +102,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                     rend.MeasuredSize.Width + childExtraSpace,
                     containerArea.Height
                 ));
-                x += rend.RenderArea.Width + childExtraSpace + Model.Spacing;
+                x += rend.ArrangedArea.Width + childExtraSpace + Model.Spacing;
             }
 
             return containerArea;

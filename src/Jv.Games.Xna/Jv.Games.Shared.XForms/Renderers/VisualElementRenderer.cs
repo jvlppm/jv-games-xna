@@ -21,6 +21,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         #region Properties
         public new VisualElement Model { get { return (VisualElement)base.Model; } }
+        protected Microsoft.Xna.Framework.Rectangle RenderArea { get; private set; }
         protected Size ContentMeasuredSize { get; private set; }
         #endregion
 
@@ -70,7 +71,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         protected override void BeginDraw(SpriteBatch spriteBatch)
         {
-            if (!_validTransformationMatrix || _transformationMatrixLastArea != RenderArea)
+            if (!_validTransformationMatrix || _transformationMatrixLastArea != ArrangedArea)
                 UpdateTransformationMatrix();
 
             RasterizerState state = new RasterizerState { CullMode = CullMode.None }; ;
@@ -81,7 +82,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 #endif
                 state.ScissorTestEnable = Clip;
                 _originalClipArea = spriteBatch.GraphicsDevice.ScissorRectangle;
-                spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)RenderArea.X, (int)RenderArea.Y, (int)RenderArea.Width, (int)RenderArea.Height);
+                spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)ArrangedArea.X, (int)ArrangedArea.Y, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
             }
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, DepthStencilState.None, state, null, TransformationMatrix);
@@ -203,12 +204,12 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public Matrix GetControlTransformation()
         {
-            var absAnchorX = (float)(RenderArea.Width * Model.AnchorX);
-            var absAnchorY = (float)(RenderArea.Height * Model.AnchorY);
+            var absAnchorX = (float)(ArrangedArea.Width * Model.AnchorX);
+            var absAnchorY = (float)(ArrangedArea.Height * Model.AnchorY);
 
             var offset = new Vector2(
-                (float)(RenderArea.X + Model.TranslationX - (absAnchorX * Model.Scale - absAnchorX)),
-                (float)(RenderArea.Y + Model.TranslationY - (absAnchorY * Model.Scale - absAnchorY))
+                (float)(ArrangedArea.X + Model.TranslationX - (absAnchorX * Model.Scale - absAnchorX)),
+                (float)(ArrangedArea.Y + Model.TranslationY - (absAnchorY * Model.Scale - absAnchorY))
             );
 
             return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
@@ -222,8 +223,9 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         void UpdateTransformationMatrix()
         {
-            _transformationMatrixLastArea = RenderArea;
+            _transformationMatrixLastArea = ArrangedArea;
             TransformationMatrix = GetWorldTransformation() * GetProjectionMatrix();
+            RenderArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
             _validTransformationMatrix = true;
         }
         #endregion

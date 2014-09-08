@@ -35,7 +35,7 @@
         public IControlRenderer Parent { get; set; }
 
         public Size MeasuredSize { get; private set; }
-        public Xamarin.Forms.Rectangle RenderArea { get; private set; }
+        public Xamarin.Forms.Rectangle ArrangedArea { get; private set; }
         #endregion
 
         #region Methods
@@ -70,7 +70,7 @@
         {
             if(_lastArrangeArea != finalRect)
             {
-                RenderArea = ArrangeOverride(finalRect);
+                ArrangedArea = ArrangeOverride(finalRect);
                 _lastArrangeArea = finalRect;
             }
         }
@@ -97,7 +97,7 @@
                 return;
 
             _lastArrangeArea = null;
-            RenderArea = Xamarin.Forms.Rectangle.Zero;
+            ArrangedArea = Xamarin.Forms.Rectangle.Zero;
             if (Parent != null)
                 Parent.InvalidateArrange();
         }
