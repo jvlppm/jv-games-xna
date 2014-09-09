@@ -49,7 +49,7 @@ namespace Sample.XForms
 
             // TODO: use this.Content to load your game content here
 
-            //Jv.Games.Xna.XForms.Renderers.LabelRenderer.DefaultFont = Content.Load<SpriteFont>("DefaultFont");
+            Jv.Games.Xna.XForms.Renderers.LabelRenderer.DefaultFont = Content.Load<SpriteFont>("DefaultFont");
             var uiComponent = (_ui = new Xamarin.Forms.ContentPage
             {
                 Content = new Xamarin.Forms.StackLayout

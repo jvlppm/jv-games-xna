@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)PropertyTracker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererGameComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\ImageRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ImageRenderer.cs" />

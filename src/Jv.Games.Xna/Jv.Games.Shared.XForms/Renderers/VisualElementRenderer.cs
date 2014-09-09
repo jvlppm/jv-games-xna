@@ -75,6 +75,13 @@ namespace Jv.Games.Xna.XForms.Renderers
 
             SpriteBatch = new SpriteBatch(Forms.Game.GraphicsDevice);
             PropertyTracker = new PropertyTracker();
+
+            PropertyTracker.AddHandler(VisualElement.AnchorXProperty, Handle_Transformation);
+            PropertyTracker.AddHandler(VisualElement.AnchorYProperty, Handle_Transformation);
+            PropertyTracker.AddHandler(VisualElement.RotationXProperty, Handle_Transformation);
+            PropertyTracker.AddHandler(VisualElement.RotationYProperty, Handle_Transformation);
+            PropertyTracker.AddHandler(VisualElement.RotationProperty, Handle_Transformation);
+            PropertyTracker.AddHandler(VisualElement.ScaleProperty, Handle_Transformation);
         }
         #endregion
 
@@ -105,7 +112,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         protected virtual void BeginDraw()
         {
             if (Model.Bounds != _transformationBounds)
-                UpdateTransformationMatrix();
+                Arrange();
 
             var state = new Microsoft.Xna.Framework.Graphics.RasterizerState
             {
@@ -152,7 +159,23 @@ namespace Jv.Games.Xna.XForms.Renderers
         #endregion
 
         #region 3D Transformations
-        void UpdateTransformationMatrix()
+        bool Handle_Transformation(BindableProperty prop)
+        {
+            InvalidateArrange();
+            return true;
+        }
+
+        public virtual void InvalidateArrange()
+        {
+            _transformationBounds = default(Rectangle);
+            foreach (var child in _childrenRenderers)
+            {
+                var visualRenderer = child.Value as IVisualElementRenderer;
+                visualRenderer.InvalidateArrange();
+            }
+        }
+
+        protected virtual void Arrange()
         {
             TransformationMatrix = GetWorldTransformation(Model) * GetProjectionMatrix();
             //RenderArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)ArrangedArea.Width, (int)ArrangedArea.Height);

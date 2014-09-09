@@ -17,7 +17,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public ImageRenderer()
         {
-            PropertyTracker.AddHandler(Image.SourceProperty, Handle_SourceProperty);
+            PropertyTracker.AddHandler(Image.SourceProperty, Handle_Source);
         }
 
         public override SizeRequest Measure(Size availableSize)
@@ -53,7 +53,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
 
         #region Property Handlers
-        protected virtual bool Handle_SourceProperty(BindableProperty prop)
+        protected virtual bool Handle_Source(BindableProperty prop)
         {
             if (_imageLoadCancellation != null)
                 _imageLoadCancellation.Cancel();

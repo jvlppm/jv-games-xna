@@ -17,5 +17,6 @@
     public interface IVisualElementRenderer : IRenderer
     {
         VisualElement Model { get; set; }
+        void InvalidateArrange();
     }
 }
