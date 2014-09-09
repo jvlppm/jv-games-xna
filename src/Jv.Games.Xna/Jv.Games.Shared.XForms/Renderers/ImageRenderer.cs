@@ -14,6 +14,7 @@ namespace Jv.Games.Xna.XForms.Renderers
     {
         CancellationTokenSource _imageLoadCancellation;
         Texture2D _image;
+        Microsoft.Xna.Framework.Rectangle _renderArea;
 
         public ImageRenderer()
         {
@@ -45,11 +46,17 @@ namespace Jv.Games.Xna.XForms.Renderers
             throw new NotImplementedException();
         }
 
+        protected override void Arrange()
+        {
+            base.Arrange();
+            _renderArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)Model.Bounds.Width, (int)Model.Bounds.Height);
+        }
+
         protected override void LocalDraw(Microsoft.Xna.Framework.GameTime gameTime)
         {
             if(_image == null)
                 return;
-            SpriteBatch.Draw(_image, Microsoft.Xna.Framework.Vector2.Zero, Microsoft.Xna.Framework.Color.White);
+            SpriteBatch.Draw(_image, _renderArea, Microsoft.Xna.Framework.Color.White);
         }
 
         #region Property Handlers

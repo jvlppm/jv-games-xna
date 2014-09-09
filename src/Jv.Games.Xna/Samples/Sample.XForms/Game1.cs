@@ -54,16 +54,12 @@ namespace Sample.XForms
             {
                 Content = new Xamarin.Forms.StackLayout
                 {
-                    Orientation = Xamarin.Forms.StackOrientation.Horizontal,
+                    Orientation = Xamarin.Forms.StackOrientation.Vertical,
+                    VerticalOptions = Xamarin.Forms.LayoutOptions.FillAndExpand,
+                    HorizontalOptions = Xamarin.Forms.LayoutOptions.FillAndExpand,
 
                     Children =
                     {
-                        new Xamarin.Forms.Image
-                        {
-                            HorizontalOptions = Xamarin.Forms.LayoutOptions.Center,
-                            VerticalOptions = Xamarin.Forms.LayoutOptions.Center,
-                            Source = "TestImage"
-                        },
                         new Xamarin.Forms.Label
                         {
                             HorizontalOptions = Xamarin.Forms.LayoutOptions.Center,
@@ -71,6 +67,12 @@ namespace Sample.XForms
                             YAlign = Xamarin.Forms.TextAlignment.Center,
                             Text = "Title",
                         },
+                        new Xamarin.Forms.Image
+                        {
+                            HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
+                            VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
+                            Source = "TestImage"
+                        }
                     }
                 }
             }).AsGameComponent();

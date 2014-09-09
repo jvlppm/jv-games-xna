@@ -23,14 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)RendererGameComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\ImageRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ElementRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ImageRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\LabelRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\LayoutRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\RendererBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\StackLayoutRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ViewRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\VisualElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\VisualElementRenderer.cs" />
   </ItemGroup>
 </Project>
