@@ -1,8 +1,8 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
     using Jv.Games.Xna.XForms.Renderers;
-using System;
-using Xamarin.Forms;
+    using System;
+    using Xamarin.Forms;
 
     public static class RendererFactory
     {
@@ -15,6 +15,13 @@ using Xamarin.Forms;
         public static void SetRenderer(VisualElement obj, IVisualElementRenderer renderer)
         {
             obj.SetValue(RendererProperty, renderer);
+        }
+
+        public static IRenderer Create(Element element)
+        {
+            if (element is VisualElement)
+                return Create((VisualElement)element);
+            throw new NotImplementedException();
         }
 
         public static IVisualElementRenderer Create(VisualElement element)
@@ -51,7 +58,7 @@ using Xamarin.Forms;
 
         internal static void ScanForRenderers()
         {
-            Registrar.RegisterAll(new []{
+            Registrar.RegisterAll(new[]{
                 typeof(ExportRendererAttribute)
             });
         }

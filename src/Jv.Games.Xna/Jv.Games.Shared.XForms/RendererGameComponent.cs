@@ -1,14 +1,16 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
-    using Microsoft.Xna.Framework;
     using System;
+    using Xamarin.Forms;
+    using Game = Microsoft.Xna.Framework.Game;
+    using GameTime = Microsoft.Xna.Framework.GameTime;
 
-    public class RendererGameComponent : DrawableGameComponent, Xamarin.Forms.IPlatform
+    public class RendererGameComponent : Microsoft.Xna.Framework.DrawableGameComponent, IPlatform
     {
         ElementView _view;
         public Xamarin.Forms.Page PageRoot { get; private set; }
 
-        public RendererGameComponent(Game game)
+        public RendererGameComponent(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
         }
@@ -41,22 +43,22 @@
 
         public event EventHandler BindingContextChanged;
 
-        public Xamarin.Forms.IPlatformEngine Engine
+        public IPlatformEngine Engine
         {
             get { return Forms.PlatformEngine; }
         }
 
-        public Xamarin.Forms.Page Page
+        public Page Page
         {
             get { return PageRoot; }
         }
 
-        public void SetPage(Xamarin.Forms.Page newRoot)
+        public void SetPage(Page newRoot)
         {
             _view = new ElementView(Game, newRoot);
             PageRoot = newRoot;
             PageRoot.Platform = this;
-            newRoot.Layout(new Xamarin.Forms.Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height));
+            newRoot.Layout(new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height));
         }
     }
 }

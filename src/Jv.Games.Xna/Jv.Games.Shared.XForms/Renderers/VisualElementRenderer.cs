@@ -4,6 +4,7 @@
 namespace Jv.Games.Xna.XForms.Renderers
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Text;
     using Xamarin.Forms;
@@ -25,12 +26,11 @@ namespace Jv.Games.Xna.XForms.Renderers
 
     public class VisualElementRenderer : IVisualElementRenderer
     {
-        // TODO: track children.
-
         #region Attributes
         Rectangle _transformationBounds;
         Matrix TransformationMatrix;
         VisualElement _model;
+        Dictionary<Element, IRenderer> _childrenRenderers;
 
         protected readonly PropertyTracker PropertyTracker;
         protected readonly SpriteBatch SpriteBatch;
@@ -42,7 +42,26 @@ namespace Jv.Games.Xna.XForms.Renderers
             get { return _model; }
             set
             {
+                if (_model == value)
+                    return;
+
+                if (_model != null)
+                {
+                    _model.ChildAdded -= Model_ChildAdded;
+                    _model.ChildRemoved -= Model_ChildRemoved;
+                }
                 _model = value;
+
+                if (_model != null)
+                {
+                    _childrenRenderers = value.LogicalChildren.ToDictionary(c => c, RendererFactory.Create);
+                    _model.ChildAdded += Model_ChildAdded;
+                    _model.ChildRemoved += Model_ChildRemoved;
+                }
+                else
+                {
+                    _childrenRenderers = null;
+                }
                 PropertyTracker.SetTarget(value);
             }
         }
@@ -60,18 +79,49 @@ namespace Jv.Games.Xna.XForms.Renderers
         #endregion
 
         #region IRenderer
-        public SizeRequest Measure(Size availableSize)
+        public virtual SizeRequest Measure(Size availableSize)
         {
             return default(SizeRequest);
         }
 
         public void Draw(Microsoft.Xna.Framework.GameTime gameTime)
         {
+            Render(gameTime);
+
+            if (_childrenRenderers != null)
+            {
+                foreach (var childRenderer in _childrenRenderers.Values)
+                    childRenderer.Draw(gameTime);
+            }
+        }
+
+        protected void Render(Microsoft.Xna.Framework.GameTime gameTime)
+        {
+            BeginDraw();
+            LocalDraw(gameTime);
+            EndDraw();
+        }
+
+        protected virtual void BeginDraw()
+        {
             if (Model.Bounds != _transformationBounds)
                 UpdateTransformationMatrix();
-            LocalDraw(gameTime);
 
-            // TODO: children.Draw(gameTime)
+            var state = new Microsoft.Xna.Framework.Graphics.RasterizerState
+            {
+                CullMode = Microsoft.Xna.Framework.Graphics.CullMode.None
+            };
+            /*if (Clip)
+            {
+#if IOS || ANDROID
+                Game.GraphicsDevice.RasterizerState.ScissorTestEnable = Clip;
+#endif
+                state.ScissorTestEnable = Clip;
+                _originalClipArea = spriteBatch.GraphicsDevice.ScissorRectangle;
+                spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)ArrangedArea.X, (int)ArrangedArea.Y, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
+            }*/
+
+            SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode.Immediate, Microsoft.Xna.Framework.Graphics.BlendState.AlphaBlend, null, Microsoft.Xna.Framework.Graphics.DepthStencilState.None, state, null, TransformationMatrix);
         }
 
         protected virtual void LocalDraw(Microsoft.Xna.Framework.GameTime gameTime)
@@ -79,9 +129,25 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         }
 
+        protected virtual void EndDraw()
+        {
+            SpriteBatch.End();
+            /*if (Clip)
+            {
+#if IOS || ANDROID
+                Game.GraphicsDevice.RasterizerState.ScissorTestEnable = false;
+#endif
+                spriteBatch.GraphicsDevice.ScissorRectangle = _originalClipArea;
+            }*/
+        }
+
         public virtual void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            // TODO: children.Update(gameTime)
+            if (_childrenRenderers != null)
+            {
+                foreach (var childRenderer in _childrenRenderers.Values)
+                    childRenderer.Update(gameTime);
+            }
         }
         #endregion
 
@@ -139,6 +205,18 @@ namespace Jv.Games.Xna.XForms.Renderers
                  * Matrix.CreateScale((float)element.Scale)
                  * Matrix.CreateTranslation(absAnchorX * (float)element.Scale, absAnchorY * (float)element.Scale, 0f)
                  * Matrix.CreateTranslation(new Vector3(offset, 0));
+        }
+        #endregion
+
+        #region Child track
+        void Model_ChildAdded(object sender, ElementEventArgs e)
+        {
+            _childrenRenderers.Add(e.Element, RendererFactory.Create(e.Element));
+        }
+
+        void Model_ChildRemoved(object sender, ElementEventArgs e)
+        {
+            _childrenRenderers.Remove(e.Element);
         }
         #endregion
     }

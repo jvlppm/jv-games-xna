@@ -18,10 +18,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformTimer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IVisualElementRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Internal\StackDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PropertyTracker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererGameComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\ImageRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ImageRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\LabelRenderer.cs" />
