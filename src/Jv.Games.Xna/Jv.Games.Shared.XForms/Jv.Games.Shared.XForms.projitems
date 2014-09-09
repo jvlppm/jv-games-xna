@@ -9,23 +9,27 @@
     <Import_RootNamespace>Jv.Games.Xna.XForms</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ElementView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExportRendererAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Forms.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IControlRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\IsolatedStorageFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformServices.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IVisualElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\StackDictionary.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IsolatedStorageFile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformServices.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PropertyTracker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererGameComponent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\ElementRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\ImageRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\LayoutRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\StackLayoutRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ElementRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ImageRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\LabelRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\LayoutRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\RendererBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\StackLayoutRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\ViewRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\Old\VisualElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\VisualElementRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\ViewRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Renderers\RendererBase.cs" />
   </ItemGroup>
 </Project>

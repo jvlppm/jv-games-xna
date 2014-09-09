@@ -1,11 +1,23 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
-    using System;
-    using Xamarin.Forms;
+    using Jv.Games.Xna.XForms.Renderers;
+using System;
+using Xamarin.Forms;
 
     public static class RendererFactory
     {
-        public static IControlRenderer Create(Element element)
+        static BindableProperty RendererProperty = BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), typeof(RendererFactory), null);
+
+        public static IVisualElementRenderer GetRenderer(BindableObject obj)
+        {
+            return (IVisualElementRenderer)obj.GetValue(RendererProperty);
+        }
+        public static void SetRenderer(VisualElement obj, IVisualElementRenderer renderer)
+        {
+            obj.SetValue(RendererProperty, renderer);
+        }
+
+        public static IVisualElementRenderer Create(VisualElement element)
         {
 #if PORTABLE
             throw new NotImplementedException();
@@ -16,19 +28,25 @@
             if (element == null)
                 throw new NotImplementedException();
 
-            var renderer = Registrar.Registered.GetHandler<IControlRenderer>(element.GetType());
+            var renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType());
             if (renderer != null)
             {
+                element.IsPlatformEnabled = true;
                 renderer.Model = element;
-                renderer.Initialize(Forms.Game);
+                SetRenderer(element, renderer);
             }
             return renderer;
 #endif
         }
 
-        public static RendererGameComponent AsGameComponent(this Element element)
+        public static RendererGameComponent AsGameComponent(this Page page)
         {
-            return new RendererGameComponent(Forms.Game, Create(element));
+            if (!Forms.IsInitialized)
+                throw new InvalidOperationException("Xamarin.Forms not initialized");
+
+            var component = new RendererGameComponent(Forms.Game);
+            component.SetPage(page);
+            return component;
         }
 
         internal static void ScanForRenderers()

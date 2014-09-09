@@ -1,4 +1,4 @@
-﻿[assembly: Jv.Games.Xna.XForms.ExportRenderer(
+﻿/*[assembly: Jv.Games.Xna.XForms.ExportRenderer(
     typeof(Xamarin.Forms.Label),
     typeof(Jv.Games.Xna.XForms.Renderers.LabelRenderer))]
 namespace Jv.Games.Xna.XForms.Renderers
@@ -28,9 +28,9 @@ namespace Jv.Games.Xna.XForms.Renderers
             _content = game.Content;
             HandleProperty(Label.FontProperty, HandleFont);
             HandleProperty(Label.TextColorProperty, HandleTextColor);
-            HandleProperty(Label.TextProperty, HandleMeasurePropertyChanged);
-            HandleProperty(Label.XAlignProperty, HandleArrangePropertyChanged);
-            HandleProperty(Label.YAlignProperty, HandleArrangePropertyChanged);
+            //HandleProperty(Label.TextProperty, HandleMeasurePropertyChanged);
+            //HandleProperty(Label.XAlignProperty, HandleArrangePropertyChanged);
+            //HandleProperty(Label.YAlignProperty, HandleArrangePropertyChanged);
             base.Initialize(game);
         }
 
@@ -53,7 +53,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        protected override Size MeasureContentOverride(Size availableSize)
+        protected override SizeRequest MeasureContentOverride(Size availableSize)
         {
             if (_font == null)
                 _font = LabelRenderer.DefaultFont;
@@ -61,16 +61,17 @@ namespace Jv.Games.Xna.XForms.Renderers
                 return base.MeasureContentOverride(availableSize);
 
             var textMeasure = _font.MeasureString(Model.Text);
-            return new Size(textMeasure.X, textMeasure.Y);
+            var labelSize = new Size(textMeasure.X, textMeasure.Y);
+            return new SizeRequest(labelSize, labelSize);
         }
 
         protected override Rectangle ArrangeOverride(Rectangle finalRect)
         {
             var renderArea = base.ArrangeOverride(finalRect);
 
-            _textOffset = new Vector2(
-                (float)GetAlignOffset(Model.XAlign, (float)ContentMeasuredSize.Width, (float)renderArea.Width),
-                (float)GetAlignOffset(Model.YAlign, (float)ContentMeasuredSize.Height, (float)renderArea.Height));
+            //_textOffset = new Vector2(
+            //    (float)GetAlignOffset(Model.XAlign, (float)ContentMeasuredSize.Width, (float)renderArea.Width),
+            //    (float)GetAlignOffset(Model.YAlign, (float)ContentMeasuredSize.Height, (float)renderArea.Height));
 
             return renderArea;
         }
@@ -97,3 +98,4 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
     }
 }
+*/

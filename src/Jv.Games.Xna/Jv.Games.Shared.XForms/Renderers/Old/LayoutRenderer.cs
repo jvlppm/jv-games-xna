@@ -1,4 +1,4 @@
-﻿[assembly: Jv.Games.Xna.XForms.ExportRenderer(
+﻿/*[assembly: Jv.Games.Xna.XForms.ExportRenderer(
     typeof(Xamarin.Forms.Layout),
     typeof(Jv.Games.Xna.XForms.Renderers.LayoutRenderer))]
 namespace Jv.Games.Xna.XForms.Renderers
@@ -119,4 +119,4 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
         #endregion
     }
-}
+}*/

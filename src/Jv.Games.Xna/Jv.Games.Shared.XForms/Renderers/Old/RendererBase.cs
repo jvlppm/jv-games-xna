@@ -1,4 +1,4 @@
-﻿namespace Jv.Games.Xna.XForms.Renderers
+﻿/*namespace Jv.Games.Xna.XForms.Renderers
 {
     using Xamarin.Forms;
     using Microsoft.Xna.Framework.Graphics;
@@ -34,7 +34,7 @@
 
         public IControlRenderer Parent { get; set; }
 
-        public Size MeasuredSize { get; private set; }
+        public SizeRequest MeasuredSize { get; private set; }
         public Xamarin.Forms.Rectangle ArrangedArea { get; private set; }
         #endregion
 
@@ -61,9 +61,9 @@
             }
         }
 
-        protected virtual Size MeasureOverride(Size availableSize)
+        protected virtual SizeRequest MeasureOverride(Size availableSize)
         {
-            return Size.Zero;
+            return default(SizeRequest);
         }
 
         public virtual void Arrange(Xamarin.Forms.Rectangle finalRect)
@@ -85,7 +85,7 @@
             if (_lastAvailableSize == null)
                 return;
             _lastAvailableSize = null;
-            MeasuredSize = Size.Zero;
+            MeasuredSize = default(SizeRequest);
             InvalidateArrange();
             if (Parent != null)
                 Parent.InvalidateMeasure();
@@ -126,3 +126,4 @@
     }
 }
 
+*/

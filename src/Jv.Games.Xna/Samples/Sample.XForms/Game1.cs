@@ -14,7 +14,7 @@ namespace Sample.XForms
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Xamarin.Forms.View _rotatingView;
+        Xamarin.Forms.Page _ui;
 
         public Game1()
         {
@@ -49,13 +49,21 @@ namespace Sample.XForms
 
             // TODO: use this.Content to load your game content here
 
-            Jv.Games.Xna.XForms.Renderers.LabelRenderer.DefaultFont = Content.Load<SpriteFont>("DefaultFont");
-            var ui = (_rotatingView = new Xamarin.Forms.StackLayout
+            //Jv.Games.Xna.XForms.Renderers.LabelRenderer.DefaultFont = Content.Load<SpriteFont>("DefaultFont");
+            var uiComponent = (_ui = new Xamarin.Forms.ContentPage
             {
-                Orientation = Xamarin.Forms.StackOrientation.Vertical,
+                Content = new Xamarin.Forms.StackLayout
+                {
+                    Orientation = Xamarin.Forms.StackOrientation.Horizontal,
 
-                Children =
+                    Children =
                     {
+                        new Xamarin.Forms.Image
+                        {
+                            HorizontalOptions = Xamarin.Forms.LayoutOptions.Center,
+                            VerticalOptions = Xamarin.Forms.LayoutOptions.Center,
+                            Source = "TestImage"
+                        },
                         new Xamarin.Forms.Label
                         {
                             HorizontalOptions = Xamarin.Forms.LayoutOptions.Center,
@@ -63,16 +71,10 @@ namespace Sample.XForms
                             YAlign = Xamarin.Forms.TextAlignment.Center,
                             Text = "Title",
                         },
-
-                        new Xamarin.Forms.Image
-                        {
-                            HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
-                            VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
-                            Source = "TestImage"
-                        }
                     }
+                }
             }).AsGameComponent();
-            Components.Add(ui);
+            Components.Add(uiComponent);
         }
 
         /// <summary>
@@ -95,14 +97,14 @@ namespace Sample.XForms
 
             // TODO: Add your update logic here
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                _rotatingView.RotationY = (_rotatingView.RotationY + diffSpeed) % 360;
+                _ui.RotationY = (_ui.RotationY + diffSpeed) % 360;
             else if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                _rotatingView.RotationY = (_rotatingView.RotationY - diffSpeed) % 360;
+                _ui.RotationY = (_ui.RotationY - diffSpeed) % 360;
 
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                _rotatingView.RotationX = (_rotatingView.RotationX + diffSpeed) % 360;
+                _ui.RotationX = (_ui.RotationX + diffSpeed) % 360;
             else if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                _rotatingView.RotationX = (_rotatingView.RotationX - diffSpeed) % 360;
+                _ui.RotationX = (_ui.RotationX - diffSpeed) % 360;
 
             base.Update(gameTime);
         }

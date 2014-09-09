@@ -1,4 +1,4 @@
-﻿[assembly: Jv.Games.Xna.XForms.ExportRenderer(
+﻿/*[assembly: Jv.Games.Xna.XForms.ExportRenderer(
     typeof(Xamarin.Forms.StackLayout),
     typeof(Jv.Games.Xna.XForms.Renderers.StackLayoutRenderer))]
 namespace Jv.Games.Xna.XForms.Renderers
@@ -16,30 +16,32 @@ namespace Jv.Games.Xna.XForms.Renderers
             HandleProperty(StackLayout.OrientationProperty, HandleMeasurePropertyChanged);
         }
 
-        protected override Size MeasureContentOverride(Size availableSize)
+        protected override SizeRequest MeasureContentOverride(Size availableSize)
         {
             Size measuredSize = Size.Zero;
             if (Model.Orientation == StackOrientation.Horizontal)
             {
-                foreach (var child in Children)
+                foreach (var child in Model.Children.OrderBy(c => c.HorizontalOptions.Expands? 1 : 0))
                 {
-                    child.Measure(availableSize);
-                    measuredSize.Width += child.MeasuredSize.Width + Model.Spacing;
-                    availableSize.Width -= child.MeasuredSize.Width;
-                    if (measuredSize.Height < child.MeasuredSize.Height)
-                        measuredSize.Height = child.MeasuredSize.Height;
+                    var rend = ChildrenRenderers[child];
+                    rend.Measure(availableSize);
+                    measuredSize.Width += rend.MeasuredSize.Width + Model.Spacing;
+                    availableSize.Width -= rend.MeasuredSize.Width;
+                    if (measuredSize.Height < rend.MeasuredSize.Height)
+                        measuredSize.Height = rend.MeasuredSize.Height;
                 }
                 measuredSize.Width -= Model.Spacing;
             }
             else
             {
-                foreach (var child in Children)
+                foreach (var child in Model.Children.OrderBy(c => c.VerticalOptions.Expands ? 1 : 0))
                 {
-                    child.Measure(availableSize);
-                    measuredSize.Height += child.MeasuredSize.Height + Model.Spacing;
-                    availableSize.Height -= child.MeasuredSize.Height;
-                    if (measuredSize.Width < child.MeasuredSize.Width)
-                        measuredSize.Width = child.MeasuredSize.Width;
+                    var rend = ChildrenRenderers[child];
+                    rend.Measure(availableSize);
+                    measuredSize.Height += rend.MeasuredSize.Height + Model.Spacing;
+                    availableSize.Height -= rend.MeasuredSize.Height;
+                    if (measuredSize.Width < rend.MeasuredSize.Width)
+                        measuredSize.Width = rend.MeasuredSize.Width;
                 }
                 measuredSize.Height -= Model.Spacing;
             }
@@ -57,25 +59,26 @@ namespace Jv.Games.Xna.XForms.Renderers
         Rectangle ArrangeVertically(ref Rectangle finalRect)
         {
             var expandableChildrenCount = Model.Children.Count(c => c.VerticalOptions.Expands);
-            var extraSpace = finalRect.Height - MeasuredSize.Height;
-            var itemExtraSpace = expandableChildrenCount == 0 || extraSpace < 0 ? 0 : extraSpace / expandableChildrenCount;
-
             var containerArea = base.ArrangeOverride(finalRect);
 
             double x = 0;
             double y = 0;
 
+            var spacingTotal = Model.Spacing * (Model.Children.Count - 1);
+            var nonExpandableHeight = Model.Children.Where(c => !c.VerticalOptions.Expands).Sum(c => ChildrenRenderers[c].MeasuredSize.Height);
+            var expandableItemHeight = (finalRect.Height - nonExpandableHeight - spacingTotal) / expandableChildrenCount;
+
             foreach (var child in Model.Children)
             {
-                var childExtraSpace = child.VerticalOptions.Expands ? itemExtraSpace : 0;
                 var rend = ChildrenRenderers[child];
+                var itemHeight = child.VerticalOptions.Expands ? expandableItemHeight : rend.MeasuredSize.Height;
                 rend.Arrange(new Rectangle(
                     x,
                     y,
                     containerArea.Width,
-                    rend.MeasuredSize.Height + childExtraSpace
+                    itemHeight
                 ));
-                y += rend.ArrangedArea.Height + Model.Spacing;
+                y += itemHeight + Model.Spacing;
             }
 
             return containerArea;
@@ -84,28 +87,30 @@ namespace Jv.Games.Xna.XForms.Renderers
         Rectangle ArrangeHorizontally(ref Rectangle finalRect)
         {
             var expandableChildrenCount = Model.Children.Count(c => c.HorizontalOptions.Expands);
-            var extraSpace = finalRect.Width - MeasuredSize.Width;
-            var itemExtraSpace = expandableChildrenCount == 0 || extraSpace < 0 ? 0 : extraSpace / expandableChildrenCount;
-
             var containerArea = base.ArrangeOverride(finalRect);
 
             double x = 0;
             double y = 0;
 
+            var spacingTotal = Model.Spacing * (Model.Children.Count - 1);
+            var nonExpandableHeight = Model.Children.Where(c => !c.HorizontalOptions.Expands).Sum(c => ChildrenRenderers[c].MeasuredSize.Width);
+            var expandableItemWidth = (finalRect.Width - nonExpandableHeight - spacingTotal) / expandableChildrenCount;
+
             foreach (var child in Model.Children)
             {
-                var childExtraSpace = child.VerticalOptions.Expands ? itemExtraSpace : 0;
                 var rend = ChildrenRenderers[child];
+                var itemWidth = child.HorizontalOptions.Expands ? expandableItemWidth : rend.MeasuredSize.Width;
                 rend.Arrange(new Rectangle(
                     x,
                     y,
-                    rend.MeasuredSize.Width + childExtraSpace,
+                    itemWidth,
                     containerArea.Height
                 ));
-                x += rend.ArrangedArea.Width + Model.Spacing;
+                x += itemWidth + Model.Spacing;
             }
 
             return containerArea;
         }
     }
 }
+*/

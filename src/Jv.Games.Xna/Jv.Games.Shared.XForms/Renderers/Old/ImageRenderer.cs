@@ -1,4 +1,4 @@
-﻿[assembly: Jv.Games.Xna.XForms.ExportRenderer(typeof(Xamarin.Forms.Image), typeof(Jv.Games.Xna.XForms.Renderers.ImageRenderer))]
+﻿/*[assembly: Jv.Games.Xna.XForms.ExportRenderer(typeof(Xamarin.Forms.Image), typeof(Jv.Games.Xna.XForms.Renderers.ImageRenderer))]
 namespace Jv.Games.Xna.XForms.Renderers
 {
     using Microsoft.Xna.Framework;
@@ -21,25 +21,6 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             base.Initialize(game);
             HandleProperty(Image.SourceProperty, HandleImageProperty);
-        }
-
-        public override void Arrange(Xamarin.Forms.Rectangle finalRect)
-        {
-            base.Arrange(finalRect);
-            switch (Model.Aspect)
-            {
-                case Aspect.Fill:
-                    ImageArea = RenderArea;
-                    break;
-                case Aspect.AspectFit:
-                    var scaleFit = Math.Min(ArrangedArea.Width / (float)_image.Width, ArrangedArea.Height / (float)_image.Height);
-                    ImageArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)(_image.Width * scaleFit), (int)(_image.Height * scaleFit));
-                    break;
-                case Aspect.AspectFill:
-                    var scaleFill = Math.Max(ArrangedArea.Width / (float)_image.Width, ArrangedArea.Height / (float)_image.Height);
-                    ImageArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)(_image.Width * scaleFill), (int)(_image.Height * scaleFill));
-                    break;
-            }
         }
 
         protected virtual bool HandleImageProperty(BindableProperty prop)
@@ -104,11 +85,27 @@ namespace Jv.Games.Xna.XForms.Renderers
             return true;
         }
 
-        protected override Size MeasureContentOverride(Size availableSize)
+        protected override SizeRequest MeasureContentOverride(Size availableSize)
         {
             if (_image == null)
                 return base.MeasureContentOverride(availableSize);
-            return new Size(_image.Width, _image.Height);
+
+            switch (Model.Aspect)
+            {
+                case Aspect.Fill:
+                    ImageArea = RenderArea;
+                    break;
+                case Aspect.AspectFit:
+                    var scaleFit = Math.Min(availableSize.Width / (float)_image.Width, availableSize.Height / (float)_image.Height);
+                    ImageArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)(_image.Width * scaleFit), (int)(_image.Height * scaleFit));
+                    break;
+                case Aspect.AspectFill:
+                    var scaleFill = Math.Max(availableSize.Width / (float)_image.Width, availableSize.Height / (float)_image.Height);
+                    ImageArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)(_image.Width * scaleFill), (int)(_image.Height * scaleFill));
+                    break;
+            }
+
+            return new SizeRequest(new Size(ImageArea.Width, ImageArea.Height));
         }
 
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.GameTime gameTime)
@@ -119,3 +116,4 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
     }
 }
+*/

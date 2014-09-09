@@ -1,4 +1,4 @@
-﻿[assembly: Jv.Games.Xna.XForms.ExportRenderer(
+﻿/*[assembly: Jv.Games.Xna.XForms.ExportRenderer(
     typeof(Xamarin.Forms.Element),
     typeof(Jv.Games.Xna.XForms.Renderers.ElementRenderer))]
 namespace Jv.Games.Xna.XForms.Renderers
@@ -59,9 +59,12 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         protected virtual void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            foreach (var property in HandledProperties[e.PropertyName])
-                Handlers[property].FirstOrDefault(handle => handle(property));
+            IReadOnlyCollection<BindableProperty> handlers;
+            if (HandledProperties.TryGetValue(e.PropertyName, out handlers))
+                foreach (var property in handlers)
+                    Handlers[property].FirstOrDefault(handle => handle(property));
         }
         #endregion
     }
 }
+*/

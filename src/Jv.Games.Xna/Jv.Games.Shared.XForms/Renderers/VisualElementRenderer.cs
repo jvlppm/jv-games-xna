@@ -1,189 +1,109 @@
 ﻿[assembly: Jv.Games.Xna.XForms.ExportRenderer(
     typeof(Xamarin.Forms.VisualElement),
-    typeof(Jv.Games.Xna.XForms.Renderers.VisualElementRenderer))]
+    typeof(Jv.Games.Xna.XForms.Renderers.VisualElementRenderer<Xamarin.Forms.VisualElement>))]
 namespace Jv.Games.Xna.XForms.Renderers
 {
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
     using System;
+    using System.Collections.Generic;
+    using System.Text;
     using Xamarin.Forms;
-    using Rectangle = Xamarin.Forms.Rectangle;
+    using Vector2 = Microsoft.Xna.Framework.Vector2;
+    using Vector3 = Microsoft.Xna.Framework.Vector3;
+    using Matrix = Microsoft.Xna.Framework.Matrix;
+    using MathHelper = Microsoft.Xna.Framework.MathHelper;
+    using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
 
-    public class VisualElementRenderer : ElementRenderer, IControlRenderer
+    public class VisualElementRenderer<TModel> : VisualElementRenderer
+        where TModel : VisualElement
     {
+        public new TModel Model
+        {
+            get { return (TModel)base.Model; }
+            set { base.Model = value; }
+        }
+    }
+
+    public class VisualElementRenderer : IVisualElementRenderer
+    {
+        // TODO: track children.
+
         #region Attributes
-        bool _validTransformationMatrix;
+        Rectangle _transformationBounds;
         Matrix TransformationMatrix;
-        Rectangle _transformationMatrixLastArea;
-        Microsoft.Xna.Framework.Rectangle _originalClipArea;
-        public bool Clip;
+        VisualElement _model;
+
+        protected readonly PropertyTracker PropertyTracker;
+        protected readonly SpriteBatch SpriteBatch;
         #endregion
 
         #region Properties
-        public new VisualElement Model { get { return (VisualElement)base.Model; } }
-        protected Microsoft.Xna.Framework.Rectangle RenderArea { get; private set; }
-        protected Size ContentMeasuredSize { get; private set; }
+        public VisualElement Model
+        {
+            get { return _model; }
+            set
+            {
+                _model = value;
+                PropertyTracker.SetTarget(value);
+            }
+        }
         #endregion
 
         #region Constructors
         public VisualElementRenderer()
         {
-            HandleProperty(VisualElement.IsVisibleProperty, HandleMeasurePropertyChanged);
-            HandleProperty(VisualElement.TranslationXProperty, HandleArrangePropertyChanged);
-            HandleProperty(VisualElement.TranslationYProperty, HandleArrangePropertyChanged);
-            HandleProperty(VisualElement.RotationYProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.RotationXProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.RotationProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.ScaleProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.AnchorXProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.AnchorYProperty, HandleTransformationChange);
-            HandleProperty(VisualElement.WidthProperty, HandleMeasurePropertyChanged);
-            HandleProperty(VisualElement.HeightProperty, HandleMeasurePropertyChanged);
+            if (!Forms.IsInitialized)
+                throw new InvalidOperationException("Xamarin.Forms not initialized");
+
+            SpriteBatch = new SpriteBatch(Forms.Game.GraphicsDevice);
+            PropertyTracker = new PropertyTracker();
         }
         #endregion
 
-        #region Property Handlers
-        protected virtual bool HandleTransformationChange(BindableProperty prop)
+        #region IRenderer
+        public SizeRequest Measure(Size availableSize)
         {
-            InvalidateTransform();
-            return true;
+            return default(SizeRequest);
         }
 
-        protected virtual bool HandleArrangePropertyChanged(BindableProperty prop)
+        public void Draw(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            InvalidateArrange();
-            return true;
-        }
-
-        protected virtual bool HandleMeasurePropertyChanged(BindableProperty prop)
-        {
-            InvalidateMeasure();
-            return true;
-        }
-        #endregion
-
-        #region Overrides
-        public override void InvalidateArrange()
-        {
-            _validTransformationMatrix = false;
-            base.InvalidateArrange();
-        }
-
-        protected override void BeginDraw(SpriteBatch spriteBatch)
-        {
-            if (!_validTransformationMatrix || _transformationMatrixLastArea != ArrangedArea)
+            if (Model.Bounds != _transformationBounds)
                 UpdateTransformationMatrix();
+            LocalDraw(gameTime);
 
-            RasterizerState state = new RasterizerState { CullMode = CullMode.None }; ;
-            if (Clip)
-            {
-#if IOS || ANDROID
-                Game.GraphicsDevice.RasterizerState.ScissorTestEnable = Clip;
-#endif
-                state.ScissorTestEnable = Clip;
-                _originalClipArea = spriteBatch.GraphicsDevice.ScissorRectangle;
-                spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)ArrangedArea.X, (int)ArrangedArea.Y, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
-            }
-
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, DepthStencilState.None, state, null, TransformationMatrix);
+            // TODO: children.Draw(gameTime)
         }
 
-        protected override void EndDraw(SpriteBatch spriteBatch)
+        protected virtual void LocalDraw(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            base.EndDraw(spriteBatch);
 
-            if (Clip)
-            {
-#if IOS || ANDROID
-                Game.GraphicsDevice.RasterizerState.ScissorTestEnable = false;
-#endif
-                spriteBatch.GraphicsDevice.ScissorRectangle = _originalClipArea;
-            }
         }
 
-        protected virtual Size MeasureContentOverride(Size availableSize)
+        public virtual void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            return Size.Zero;
-        }
-
-        sealed protected override Size MeasureOverride(Size availableSize)
-        {
-            if (!Model.IsVisible)
-                return MeasuredSize;
-
-            var ignore = new Size(-1, -1);
-            var minRequestSize = new Size(Model.MinimumWidthRequest, Model.MinimumHeightRequest);
-            var requestSize = new Size(Model.WidthRequest, Model.HeightRequest);
-
-            var constrainedAvailableSize = RespectSize(availableSize, minRequestSize, requestSize, availableSize);
-
-            ContentMeasuredSize = MeasureContentOverride(constrainedAvailableSize);
-
-            return RespectSize(ContentMeasuredSize, minRequestSize, requestSize, availableSize);
-        }
-
-        static Size RespectSize(Size original, Size minimum, Size specified, Size maximum)
-        {
-            original = new Size(
-                specified.Width < 0 ? original.Width : specified.Width,
-                specified.Height < 0 ? original.Height : specified.Height
-            );
-
-            original = new Size(
-                minimum.Width < 0 ? original.Width : Math.Max(minimum.Width, original.Width),
-                minimum.Height < 0 ? original.Height : Math.Max(minimum.Height, original.Height)
-            );
-
-            original = new Size(
-                maximum.Width < 0 ? original.Width : Math.Min(maximum.Width, original.Width),
-                maximum.Height < 0 ? original.Height : Math.Min(maximum.Height, original.Height)
-            );
-
-            return original;
-        }
-
-        void IControlRenderer.Arrange(Rectangle finalRect)
-        {
-            if (!Model.IsVisible)
-                return;
-            Arrange(finalRect);
-        }
-
-        void IControlRenderer.Update(GameTime gameTime)
-        {
-            if (!Model.IsVisible)
-                return;
-            Update(gameTime);
-        }
-
-        void IControlRenderer.Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            if (!Model.IsVisible)
-                return;
-
-            BeginDraw(spriteBatch);
-            Draw(spriteBatch, gameTime);
-            EndDraw(spriteBatch);
+            // TODO: children.Update(gameTime)
         }
         #endregion
 
-        #region I3DRenderer
-        public virtual void InvalidateTransform()
+        #region 3D Transformations
+        void UpdateTransformationMatrix()
         {
-            _validTransformationMatrix = false;
+            TransformationMatrix = GetWorldTransformation(Model) * GetProjectionMatrix();
+            //RenderArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
+            _transformationBounds = Model.Bounds;
         }
 
-        Matrix GetWorldTransformation()
+        static Matrix GetWorldTransformation(Element element)
         {
             Matrix world = Matrix.Identity;
-            var currentRenderer = (IControlRenderer)this;
-            while (currentRenderer != null)
+            var currentElement = element;
+            while (currentElement != null)
             {
-                var currentVisual = currentRenderer as VisualElementRenderer;
+                var currentVisual = currentElement as VisualElement;
                 if (currentVisual != null)
-                    world *= currentVisual.GetControlTransformation();
+                    world *= GetControlTransformation(currentVisual);
 
-                currentRenderer = currentRenderer.Parent;
+                currentElement = currentElement.Parent;
             }
 
             return world;
@@ -202,31 +122,23 @@ namespace Jv.Games.Xna.XForms.Renderers
                  * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 1);
         }
 
-        public Matrix GetControlTransformation()
+        static Matrix GetControlTransformation(VisualElement element)
         {
-            var absAnchorX = (float)(ArrangedArea.Width * Model.AnchorX);
-            var absAnchorY = (float)(ArrangedArea.Height * Model.AnchorY);
+            var absAnchorX = (float)(element.Bounds.Width * element.AnchorX);
+            var absAnchorY = (float)(element.Bounds.Height * element.AnchorY);
 
             var offset = new Vector2(
-                (float)(ArrangedArea.X + Model.TranslationX - (absAnchorX * Model.Scale - absAnchorX)),
-                (float)(ArrangedArea.Y + Model.TranslationY - (absAnchorY * Model.Scale - absAnchorY))
+                (float)(element.Bounds.X + element.TranslationX - (absAnchorX * element.Scale - absAnchorX)),
+                (float)(element.Bounds.Y + element.TranslationY - (absAnchorY * element.Scale - absAnchorY))
             );
 
             return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
-                 * Matrix.CreateRotationX(MathHelper.ToRadians((float)Model.RotationX))
-                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)Model.RotationY))
-                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)Model.Rotation))
-                 * Matrix.CreateScale((float)Model.Scale)
-                 * Matrix.CreateTranslation(absAnchorX * (float)Model.Scale, absAnchorY * (float)Model.Scale, 0f)
+                 * Matrix.CreateRotationX(MathHelper.ToRadians((float)element.RotationX))
+                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)element.RotationY))
+                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)element.Rotation))
+                 * Matrix.CreateScale((float)element.Scale)
+                 * Matrix.CreateTranslation(absAnchorX * (float)element.Scale, absAnchorY * (float)element.Scale, 0f)
                  * Matrix.CreateTranslation(new Vector3(offset, 0));
-        }
-
-        void UpdateTransformationMatrix()
-        {
-            _transformationMatrixLastArea = ArrangedArea;
-            TransformationMatrix = GetWorldTransformation() * GetProjectionMatrix();
-            RenderArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
-            _validTransformationMatrix = true;
         }
         #endregion
     }
