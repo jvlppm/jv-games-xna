@@ -199,6 +199,9 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         static Matrix GetProjectionMatrix(VisualElement element)
         {
+            if (element.Bounds.Width <= 0 && element.Bounds.Height <= 0)
+                return Matrix.Identity;
+
             float dist = (float)Math.Max(element.Bounds.Width, element.Bounds.Height);
             var angle = (float)System.Math.Atan(((float)element.Bounds.Height / 2) / dist) * 2;
 
