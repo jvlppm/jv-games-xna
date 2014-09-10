@@ -23,10 +23,15 @@
             game.Components.Add(platformServices);
             Device.PlatformServices = platformServices;
 
-            RendererFactory.ScanForRenderers();
             PlatformEngine = new PlatformEngine();
 
             Game = game;
+
+            Registrar.RegisterAll(new[]{
+                typeof(ExportRendererAttribute),
+                typeof(ExportImageSourceHandlerAttribute),
+            });
+
             IsInitialized = true;
 #endif
         }

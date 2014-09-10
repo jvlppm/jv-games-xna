@@ -66,56 +66,20 @@ namespace Jv.Games.Xna.XForms.Renderers
                 _imageLoadCancellation.Cancel();
             _imageLoadCancellation = new CancellationTokenSource();
 
-            Task<Stream> getStream = null;
-
-            var fileSource = Model.Source as FileImageSource;
-
-            if (fileSource != null)
-            {
-                try
-                {
-                    _image = Forms.Game.Content.Load<Texture2D>(fileSource.File);
-                    //InvalidateMeasure();
-                    _imageLoadCancellation = null;
-                    return true;
-                }
-                catch
-                {
-#if !PORTABLE
-                    if (File.Exists(fileSource.File))
-                        getStream = Task.FromResult((Stream)File.OpenRead(fileSource.File));
-                    else
-#endif
-                    {
-                        _image = null;
-                        //InvalidateMeasure();
-                        return true;
-                    }
-                }
-            }
-
-            var streamSource = Model.Source as StreamImageSource;
-            var uriSource = Model.Source as UriImageSource;
-            if (streamSource != null)
-                getStream = streamSource.Stream(_imageLoadCancellation.Token);
-            else if (uriSource != null)
-                getStream = uriSource.GetStreamAsync(_imageLoadCancellation.Token);
-
-            if (getStream != null)
+            IImageSourceHandler handler = Registrar.Registered.GetHandler<IImageSourceHandler>(Model.Source.GetType());
+            if (handler != null)
             {
                 Model.IsLoading = true;
-                getStream.ContinueWith(t =>
+                var load = handler.LoadImageAsync(Model.Source, _imageLoadCancellation.Token);
+                load.ContinueWith(t =>
                 {
-                    Xamarin.Forms.Device.BeginInvokeOnMainThread(delegate
+                    try
                     {
-                        if (t.Result == null)
-                            _image = null;
-                        else
-                            _image = Texture2D.FromStream(Forms.Game.GraphicsDevice, t.Result);
-                        //InvalidateMeasure();
-                        Model.IsLoading = false;
-                        _imageLoadCancellation = null;
-                    });
+                        _image = t.Result;
+                        Model.NativeSizeChanged();
+                    }
+                    catch { }
+                    Model.IsLoading = false;
                 });
             }
 

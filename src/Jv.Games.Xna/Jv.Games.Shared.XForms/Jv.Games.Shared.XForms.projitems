@@ -10,9 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ElementView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExportRendererAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Forms.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IImageSourceHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\IsolatedStorageFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformServices.cs" />
@@ -24,5 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\ImageRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\VisualElementRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DefaultImageSourceHandler.cs" />
   </ItemGroup>
 </Project>

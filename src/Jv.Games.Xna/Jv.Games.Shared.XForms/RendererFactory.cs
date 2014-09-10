@@ -55,12 +55,5 @@
             component.SetPage(page);
             return component;
         }
-
-        internal static void ScanForRenderers()
-        {
-            Registrar.RegisterAll(new[]{
-                typeof(ExportRendererAttribute)
-            });
-        }
     }
 }
