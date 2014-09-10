@@ -177,8 +177,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         protected virtual void Arrange()
         {
-            TransformationMatrix = GetWorldTransformation(Model) * GetProjectionMatrix();
-            //RenderArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
+            TransformationMatrix = GetWorldTransformation(Model) * GetProjectionMatrix(Model);
             _transformationBounds = Model.Bounds;
         }
 
@@ -198,17 +197,19 @@ namespace Jv.Games.Xna.XForms.Renderers
             return world;
         }
 
-        static Matrix GetProjectionMatrix()
+        static Matrix GetProjectionMatrix(VisualElement element)
         {
-            var viewport = Forms.Game.GraphicsDevice.Viewport;
+            float dist = (float)Math.Max(element.Bounds.Width, element.Bounds.Height);
+            var angle = (float)System.Math.Atan(((float)element.Bounds.Height / 2) / dist) * 2;
 
-            float dist = (float)Math.Max(viewport.Width, viewport.Height);
-            var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
+            var centerX = element.Bounds.Left + element.Bounds.Width / 2;
+            var centerY = element.Bounds.Top + element.Bounds.Height / 2;
 
-            return Matrix.CreateTranslation(-(float)viewport.Width / 2, -(float)viewport.Height / 2, -dist)
-                 * Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), 0.001f, dist * 2)
+            return Matrix.CreateTranslation(-(float)centerX, -(float)centerY, -dist)
+                 * Matrix.CreatePerspectiveFieldOfView(angle, (float)(element.Bounds.Width / element.Bounds.Height), 0.001f, dist * 2)
                  * Matrix.CreateTranslation(1, 1, 0)
-                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 1);
+                 * Matrix.CreateScale((float)element.Bounds.Width / 2, (float)element.Bounds.Height / 2, 1)
+                 * Matrix.CreateTranslation((float)element.Bounds.Left, (float)element.Bounds.Top, 0);
         }
 
         static Matrix GetControlTransformation(VisualElement element)
