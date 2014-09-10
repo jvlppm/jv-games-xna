@@ -5,18 +5,18 @@
     using System.Linq;
     using Xamarin.Forms;
 
-    public delegate bool PropertyHandler(BindableProperty property);
+    public delegate void PropertyHandler(BindableProperty property);
 
     public class PropertyTracker
     {
         BindableObject _target;
         readonly Dictionary<string, List<BindableProperty>> PropertiesByName;
-        readonly Dictionary<BindableProperty, Stack<PropertyHandler>> PropertyHandlers;
+        readonly Dictionary<BindableProperty, List<PropertyHandler>> PropertyHandlers;
 
         public PropertyTracker()
         {
             PropertiesByName = new Dictionary<string, List<BindableProperty>>();
-            PropertyHandlers = new Dictionary<BindableProperty, Stack<PropertyHandler>>();
+            PropertyHandlers = new Dictionary<BindableProperty, List<PropertyHandler>>();
         }
 
         public void SetTarget(BindableObject obj)
@@ -53,14 +53,14 @@
                     propStore.Add(property);
             }
 
-            Stack<PropertyHandler> handlStore;
+            List<PropertyHandler> handlStore;
             if(!PropertyHandlers.TryGetValue(property, out handlStore))
             {
-                handlStore = new Stack<PropertyHandler>();
+                handlStore = new List<PropertyHandler>();
                 PropertyHandlers.Add(property, handlStore);
             }
 
-            handlStore.Push(handler);
+            handlStore.Add(handler);
 
             if (_target != null)
                 handler(property);
@@ -78,11 +78,11 @@
 
         void NotifyPropertyChanged(BindableProperty property)
         {
-            Stack<PropertyHandler> handlers;
+            List<PropertyHandler> handlers;
             if (!PropertyHandlers.TryGetValue(property, out handlers))
                 return;
 
-            handlers.FirstOrDefault(h => h(property));
+            handlers.ForEach(h => h(property));
         }
     }
 }

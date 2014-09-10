@@ -67,7 +67,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
 
         #region Property Handlers
-        protected virtual bool Handle_TextColor(BindableProperty property)
+        void Handle_TextColor(BindableProperty property)
         {
             if (Model.TextColor == default(Xamarin.Forms.Color))
                 _textColor = LabelRenderer.DefaultTextColor;
@@ -75,10 +75,9 @@ namespace Jv.Games.Xna.XForms.Renderers
                 _textColor = Model.TextColor.ToXnaColor();
 
             UpdateAlignment();
-            return true;
         }
 
-        protected virtual bool Handle_Font(BindableProperty property)
+        void Handle_Font(BindableProperty property)
         {
             if (Model.Font.FontFamily != null)
                 _font = Forms.Game.Content.Load<SpriteFont>(Model.Font.FontFamily);
@@ -86,13 +85,11 @@ namespace Jv.Games.Xna.XForms.Renderers
                 _font = null;
 
             UpdateAlignment();
-            return true;
         }
 
-        protected virtual bool Handle_ArrangeProperty(BindableProperty property)
+        void Handle_ArrangeProperty(BindableProperty property)
         {
             UpdateAlignment();
-            return true;
         }
 
         static float GetAlignOffset(TextAlignment alignment, float textSize, float renderSize)

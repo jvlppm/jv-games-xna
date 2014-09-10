@@ -60,7 +60,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
 
         #region Property Handlers
-        protected virtual bool Handle_Source(BindableProperty prop)
+        async void Handle_Source(BindableProperty prop)
         {
             if (_imageLoadCancellation != null)
                 _imageLoadCancellation.Cancel();
@@ -70,20 +70,15 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (handler != null)
             {
                 Model.IsLoading = true;
-                var load = handler.LoadImageAsync(Model.Source, _imageLoadCancellation.Token);
-                load.ContinueWith(t =>
+                try
                 {
-                    try
-                    {
-                        _image = t.Result;
-                        Model.NativeSizeChanged();
-                    }
-                    catch { }
-                    Model.IsLoading = false;
-                });
+                    _image = await handler.LoadImageAsync(Model.Source, _imageLoadCancellation.Token);
+                    _imageLoadCancellation = null;
+                    Model.NativeSizeChanged();
+                }
+                catch { }
+                Model.IsLoading = false;
             }
-
-            return true;
         }
         #endregion
     }

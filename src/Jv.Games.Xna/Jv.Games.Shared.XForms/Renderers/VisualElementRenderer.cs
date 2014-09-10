@@ -159,10 +159,9 @@ namespace Jv.Games.Xna.XForms.Renderers
         #endregion
 
         #region 3D Transformations
-        bool Handle_Transformation(BindableProperty prop)
+        void Handle_Transformation(BindableProperty prop)
         {
             InvalidateArrange();
-            return true;
         }
 
         public virtual void InvalidateArrange()
