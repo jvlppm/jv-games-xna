@@ -36,7 +36,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             var font = _font ?? DefaultFont;
 
-            if (font == null)
+            if (font == null || Model.Text == null)
                 return base.Measure(availableSize);
 
             var textMeasure = font.MeasureString(Model.Text);
@@ -47,7 +47,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         protected override void LocalDraw(Microsoft.Xna.Framework.GameTime gameTime)
         {
             var font = _font ?? DefaultFont;
-            if (font == null)
+            if (font == null || Model.Text == null)
                 return;
 
             SpriteBatch.DrawString(font, Model.Text, _textOffset, Color.White);
