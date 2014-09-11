@@ -17,17 +17,17 @@
         /// <summary>
         /// Texture image used to render this frame.
         /// </summary>
-        public Texture2D Texture { get; private set; }
+        public readonly Texture2D Texture;
 
         /// <summary>
         /// The frame's position inside the sprite sheet.
         /// </summary>
-        public Rectangle Rectangle { get; private set; }
+        public readonly Rectangle Rectangle;
 
         /// <summary>
         /// The speed factor in which the annimation will be played.
         /// </summary>
-        public float DurationWeight { get; private set; }
+        public float DurationWeight;
 
         /// <summary>
         /// The Width of this frame.

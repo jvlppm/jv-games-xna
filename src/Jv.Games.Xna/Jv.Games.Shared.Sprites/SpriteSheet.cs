@@ -5,13 +5,34 @@
     using System;
     using System.Linq;
 
+    /// <summary>
+    /// Sprite sheet image reader.
+    /// </summary>
     public class SpriteSheet
     {
-        public Texture2D Texture { get; private set; }
-        public int Columns { get; private set; }
-        public int Rows { get; private set; }
-        public Point FrameSize { get; private set; }
+        /// <summary>
+        /// Sprite sheet image.
+        /// </summary>
+        public readonly Texture2D Texture;
+        /// <summary>
+        /// Number of image frames per row.
+        /// </summary>
+        public readonly int Columns;
+        /// <summary>
+        /// Number of image frames per column.
+        /// </summary>
+        public readonly int Rows;
+        /// <summary>
+        /// The size in pixels of each image frame.
+        /// </summary>
+        public readonly Point FrameSize;
 
+        /// <summary>
+        /// Creates a new <see cref="Jv.Games.Xna.Sprites.SpriteSheet"/> grid.
+        /// </summary>
+        /// <param name="texture">Texture image containing the animations.</param>
+        /// <param name="columns">The number of columns this sprite sheet contains.</param>
+        /// <param name="rows">The number of rows this sprite sheet contains.</param>
         public SpriteSheet(Texture2D texture, int columns, int rows)
         {
             if (texture == null)
@@ -30,6 +51,11 @@
             FrameSize = new Point(texture.Width / columns, texture.Height / rows);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Jv.Games.Xna.Sprites.SpriteSheet"/>
+        /// </summary>
+        /// <param name="texture">Texture image containing the animations.</param>
+        /// <param name="frameSize">The size in pixels of each image frame.</param>
         public SpriteSheet(Texture2D texture, Point frameSize)
         {
             if (texture == null)
@@ -45,6 +71,14 @@
             FrameSize = frameSize;
         }
 
+        /// <summary>
+        /// Extracts a <see cref="Jv.Games.Xna.Sprites.Animation"/> with the specified frame locations.
+        /// </summary>
+        /// <param name="name">Name of the extracted animation.</param>
+        /// <param name="frameRects">Location coordinates of each frame in the animation.</param>
+        /// <param name="frameDuration">How long each frame is displayed, before switching to the next frame.</param>
+        /// <param name="repeat"><c>True</c> if the animation should repeat after the last frame finishes.</param>
+        /// <returns>The extracted animation.</returns>
         public Animation GetAnimation(string name, Rectangle[] frameRects, TimeSpan frameDuration, bool repeat = true)
         {
             if (frameRects.Length <= 0 ||
@@ -62,6 +96,16 @@
             return new Animation(name, frames, duration);
         }
 
+        /// <summary>
+        /// Extracts a <see cref="Jv.Games.Xna.Sprites.Animation"/> with the specified frames.
+        /// </summary>
+        /// <param name="name">Name of the extracted animation.</param>
+        /// <param name="frameIndexes">
+        /// Zero based index of the frame, inside the sprite sheet grid.
+        /// </param>
+        /// <param name="frameDuration">How long each frame is displayed, before switching to the next frame.</param>
+        /// <param name="repeat"><c>True</c> if the animation should repeat after the last frame finishes.</param>
+        /// <returns>The extracted animation.</returns>
         public Animation GetAnimation(string name, int[] frameIndexes, TimeSpan frameDuration, bool repeat = true)
         {
             if (frameIndexes.Length <= 0 || frameIndexes.Any(index => index < 0 || index >= Columns * Rows))
@@ -77,6 +121,16 @@
             return new Animation(name, frames, duration);
         }
 
+        /// <summary>
+        /// Extracts a <see cref="Jv.Games.Xna.Sprites.Animation"/> from a specified animation row.
+        /// </summary>
+        /// <param name="name">Name of the extracted animation.</param>
+        /// <param name="line">Zero based index of the animation line.</param>
+        /// <param name="count">How many sequential frames should be picked.</param>
+        /// <param name="frameDuration">How long each frame is displayed, before switching to the next frame.</param>
+        /// <param name="repeat"><c>True</c> if the animation should repeat after the last frame finishes.</param>
+        /// <param name="skipFrames">How many frames should be ignored from the line, before starting to pick frames.</param>
+        /// <returns>The extracted animation.</returns>
         public Animation GetAnimation(string name, int line, int count, TimeSpan frameDuration, bool repeat = true, int skipFrames = 0)
         {
             if (line < 0 || line > Rows)
@@ -94,6 +148,11 @@
             return GetAnimation(name, indexes, frameDuration, repeat);
         }
 
+        /// <summary>
+        /// Extracts a single frame from the sprite sheet.
+        /// </summary>
+        /// <param name="index">Zero based index of the frame, inside the sprite sheet grid.</param>
+        /// <returns>The extracted frame.</returns>
         public Frame GetFrame(int index)
         {
             if (index < 0 || index >= Columns * Rows)
