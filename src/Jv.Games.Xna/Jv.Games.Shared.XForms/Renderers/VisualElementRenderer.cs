@@ -65,6 +65,8 @@ namespace Jv.Games.Xna.XForms.Renderers
                 PropertyTracker.SetTarget(value);
             }
         }
+
+        public IRenderer Parent { get; set; }
         #endregion
 
         #region Constructors
@@ -237,11 +239,17 @@ namespace Jv.Games.Xna.XForms.Renderers
         #region Child track
         void Model_ChildAdded(object sender, ElementEventArgs e)
         {
-            _childrenRenderers.Add(e.Element, RendererFactory.Create(e.Element));
+            var childRenderer = RendererFactory.Create(e.Element);
+            childRenderer.Parent = this;
+            _childrenRenderers.Add(e.Element, childRenderer);
         }
 
         void Model_ChildRemoved(object sender, ElementEventArgs e)
         {
+            IRenderer childRenderer;
+            if (_childrenRenderers.TryGetValue(e.Element, out childRenderer))
+                childRenderer.Parent = null;
+
             _childrenRenderers.Remove(e.Element);
         }
         #endregion

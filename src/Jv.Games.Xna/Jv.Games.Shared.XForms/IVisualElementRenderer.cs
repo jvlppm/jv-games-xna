@@ -7,7 +7,7 @@
 
     public interface IRenderer : IRegisterable
     {
-        //Element Model { get; set; }
+        IRenderer Parent { get; set; }
 
         SizeRequest Measure(Size availableSize);
         void Draw(GameTime gameTime);
