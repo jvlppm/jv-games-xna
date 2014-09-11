@@ -161,16 +161,16 @@ namespace Jv.Games.Xna.XForms.Renderers
         #region 3D Transformations
         void Handle_Transformation(BindableProperty prop)
         {
-            InvalidateArrange();
+            InvalidateTransformations();
         }
 
-        public virtual void InvalidateArrange()
+        public void InvalidateTransformations()
         {
             _transformationBounds = default(Rectangle);
             foreach (var child in _childrenRenderers)
             {
                 var visualRenderer = child.Value as IVisualElementRenderer;
-                visualRenderer.InvalidateArrange();
+                visualRenderer.InvalidateTransformations();
             }
         }
 
@@ -243,6 +243,13 @@ namespace Jv.Games.Xna.XForms.Renderers
         void Model_ChildRemoved(object sender, ElementEventArgs e)
         {
             _childrenRenderers.Remove(e.Element);
+        }
+        #endregion
+
+        #region Protected Methods
+        protected void InvalidateMeasure()
+        {
+            Model.NativeSizeChanged();
         }
         #endregion
     }
