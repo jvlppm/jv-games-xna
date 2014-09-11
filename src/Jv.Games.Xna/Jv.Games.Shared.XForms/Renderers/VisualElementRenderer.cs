@@ -201,7 +201,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (element.Bounds.Width <= 0 && element.Bounds.Height <= 0)
                 return Matrix.Identity;
 
-            float dist = (float)Math.Max(element.Bounds.Width, element.Bounds.Height);
+            float dist = (float)160;
             var angle = (float)System.Math.Atan(((float)element.Bounds.Height / 2) / dist) * 2;
 
             var centerX = element.Bounds.Left + element.Bounds.Width / 2;
