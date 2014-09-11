@@ -50,7 +50,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (font == null || Model.Text == null)
                 return;
 
-            SpriteBatch.DrawString(font, Model.Text, _textOffset, Color.White);
+            SpriteBatch.DrawString(font, Model.Text, _textOffset, _textColor);
         }
 
         protected override void Arrange()
