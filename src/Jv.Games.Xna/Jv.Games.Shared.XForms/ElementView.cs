@@ -7,14 +7,15 @@
     public class ElementView
     {
         public readonly IRenderer Renderer;
-        public readonly Xamarin.Forms.Element Element;
+        public readonly Xamarin.Forms.VisualElement Element;
 
         public ElementView(Game game, Xamarin.Forms.VisualElement element)
         {
             Renderer = RendererFactory.Create(element);
+            Element = element;
         }
 
-        public ElementView(Game game, IRenderer renderer, Xamarin.Forms.Element element)
+        public ElementView(Game game, IRenderer renderer, Xamarin.Forms.VisualElement element)
         {
             Renderer = renderer;
             Element = element;

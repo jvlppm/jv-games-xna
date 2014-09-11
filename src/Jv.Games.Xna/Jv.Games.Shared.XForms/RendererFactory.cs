@@ -17,14 +17,14 @@
             obj.SetValue(RendererProperty, renderer);
         }
 
-        public static IRenderer Create(Element element)
+        internal static IRenderer Create(Element element)
         {
             if (element is VisualElement)
                 return Create((VisualElement)element);
             throw new NotImplementedException();
         }
 
-        public static IVisualElementRenderer Create(VisualElement element)
+        internal static IVisualElementRenderer Create(VisualElement element)
         {
 #if PORTABLE
             throw new NotImplementedException();
@@ -54,6 +54,11 @@
             var component = new RendererGameComponent(Forms.Game);
             component.SetPage(page);
             return component;
+        }
+
+        public static RendererGameComponent AsGameComponent(this View view)
+        {
+            return new ContentPage { Content = view }.AsGameComponent();
         }
     }
 }

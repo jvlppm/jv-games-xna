@@ -7,9 +7,15 @@
 
     public class RendererGameComponent : Microsoft.Xna.Framework.DrawableGameComponent, IPlatform
     {
+        Page _page;
         ElementView _view;
         object _bindingContext;
-        public Xamarin.Forms.Page PageRoot { get; private set; }
+
+        public Xamarin.Forms.Rectangle Area
+        {
+            get { return Page.Bounds; }
+            set { Page.Layout(value); }
+        }
 
         public RendererGameComponent(Microsoft.Xna.Framework.Game game)
             : base(game)
@@ -50,17 +56,14 @@
             get { return Forms.PlatformEngine; }
         }
 
-        public Page Page
-        {
-            get { return PageRoot; }
-        }
+        public Page Page { get { return _page; } }
 
         public void SetPage(Page newRoot)
         {
+            _page = newRoot;
+            _page.Platform = this;
             _view = new ElementView(Game, newRoot);
-            PageRoot = newRoot;
-            PageRoot.Platform = this;
-            newRoot.Layout(new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height));
+            Area = new Rectangle(Forms.Game.GraphicsDevice.Viewport.X, Forms.Game.GraphicsDevice.Viewport.Y, Forms.Game.GraphicsDevice.Viewport.Width, Forms.Game.GraphicsDevice.Viewport.Height);
         }
     }
 }

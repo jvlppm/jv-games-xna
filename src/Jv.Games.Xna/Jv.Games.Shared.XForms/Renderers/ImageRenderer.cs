@@ -74,7 +74,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                 {
                     _image = await handler.LoadImageAsync(Model.Source, _imageLoadCancellation.Token);
                     _imageLoadCancellation = null;
-                    Model.NativeSizeChanged();
+                    InvalidateMeasure();
                 }
                 catch { }
                 Model.IsLoading = false;
