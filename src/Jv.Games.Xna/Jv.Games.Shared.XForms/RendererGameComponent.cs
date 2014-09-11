@@ -8,6 +8,7 @@
     public class RendererGameComponent : Microsoft.Xna.Framework.DrawableGameComponent, IPlatform
     {
         ElementView _view;
+        object _bindingContext;
         public Xamarin.Forms.Page PageRoot { get; private set; }
 
         public RendererGameComponent(Microsoft.Xna.Framework.Game game)
@@ -17,7 +18,7 @@
 
         public override void Draw(GameTime gameTime)
         {
-            if(_view != null)
+            if (_view != null)
                 _view.Draw(gameTime);
             base.Draw(gameTime);
         }
@@ -31,13 +32,14 @@
 
         public object BindingContext
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get { return _bindingContext; }
             set
             {
-                throw new NotImplementedException();
+                if (_bindingContext == value)
+                    return;
+                _bindingContext = value;
+                if (BindingContextChanged != null)
+                    BindingContextChanged(this, EventArgs.Empty);
             }
         }
 
