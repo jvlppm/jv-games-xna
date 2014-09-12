@@ -203,17 +203,15 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (element.Bounds.Width <= 0 && element.Bounds.Height <= 0)
                 return Matrix.Identity;
 
-            float dist = (float)160;
-            var angle = (float)System.Math.Atan(((float)element.Bounds.Height / 2) / dist) * 2;
+            var viewport = Forms.Game.GraphicsDevice.Viewport;
 
-            var centerX = element.Bounds.Left + element.Bounds.Width / 2;
-            var centerY = element.Bounds.Top + element.Bounds.Height / 2;
+            float dist = (float)Math.Max(viewport.Width, viewport.Height) * 2;
+            var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
 
-            return Matrix.CreateTranslation(-(float)centerX, -(float)centerY, -dist)
-                 * Matrix.CreatePerspectiveFieldOfView(angle, (float)(element.Bounds.Width / element.Bounds.Height), 0.001f, dist * 2)
+            return Matrix.CreateTranslation(-(float)viewport.Width / 2, -(float)viewport.Height / 2, -dist)
+                 * Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), 0.001f, dist * 2)
                  * Matrix.CreateTranslation(1, 1, 0)
-                 * Matrix.CreateScale((float)element.Bounds.Width / 2, (float)element.Bounds.Height / 2, 1)
-                 * Matrix.CreateTranslation((float)element.Bounds.Left, (float)element.Bounds.Top, 0);
+                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 1);
         }
 
         static Matrix GetControlTransformation(VisualElement element)
