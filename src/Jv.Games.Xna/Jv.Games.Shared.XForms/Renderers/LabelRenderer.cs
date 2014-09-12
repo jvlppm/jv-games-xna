@@ -40,7 +40,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                 return base.Measure(availableSize);
 
             var textMeasure = font.MeasureString(Model.Text);
-            _measuredSize = new SizeRequest(new Size(textMeasure.X, textMeasure.Y), default(Size));
+            _measuredSize = new SizeRequest(new Size(textMeasure.X, textMeasure.Y));
             return _measuredSize;
         }
 
