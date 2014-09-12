@@ -46,19 +46,25 @@
 #endif
         }
 
-        public static RendererGameComponent AsGameComponent(this Page page)
+        public static UIGameComponent AsGameComponent(this VisualElement visual)
         {
-            if (!Forms.IsInitialized)
-                throw new InvalidOperationException("Xamarin.Forms not initialized");
+            var component = new UIGameComponent();
+            var page = visual as Page;
 
-            var component = new RendererGameComponent(Forms.Game);
-            component.SetPage(page);
-            return component;
-        }
+            if (page != null)
+            {
+                component.SetPage(page);
+                return component;
+            }
 
-        public static RendererGameComponent AsGameComponent(this View view)
-        {
-            return new ContentPage { Content = view }.AsGameComponent();
+            var view = visual as View;
+            if(view != null)
+            {
+                component.SetPage(new ContentPage { Content = view });
+                return component;
+            }
+
+            throw new ArgumentException("Not supported visual element type", "visual");
         }
     }
 }

@@ -1,38 +1,38 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
+    using Jv.Games.Xna.XForms.Renderers;
     using System;
     using Xamarin.Forms;
     using Game = Microsoft.Xna.Framework.Game;
     using GameTime = Microsoft.Xna.Framework.GameTime;
 
-    public class RendererGameComponent : Microsoft.Xna.Framework.DrawableGameComponent, IPlatform
+    public class UIGameComponent : Microsoft.Xna.Framework.DrawableGameComponent, IPlatform
     {
         Page _page;
-        ElementView _view;
+        public IRenderer _renderer;
         object _bindingContext;
 
-        public Xamarin.Forms.Rectangle Area
-        {
-            get { return Page.Bounds; }
-            set { Page.Layout(value); }
-        }
+        public Xamarin.Forms.Rectangle? Area { get; set; }
 
-        public RendererGameComponent(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public UIGameComponent()
+            : base(Forms.Game)
         {
         }
 
         public override void Draw(GameTime gameTime)
         {
-            if (_view != null)
-                _view.Draw(gameTime);
+            if (_renderer != null)
+            {
+                _page.Layout(Area ?? Forms.Game.GraphicsDevice.Viewport.Bounds.ToXFormsRectangle());
+                _renderer.Draw(gameTime);
+            }
             base.Draw(gameTime);
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (_view != null)
-                _view.Update(gameTime);
+            if (_renderer != null)
+                _renderer.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -62,8 +62,7 @@
         {
             _page = newRoot;
             _page.Platform = this;
-            _view = new ElementView(Game, newRoot);
-            Area = new Rectangle(Forms.Game.GraphicsDevice.Viewport.X, Forms.Game.GraphicsDevice.Viewport.Y, Forms.Game.GraphicsDevice.Viewport.Width, Forms.Game.GraphicsDevice.Viewport.Height);
+            _renderer = RendererFactory.Create(newRoot);
         }
     }
 }
