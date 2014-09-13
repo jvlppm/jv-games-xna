@@ -27,11 +27,18 @@ namespace Jv.Games.Xna.XForms
             var streamSource = imageSource as StreamImageSource;
             var uriSource = imageSource as UriImageSource;
 
-#if !PORTABLE
             var fileSource = imageSource as FileImageSource;
             if (fileSource != null)
-                getStream = Task.FromResult((Stream) System.IO.File.OpenRead(fileSource.File));
+            {
+#if !PORTABLE
+                if (File.Exists(fileSource.File))
+                    getStream = Task.FromResult((Stream)System.IO.File.OpenRead(fileSource.File));
+                else
 #endif
+                {
+                    return Forms.Game.Content.Load<Texture2D>(fileSource.File);
+                }
+            }
             if (streamSource != null)
                 getStream = streamSource.Stream(cancellationToken);
             else if (uriSource != null)

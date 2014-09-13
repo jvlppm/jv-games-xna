@@ -14,7 +14,7 @@ namespace Sample.XForms
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Xamarin.Forms.Page _ui;
+        Xamarin.Forms.VisualElement _ui;
 
         public Game1()
         {
@@ -71,7 +71,7 @@ namespace Sample.XForms
                         {
                             HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
-                            Source = "content:///TestImage"
+                            Source = "TestImage"
                         }
                     }
                 }
