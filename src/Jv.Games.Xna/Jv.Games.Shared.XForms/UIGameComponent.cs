@@ -1,15 +1,13 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
-    using Jv.Games.Xna.XForms.Renderers;
     using System;
     using Xamarin.Forms;
-    using Game = Microsoft.Xna.Framework.Game;
     using GameTime = Microsoft.Xna.Framework.GameTime;
 
     public class UIGameComponent : Microsoft.Xna.Framework.DrawableGameComponent, IPlatform
     {
         Page _page;
-        public IRenderer _renderer;
+        IRenderer _renderer;
         object _bindingContext;
 
         public Xamarin.Forms.Rectangle? Area { get; set; }
