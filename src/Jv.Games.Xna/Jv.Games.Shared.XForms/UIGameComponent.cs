@@ -10,7 +10,7 @@
         IRenderer _renderer;
         object _bindingContext;
 
-        public Xamarin.Forms.Rectangle? Area { get; set; }
+        public Xamarin.Forms.Rectangle? Area;
 
         public UIGameComponent()
             : base(Forms.Game)

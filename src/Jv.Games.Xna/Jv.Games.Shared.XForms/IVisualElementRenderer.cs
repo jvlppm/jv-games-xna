@@ -1,9 +1,7 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
     using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
     using Xamarin.Forms;
-    using Rectangle=Xamarin.Forms.Rectangle;
 
     public interface IRenderer : IRegisterable
     {

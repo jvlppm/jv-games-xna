@@ -1,6 +1,5 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
-    using Jv.Games.Xna.XForms.Renderers;
     using System;
     using Xamarin.Forms;
 

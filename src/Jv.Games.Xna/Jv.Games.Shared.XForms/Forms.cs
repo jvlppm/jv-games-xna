@@ -35,7 +35,5 @@
             IsInitialized = true;
 #endif
         }
-
-        
     }
 }

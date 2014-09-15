@@ -12,14 +12,7 @@ namespace Jv.Games.Xna.XForms
     using System.Threading.Tasks;
     using Xamarin.Forms;
 
-    interface ISpecificPlatformServices : IGameComponent
-    {
-        System.Reflection.Assembly[] GetAssemblies();
-        void OpenUriAction(Uri uri);
-        IIsolatedStorageFile GetUserStoreForApplication();
-    }
-
-    class PlatformServices : GameComponent, IPlatformServices, ISpecificPlatformServices
+    class PlatformServices : GameComponent, IPlatformServices
     {
         readonly Context UpdateContext;
         readonly HttpClient HttpClient;
