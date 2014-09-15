@@ -22,6 +22,26 @@ namespace Jv.Games.Xna.XForms.Renderers
             get { return (TModel)base.Model; }
             set { base.Model = value; }
         }
+
+        protected virtual void OnModelLoad(TModel model)
+        {
+            base.OnModelLoad(model);
+        }
+
+        protected virtual void OnModelUnload(TModel model)
+        {
+            base.OnModelUnload(model);
+        }
+
+        sealed protected override void OnModelLoad(VisualElement model)
+        {
+            OnModelLoad((TModel)model);
+        }
+
+        sealed protected override void OnModelUnload(VisualElement model)
+        {
+            OnModelUnload((TModel)model);
+        }
     }
 
     public class VisualElementRenderer : IVisualElementRenderer
@@ -46,27 +66,20 @@ namespace Jv.Games.Xna.XForms.Renderers
                     return;
 
                 if (_model != null)
-                {
-                    _model.ChildAdded -= Model_ChildAdded;
-                    _model.ChildRemoved -= Model_ChildRemoved;
-                }
+                    OnModelUnload(_model);
+
                 _model = value;
 
                 if (_model != null)
-                {
-                    _childrenRenderers = value.LogicalChildren.ToDictionary(c => c, RendererFactory.Create);
-                    _model.ChildAdded += Model_ChildAdded;
-                    _model.ChildRemoved += Model_ChildRemoved;
-                }
-                else
-                {
-                    _childrenRenderers = null;
-                }
+                    OnModelLoad(_model);
+
                 PropertyTracker.SetTarget(value);
             }
         }
 
         public IRenderer Parent { get; set; }
+
+        public bool IsVisible { get; set; }
         #endregion
 
         #region Constructors
@@ -75,6 +88,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (!Forms.IsInitialized)
                 throw new InvalidOperationException("Xamarin.Forms not initialized");
 
+            IsVisible = true;
             SpriteBatch = new SpriteBatch(Forms.Game.GraphicsDevice);
             PropertyTracker = new PropertyTracker();
 
@@ -95,6 +109,9 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public void Draw(Microsoft.Xna.Framework.GameTime gameTime)
         {
+            if (!IsVisible)
+                return;
+
             Render(gameTime);
 
             if (_childrenRenderers != null)
@@ -152,6 +169,9 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public virtual void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
+            if (!IsVisible)
+                return;
+
             if (_childrenRenderers != null)
             {
                 foreach (var childRenderer in _childrenRenderers.Values)
@@ -256,6 +276,20 @@ namespace Jv.Games.Xna.XForms.Renderers
         protected void InvalidateMeasure()
         {
             Model.NativeSizeChanged();
+        }
+
+        protected virtual void OnModelUnload(VisualElement model)
+        {
+            _childrenRenderers = null;
+            model.ChildAdded -= Model_ChildAdded;
+            model.ChildRemoved -= Model_ChildRemoved;
+        }
+
+        protected virtual void OnModelLoad(VisualElement model)
+        {
+            _childrenRenderers = model.LogicalChildren.ToDictionary(c => c, RendererFactory.Create);
+            model.ChildAdded += Model_ChildAdded;
+            model.ChildRemoved += Model_ChildRemoved;
         }
         #endregion
     }

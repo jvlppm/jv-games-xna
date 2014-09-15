@@ -36,7 +36,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             var font = _font ?? DefaultFont;
 
-            if (font == null || Model.Text == null)
+            if (font == null || Model.Text == null || !IsVisible)
                 return base.Measure(availableSize);
 
             var textMeasure = font.MeasureString(Model.Text);

@@ -23,7 +23,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public override SizeRequest Measure(Size availableSize)
         {
-            if (_image == null)
+            if (_image == null || !IsVisible)
                 return default(SizeRequest);
 
             if(double.IsPositiveInfinity(availableSize.Width))

@@ -6,6 +6,7 @@
     public interface IRenderer : IRegisterable
     {
         IRenderer Parent { get; set; }
+        bool IsVisible { get; set; }
 
         SizeRequest Measure(Size availableSize);
         void Draw(GameTime gameTime);
