@@ -79,6 +79,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public IRenderer Parent { get; set; }
 
+        public IEnumerable<IRenderer> Children { get { return _childrenRenderers.Values; } }
+
         public bool IsVisible { get; set; }
         #endregion
 
@@ -104,7 +106,24 @@ namespace Jv.Games.Xna.XForms.Renderers
         #region IRenderer
         public virtual SizeRequest Measure(Size availableSize)
         {
-            return default(SizeRequest);
+            SizeRequest size = new SizeRequest();
+
+            foreach (var child in Children)
+            {
+                var visualChild = child as IVisualElementRenderer;
+                var c = visualChild != null ? visualChild.Model.GetSizeRequest(availableSize.Width, availableSize.Height)
+                                            : child.Measure(availableSize);
+
+                size.Minimum = new Size(
+                    Math.Max(c.Minimum.Width, size.Minimum.Width),
+                    Math.Max(c.Minimum.Height, size.Minimum.Height));
+
+                size.Request = new Size(
+                    Math.Max(c.Request.Width, size.Request.Width),
+                    Math.Max(c.Request.Height, size.Request.Height));
+            }
+
+            return size;
         }
 
         public void Draw(Microsoft.Xna.Framework.GameTime gameTime)

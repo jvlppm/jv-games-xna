@@ -25,9 +25,6 @@
 
         internal static IVisualElementRenderer Create(VisualElement element)
         {
-#if PORTABLE
-            throw new NotImplementedException();
-#else
             if (!Forms.IsInitialized)
                 throw new InvalidOperationException("Xamarin.Forms not initialized");
 
@@ -42,7 +39,6 @@
                 SetRenderer(element, renderer);
             }
             return renderer;
-#endif
         }
 
         public static UIGameComponent AsGameComponent(this VisualElement visual)

@@ -57,4 +57,7 @@
       <Name>Jv.Games.Portable</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="README.txt" />
+  </ItemGroup>
 </Project>

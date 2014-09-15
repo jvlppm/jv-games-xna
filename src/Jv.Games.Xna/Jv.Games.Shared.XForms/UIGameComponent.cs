@@ -7,7 +7,7 @@
     public class UIGameComponent : Microsoft.Xna.Framework.DrawableGameComponent, IPlatform
     {
         Page _page;
-        IRenderer _renderer;
+        IVisualElementRenderer _renderer;
         object _bindingContext;
 
         public Xamarin.Forms.Rectangle? Area;

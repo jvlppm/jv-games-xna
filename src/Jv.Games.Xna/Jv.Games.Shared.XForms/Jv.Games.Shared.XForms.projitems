@@ -9,7 +9,6 @@
     <Import_RootNamespace>Jv.Games.Xna.XForms</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ElementView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExportRendererAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\Extensions.cs" />

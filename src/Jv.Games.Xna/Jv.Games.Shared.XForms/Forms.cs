@@ -12,9 +12,6 @@
 
         public static void Init(Game game)
         {
-#if PORTABLE
-            throw new System.NotImplementedException();
-#else
             if (IsInitialized)
                 return;
 
@@ -33,7 +30,6 @@
             });
 
             IsInitialized = true;
-#endif
         }
     }
 }

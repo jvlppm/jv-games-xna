@@ -1,16 +1,17 @@
-﻿#if !PORTABLE
-namespace Jv.Games.Xna.XForms
+﻿namespace Jv.Games.Xna.XForms
 {
     using Jv.Games.Xna.Context;
     using Microsoft.Xna.Framework;
     using System;
     using System.Diagnostics;
     using System.IO;
-    using System.IO.IsolatedStorage;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Xamarin.Forms;
+#if !PORTABLE
+    using System.IO.IsolatedStorage;
+#endif
 
     class PlatformServices : GameComponent, IPlatformServices
     {
@@ -103,20 +104,31 @@ namespace Jv.Games.Xna.XForms
 
         public System.Reflection.Assembly[] GetAssemblies()
         {
+#if PORTABLE
+            throw new NotImplementedException();
+#else
             return AppDomain.CurrentDomain.GetAssemblies();
+#endif
         }
 
         public void OpenUriAction(Uri uri)
         {
+#if PORTABLE
+            throw new NotImplementedException();
+#else
             Process.Start(uri.ToString());
+#endif
         }
 
         public Xamarin.Forms.IIsolatedStorageFile GetUserStoreForApplication()
         {
+#if PORTABLE
+            throw new NotImplementedException();
+#else
             var scope = IsolatedStorageScope.User | IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain;
             var isolatedStorage = System.IO.IsolatedStorage.IsolatedStorageFile.GetStore(scope, null, null);
             return new IsolatedStorageFile(isolatedStorage);
+#endif
         }
     }
 }
-#endif
