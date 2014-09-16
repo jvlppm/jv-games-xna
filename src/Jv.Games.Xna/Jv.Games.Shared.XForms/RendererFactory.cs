@@ -5,13 +5,13 @@
 
     public static class RendererFactory
     {
-        static BindableProperty RendererProperty = BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), typeof(RendererFactory), null);
+        static BindableProperty RendererProperty = BindableProperty.CreateAttached("Renderer", typeof(IRenderer), typeof(RendererFactory), null);
 
-        public static IVisualElementRenderer GetRenderer(BindableObject obj)
+        public static IRenderer GetRenderer(BindableObject obj)
         {
-            return (IVisualElementRenderer)obj.GetValue(RendererProperty);
+            return (IRenderer)obj.GetValue(RendererProperty);
         }
-        public static void SetRenderer(VisualElement obj, IVisualElementRenderer renderer)
+        public static void SetRenderer(Element obj, IRenderer renderer)
         {
             obj.SetValue(RendererProperty, renderer);
         }

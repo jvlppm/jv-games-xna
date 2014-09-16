@@ -13,6 +13,7 @@ namespace Jv.Games.Xna.XForms.Renderers
     using Matrix = Microsoft.Xna.Framework.Matrix;
     using MathHelper = Microsoft.Xna.Framework.MathHelper;
     using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
+    using System.Collections.Immutable;
 
     public class VisualElementRenderer<TModel> : VisualElementRenderer
         where TModel : VisualElement
@@ -50,7 +51,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         Rectangle _transformationBounds;
         Matrix TransformationMatrix;
         VisualElement _model;
-        Dictionary<Element, IRenderer> _childrenRenderers;
+        ImmutableDictionary<Element, IRenderer> ChildrenRenderers = ImmutableDictionary<Element, IRenderer>.Empty;
 
         protected readonly PropertyTracker PropertyTracker;
         protected readonly SpriteBatch SpriteBatch;
@@ -79,7 +80,7 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         public IRenderer Parent { get; set; }
 
-        public IEnumerable<IRenderer> Children { get { return _childrenRenderers.Values; } }
+        public IEnumerable<IRenderer> Children { get { return ChildrenRenderers.Values; } }
 
         public bool IsVisible { get; set; }
         #endregion
@@ -133,11 +134,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 
             Render(gameTime);
 
-            if (_childrenRenderers != null)
-            {
-                foreach (var childRenderer in _childrenRenderers.Values)
-                    childRenderer.Draw(gameTime);
-            }
+            foreach (var childRenderer in ChildrenRenderers.Values)
+                childRenderer.Draw(gameTime);
         }
 
         protected void Render(Microsoft.Xna.Framework.GameTime gameTime)
@@ -191,11 +189,8 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (!IsVisible)
                 return;
 
-            if (_childrenRenderers != null)
-            {
-                foreach (var childRenderer in _childrenRenderers.Values)
-                    childRenderer.Update(gameTime);
-            }
+            foreach (var childRenderer in ChildrenRenderers.Values)
+                childRenderer.Update(gameTime);
         }
         #endregion
 
@@ -208,7 +203,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         public void InvalidateTransformations()
         {
             _transformationBounds = default(Rectangle);
-            foreach (var child in _childrenRenderers)
+            foreach (var child in ChildrenRenderers)
             {
                 var visualRenderer = child.Value as IVisualElementRenderer;
                 visualRenderer.InvalidateTransformations();
@@ -278,16 +273,17 @@ namespace Jv.Games.Xna.XForms.Renderers
         {
             var childRenderer = RendererFactory.Create(e.Element);
             childRenderer.Parent = this;
-            _childrenRenderers.Add(e.Element, childRenderer);
+            ChildrenRenderers = ChildrenRenderers.Add(e.Element, childRenderer);
         }
 
         void Model_ChildRemoved(object sender, ElementEventArgs e)
         {
             IRenderer childRenderer;
-            if (_childrenRenderers.TryGetValue(e.Element, out childRenderer))
+            if (ChildrenRenderers.TryGetValue(e.Element, out childRenderer))
+            {
                 childRenderer.Parent = null;
-
-            _childrenRenderers.Remove(e.Element);
+                ChildrenRenderers = ChildrenRenderers.Remove(e.Element);
+            }
         }
         #endregion
 
@@ -299,14 +295,17 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         protected virtual void OnModelUnload(VisualElement model)
         {
-            _childrenRenderers = null;
+            ChildrenRenderers = null;
             model.ChildAdded -= Model_ChildAdded;
             model.ChildRemoved -= Model_ChildRemoved;
         }
 
         protected virtual void OnModelLoad(VisualElement model)
         {
-            _childrenRenderers = model.LogicalChildren.ToDictionary(c => c, RendererFactory.Create);
+            var childrenBuilder = ImmutableDictionary<Element, IRenderer>.Empty.ToBuilder(); ;
+            childrenBuilder.AddRange(model.LogicalChildren.ToDictionary(c => c, RendererFactory.Create));
+
+            ChildrenRenderers = childrenBuilder.ToImmutable();
             model.ChildAdded += Model_ChildAdded;
             model.ChildRemoved += Model_ChildRemoved;
         }
