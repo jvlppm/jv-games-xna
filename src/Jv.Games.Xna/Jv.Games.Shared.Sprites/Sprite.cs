@@ -66,7 +66,8 @@
         /// </summary>
         /// <param name="spriteBatch">
         /// Spritebatch used to draw the sprite.
-        /// <c>spritebatch.Begin()</c> and <c>spritebatch.End()</c> should be called before and after this method call.
+        /// <c>spritebatch.Begin()</c> and <c>spritebatch.End()</c> should be called
+        /// before and after this method call respectivelly.
         /// </param>
         /// <param name="gameTime">Current game time.</param>
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)

@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Animation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoopedAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GridSpriteSheet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpriteSheet.cs" />
   </ItemGroup>
 </Project>
