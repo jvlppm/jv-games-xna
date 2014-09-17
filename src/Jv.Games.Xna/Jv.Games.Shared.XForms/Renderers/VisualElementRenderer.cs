@@ -49,9 +49,10 @@ namespace Jv.Games.Xna.XForms.Renderers
     {
         #region Attributes
         Rectangle _transformationBounds;
-        Matrix TransformationMatrix;
+        Microsoft.Xna.Framework.Graphics.BasicEffect Effect;
         VisualElement _model;
         ImmutableDictionary<Element, IRenderer> ChildrenRenderers = ImmutableDictionary<Element, IRenderer>.Empty;
+        float? _alpha;
 
         protected readonly PropertyTracker PropertyTracker;
         protected readonly SpriteBatch SpriteBatch;
@@ -101,6 +102,12 @@ namespace Jv.Games.Xna.XForms.Renderers
             PropertyTracker.AddHandler(VisualElement.RotationYProperty, Handle_Transformation);
             PropertyTracker.AddHandler(VisualElement.RotationProperty, Handle_Transformation);
             PropertyTracker.AddHandler(VisualElement.ScaleProperty, Handle_Transformation);
+            PropertyTracker.AddHandler(VisualElement.OpacityProperty, Handle_Opacity);
+
+            Effect = new Microsoft.Xna.Framework.Graphics.BasicEffect(Forms.Game.GraphicsDevice)
+            {
+                TextureEnabled = true
+            };
         }
         #endregion
 
@@ -164,7 +171,8 @@ namespace Jv.Games.Xna.XForms.Renderers
                 spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)ArrangedArea.X, (int)ArrangedArea.Y, (int)ArrangedArea.Width, (int)ArrangedArea.Height);
             }*/
 
-            SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode.Immediate, Microsoft.Xna.Framework.Graphics.BlendState.AlphaBlend, null, Microsoft.Xna.Framework.Graphics.DepthStencilState.None, state, null, TransformationMatrix);
+            Effect.Alpha = (_alpha = _alpha ?? (float)GetAlpha(Model)).Value;
+            SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode.Immediate, null, null, null, null, Effect);
         }
 
         protected virtual void LocalDraw(Microsoft.Xna.Framework.GameTime gameTime)
@@ -194,11 +202,29 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
         #endregion
 
-        #region 3D Transformations
+        #region Property Handlers
         void Handle_Transformation(BindableProperty prop)
         {
             InvalidateTransformations();
         }
+
+        void Handle_Opacity(BindableProperty prop)
+        {
+            InvalidateAlpha();
+        }
+
+        public void InvalidateAlpha()
+        {
+            _alpha = null;
+            foreach (var child in ChildrenRenderers)
+            {
+                var visualRenderer = child.Value as IVisualElementRenderer;
+                visualRenderer.InvalidateAlpha();
+            }
+        }
+        #endregion
+
+        #region 3D Transformations
 
         public void InvalidateTransformations()
         {
@@ -212,7 +238,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         protected virtual void Arrange()
         {
-            TransformationMatrix = GetWorldTransformation(Model) * GetProjectionMatrix(Model);
+            Effect.World = GetWorldTransformation(Model);
+            Effect.Projection = GetProjectionMatrix(Model);
             _transformationBounds = Model.Bounds;
         }
 
@@ -242,10 +269,9 @@ namespace Jv.Games.Xna.XForms.Renderers
             float dist = (float)Math.Max(viewport.Width, viewport.Height) * 2;
             var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
 
-            return Matrix.CreateTranslation(-(float)viewport.Width / 2, -(float)viewport.Height / 2, -dist)
+            return Matrix.CreateTranslation(-(float)viewport.Width / 2 - 0.5f, -(float)viewport.Height / 2 - 0.5f, -dist)
                  * Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), 0.001f, dist * 2)
-                 * Matrix.CreateTranslation(1, 1, 0)
-                 * Matrix.CreateScale(viewport.Width / 2, viewport.Height / 2, 1);
+                 * Matrix.CreateScale(1, -1, 1);
         }
 
         static Matrix GetControlTransformation(VisualElement element)
@@ -308,6 +334,23 @@ namespace Jv.Games.Xna.XForms.Renderers
             ChildrenRenderers = childrenBuilder.ToImmutable();
             model.ChildAdded += Model_ChildAdded;
             model.ChildRemoved += Model_ChildRemoved;
+        }
+        #endregion
+
+        #region Private Methods
+        static double GetAlpha(VisualElement model)
+        {
+            var alpha = model.Opacity;
+            var current = model.Parent;
+            while (current != null)
+            {
+                var visualParent = current as VisualElement;
+                if (visualParent != null)
+                    alpha *= visualParent.Opacity;
+
+                current = current.Parent;
+            }
+            return alpha;
         }
         #endregion
     }

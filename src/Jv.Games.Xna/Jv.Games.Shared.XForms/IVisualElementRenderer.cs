@@ -20,5 +20,6 @@
     {
         VisualElement Model { get; set; }
         void InvalidateTransformations();
+        void InvalidateAlpha();
     }
 }

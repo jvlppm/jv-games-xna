@@ -8,6 +8,7 @@ namespace Jv.Games.Xna.XForms.Renderers
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
+    using Xamarin.Forms;
 
     public class NavigationPageRenderer : VisualElementRenderer<Xamarin.Forms.NavigationPage>
     {
@@ -66,15 +67,15 @@ namespace Jv.Games.Xna.XForms.Renderers
             return ChangePageAsync(toShow, toHide);
         }
 
-        static Task<bool> ChangePageAsync(Xamarin.Forms.Page toShow, Xamarin.Forms.Page toHide)
+        async static Task<bool> ChangePageAsync(Xamarin.Forms.Page toShow, Xamarin.Forms.Page toHide)
         {
             var oldRenderer = RendererFactory.GetRenderer(toHide);
             var newRenderer = RendererFactory.GetRenderer(toShow);
 
-            oldRenderer.IsVisible = false;
             newRenderer.IsVisible = true;
-
-            return Task.FromResult(true);
+            await Task.WhenAll(toShow.FadeTo(1), toHide.FadeTo(0));
+            oldRenderer.IsVisible = false;
+            return true;
         }
     }
 }
