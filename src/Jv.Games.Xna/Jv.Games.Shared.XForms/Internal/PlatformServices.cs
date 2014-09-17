@@ -13,15 +13,17 @@
     using System.IO.IsolatedStorage;
 #endif
 
-    class PlatformServices : GameComponent, IPlatformServices
+    class PlatformServices : DrawableGameComponent, IPlatformServices
     {
-        readonly Context UpdateContext;
+        public readonly Context DrawContext;
+        public readonly Context UpdateContext;
         readonly HttpClient HttpClient;
         readonly SynchronizationContext MainThreadContext;
 
         public PlatformServices(Game game)
             : base(game)
         {
+            DrawContext = new Context();
             UpdateContext = new Context();
             HttpClient = new HttpClient();
             MainThreadContext = SynchronizationContext.Current;
@@ -31,6 +33,12 @@
         {
             UpdateContext.Update(gameTime);
             base.Update(gameTime);
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            DrawContext.Update(gameTime);
+            base.Draw(gameTime);
         }
 
         public void BeginInvokeOnMainThread(Action action)

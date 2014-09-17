@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Forms.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IImageSourceHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\ContextTicker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\IsolatedStorageFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\PlatformServices.cs" />

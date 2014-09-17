@@ -29,6 +29,8 @@
                 typeof(ExportImageSourceHandlerAttribute),
             });
 
+            Ticker.Default = new ContextTicker(platformServices.DrawContext);
+
             IsInitialized = true;
         }
     }
