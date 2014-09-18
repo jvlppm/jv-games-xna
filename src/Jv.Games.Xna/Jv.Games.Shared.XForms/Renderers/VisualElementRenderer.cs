@@ -13,6 +13,7 @@ namespace Jv.Games.Xna.XForms.Renderers
     using Matrix = Microsoft.Xna.Framework.Matrix;
     using MathHelper = Microsoft.Xna.Framework.MathHelper;
     using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
+    using Texture2D = Microsoft.Xna.Framework.Graphics.Texture2D;
     using System.Collections.Immutable;
 
     public class VisualElementRenderer<TModel> : VisualElementRenderer
@@ -49,10 +50,12 @@ namespace Jv.Games.Xna.XForms.Renderers
     {
         #region Attributes
         Rectangle _transformationBounds;
+        Microsoft.Xna.Framework.Rectangle _backgroundArea;
         Microsoft.Xna.Framework.Graphics.BasicEffect Effect;
         VisualElement _model;
         ImmutableDictionary<Element, IRenderer> ChildrenRenderers = ImmutableDictionary<Element, IRenderer>.Empty;
         float? _alpha;
+        Texture2D _backgroundTexture;
 
         protected readonly PropertyTracker PropertyTracker;
         protected readonly SpriteBatch SpriteBatch;
@@ -103,6 +106,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             PropertyTracker.AddHandler(VisualElement.RotationProperty, Handle_Transformation);
             PropertyTracker.AddHandler(VisualElement.ScaleProperty, Handle_Transformation);
             PropertyTracker.AddHandler(VisualElement.OpacityProperty, Handle_Opacity);
+            PropertyTracker.AddHandler(VisualElement.BackgroundColorProperty, Handle_BackgroundColor);
 
             Effect = new Microsoft.Xna.Framework.Graphics.BasicEffect(Forms.Game.GraphicsDevice)
             {
@@ -173,6 +177,9 @@ namespace Jv.Games.Xna.XForms.Renderers
 
             Effect.Alpha = (_alpha = _alpha ?? (float)GetAlpha(Model)).Value;
             SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode.Immediate, null, null, null, null, Effect);
+
+            if (_backgroundTexture != null)
+                SpriteBatch.Draw(_backgroundTexture, _backgroundArea, Microsoft.Xna.Framework.Color.White);
         }
 
         protected virtual void LocalDraw(Microsoft.Xna.Framework.GameTime gameTime)
@@ -213,6 +220,17 @@ namespace Jv.Games.Xna.XForms.Renderers
             InvalidateAlpha();
         }
 
+        void Handle_BackgroundColor(BindableProperty prop)
+        {
+            if (Model.BackgroundColor == default(Xamarin.Forms.Color))
+                _backgroundTexture = null;
+            else
+            {
+                _backgroundTexture = new Texture2D(SpriteBatch.GraphicsDevice, 1, 1);
+                _backgroundTexture.SetData(new [] {Model.BackgroundColor.ToXnaColor() } );
+            }
+        }
+
         public void InvalidateAlpha()
         {
             _alpha = null;
@@ -241,6 +259,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             Effect.World = GetWorldTransformation(Model);
             Effect.Projection = GetProjectionMatrix(Model);
             _transformationBounds = Model.Bounds;
+            _backgroundArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)Model.Bounds.Width, (int)Model.Bounds.Height);
         }
 
         static Matrix GetWorldTransformation(Element element)
