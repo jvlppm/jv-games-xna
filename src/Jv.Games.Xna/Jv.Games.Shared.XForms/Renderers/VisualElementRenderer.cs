@@ -110,7 +110,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 
             Effect = new Microsoft.Xna.Framework.Graphics.BasicEffect(Forms.Game.GraphicsDevice)
             {
-                TextureEnabled = true
+                TextureEnabled = true,
+                VertexColorEnabled = true
             };
         }
         #endregion
