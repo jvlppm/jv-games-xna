@@ -34,9 +34,9 @@
             var renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType());
             if (renderer != null)
             {
-                element.IsPlatformEnabled = true;
-                renderer.Model = element;
                 SetRenderer(element, renderer);
+                renderer.Model = element;
+                element.IsPlatformEnabled = true;
             }
             return renderer;
         }
