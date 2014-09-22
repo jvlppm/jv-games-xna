@@ -69,8 +69,8 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         async static Task<bool> ChangePageAsync(Xamarin.Forms.Page toShow, Xamarin.Forms.Page toHide)
         {
-            var oldRenderer = RendererFactory.GetRenderer(toHide);
-            var newRenderer = RendererFactory.GetRenderer(toShow);
+            var oldRenderer = VisualElementRenderer.GetRenderer(toHide);
+            var newRenderer = VisualElementRenderer.GetRenderer(toShow);
 
             newRenderer.IsVisible = true;
             await Task.WhenAll(toShow.FadeTo(1), toHide.FadeTo(0));

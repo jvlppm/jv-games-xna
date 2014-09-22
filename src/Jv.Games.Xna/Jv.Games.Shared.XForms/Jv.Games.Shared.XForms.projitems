@@ -22,9 +22,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)IVisualElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PropertyTracker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RendererFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\CellRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\LabelRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\ImageRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\NavigationPageRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderers\ViewCellRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderers\VisualElementRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultImageSourceHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIGameComponent.cs" />

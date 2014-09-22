@@ -1,5 +1,6 @@
 ﻿namespace Jv.Games.Xna.XForms
 {
+    using Jv.Games.Xna.XForms.Renderers;
     using System;
     using Xamarin.Forms;
     using GameTime = Microsoft.Xna.Framework.GameTime;
@@ -60,7 +61,7 @@
         {
             _page = newRoot;
             _page.Platform = this;
-            _renderer = RendererFactory.Create(newRoot);
+            _renderer = VisualElementRenderer.Create(newRoot);
         }
     }
 }

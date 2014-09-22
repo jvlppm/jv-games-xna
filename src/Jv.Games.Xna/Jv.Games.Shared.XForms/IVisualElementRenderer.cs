@@ -4,21 +4,31 @@
     using System.Collections.Generic;
     using Xamarin.Forms;
 
-    public interface IRenderer : IRegisterable
+    public interface ICellRenderer : IRegisterable
     {
-        IRenderer Parent { get; set; }
-        IEnumerable<IRenderer> Children { get; }
+        Cell Model { get; set; }
+        VisualElement CreateVisual(object item);
+    }
+
+    public interface IVisualElementRenderer : IRegisterable
+    {
+        VisualElement Model { get; set; }
 
         bool IsVisible { get; set; }
 
+        IVisualElementRenderer Parent { get; set; }
+        IEnumerable<IVisualElementRenderer> Children { get; }
+
+
         SizeRequest Measure(Size availableSize);
+        void Layout(Xamarin.Forms.Rectangle bounds);
+
         void Draw(GameTime gameTime);
         void Update(GameTime gameTime);
-    }
 
-    public interface IVisualElementRenderer : IRenderer
-    {
-        VisualElement Model { get; set; }
+        void Appeared();
+        void Disappeared();
+
         void InvalidateTransformations();
         void InvalidateAlpha();
     }
