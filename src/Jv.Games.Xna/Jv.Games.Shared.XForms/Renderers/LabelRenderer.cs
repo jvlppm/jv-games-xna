@@ -16,6 +16,7 @@ namespace Jv.Games.Xna.XForms.Renderers
     {
         public static SpriteFont DefaultFont;
         public static Color DefaultTextColor = Color.Black;
+        float _scale = 1f;
 
         SpriteFont _font;
         Color _textColor;
@@ -40,7 +41,7 @@ namespace Jv.Games.Xna.XForms.Renderers
                 return base.Measure(availableSize);
 
             var textMeasure = font.MeasureString(Model.Text);
-            _measuredSize = new SizeRequest(new Size(textMeasure.X, textMeasure.Y));
+            _measuredSize = new SizeRequest(new Size(textMeasure.X * _scale, textMeasure.Y * _scale));
             return _measuredSize;
         }
 
@@ -50,7 +51,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             if (font == null || Model.Text == null)
                 return;
 
-            SpriteBatch.DrawString(font, Model.Text, _textOffset, _textColor);
+            SpriteBatch.DrawString(font, Model.Text, _textOffset, _textColor, 0, Vector2.Zero, _scale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1);
         }
 
         protected override void Arrange()
@@ -67,6 +68,7 @@ namespace Jv.Games.Xna.XForms.Renderers
         }
 
         #region Property Handlers
+
         void Handle_TextColor(BindableProperty property)
         {
             if (Model.TextColor == default(Xamarin.Forms.Color))
@@ -83,6 +85,14 @@ namespace Jv.Games.Xna.XForms.Renderers
                 _font = Forms.Game.Content.Load<SpriteFont>(Model.Font.FontFamily);
             else
                 _font = null;
+
+            switch (Model.Font.NamedSize)
+            {
+                case NamedSize.Micro: _scale = 0.5f; break;
+                case NamedSize.Small: _scale = 0.75f; break;
+                case NamedSize.Medium: _scale = 1f; break;
+                case NamedSize.Large: _scale = 1.5f; break;
+            }
 
             UpdateAlignment();
         }
@@ -105,6 +115,7 @@ namespace Jv.Games.Xna.XForms.Renderers
             }
             throw new System.NotImplementedException("Unsupported TextAlignment");
         }
+
         #endregion
     }
 }
