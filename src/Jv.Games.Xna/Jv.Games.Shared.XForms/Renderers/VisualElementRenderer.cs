@@ -222,9 +222,17 @@ namespace Jv.Games.Xna.XForms.Renderers
                 Arrange();
 
             var state = Microsoft.Xna.Framework.Graphics.RasterizerState.CullNone;
+            var blendState = new Microsoft.Xna.Framework.Graphics.BlendState
+            {
+                    ColorSourceBlend = Microsoft.Xna.Framework.Graphics.Blend.SourceAlpha,
+                    AlphaSourceBlend = Microsoft.Xna.Framework.Graphics.Blend.SourceAlpha,
+
+                    ColorDestinationBlend = Microsoft.Xna.Framework.Graphics.Blend.InverseSourceAlpha,
+                    AlphaDestinationBlend = Microsoft.Xna.Framework.Graphics.Blend.InverseSourceAlpha
+            };
 
             Effect.Alpha = (_alpha = _alpha ?? GetAlpha()).Value;
-            SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode.Immediate, null, null, null, state, Effect);
+            SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode.Immediate, blendState, null, null, state, Effect);
 
             if (_backgroundTexture != null)
                 SpriteBatch.Draw(_backgroundTexture, _backgroundArea, Microsoft.Xna.Framework.Color.White);
