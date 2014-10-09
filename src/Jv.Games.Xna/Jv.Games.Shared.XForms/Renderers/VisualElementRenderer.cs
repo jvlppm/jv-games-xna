@@ -224,11 +224,11 @@ namespace Jv.Games.Xna.XForms.Renderers
             var state = Microsoft.Xna.Framework.Graphics.RasterizerState.CullNone;
             var blendState = new Microsoft.Xna.Framework.Graphics.BlendState
             {
-                    ColorSourceBlend = Microsoft.Xna.Framework.Graphics.Blend.SourceAlpha,
-                    AlphaSourceBlend = Microsoft.Xna.Framework.Graphics.Blend.SourceAlpha,
+                ColorSourceBlend = Microsoft.Xna.Framework.Graphics.Blend.SourceAlpha,
+                AlphaSourceBlend = Microsoft.Xna.Framework.Graphics.Blend.SourceAlpha,
 
-                    ColorDestinationBlend = Microsoft.Xna.Framework.Graphics.Blend.InverseSourceAlpha,
-                    AlphaDestinationBlend = Microsoft.Xna.Framework.Graphics.Blend.InverseSourceAlpha
+                ColorDestinationBlend = Microsoft.Xna.Framework.Graphics.Blend.InverseSourceAlpha,
+                AlphaDestinationBlend = Microsoft.Xna.Framework.Graphics.Blend.InverseSourceAlpha
             };
 
             Effect.Alpha = (_alpha = _alpha ?? GetAlpha()).Value;
@@ -317,13 +317,17 @@ namespace Jv.Games.Xna.XForms.Renderers
 
         protected virtual void Arrange()
         {
-            Effect.World = GetWorldTransformation(Model);
-            Effect.Projection = GetProjectionMatrix(Model);
+            Effect.World = GetWorldTransformation(Model).Multiply();
+            Effect.Projection = GetProjectionMatrix(Model).Aggregate(Matrix.Identity, (a, b) => a * b);
             _transformationBounds = Model.Bounds;
             _backgroundArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)Model.Bounds.Width, (int)Model.Bounds.Height);
+
+            /*var p1 = new Vector2(10, 10);
+            var p2 = GetProjectionMatrix(Model).Transform(p1);
+            var reverse_p1 = GetProjectionMatrix(Model).Revert(p2);*/
         }
 
-        static Matrix GetWorldTransformation(Element element)
+        static IEnumerable<Matrix> GetWorldTransformation(Element element)
         {
             Matrix world = Matrix.Identity;
             var currentElement = element;
@@ -331,30 +335,32 @@ namespace Jv.Games.Xna.XForms.Renderers
             {
                 var currentVisual = currentElement as VisualElement;
                 if (currentVisual != null)
-                    world *= GetControlTransformation(currentVisual);
+                    foreach (var m in GetControlTransformation(currentVisual))
+                        yield return m;
 
                 currentElement = currentElement.Parent;
             }
-
-            return world;
         }
 
-        static Matrix GetProjectionMatrix(VisualElement element)
+        static IEnumerable<Matrix> GetProjectionMatrix(VisualElement element)
         {
             if (element.Bounds.Width <= 0 && element.Bounds.Height <= 0)
-                return Matrix.Identity;
+            {
+                yield return Matrix.Identity;
+                yield break;
+            }
 
             var viewport = Forms.Game.GraphicsDevice.Viewport;
 
             float dist = (float)Math.Max(viewport.Width, viewport.Height) * 2;
             var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
 
-            return Matrix.CreateTranslation(-(float)viewport.Width / 2 - 0.5f, -(float)viewport.Height / 2 - 0.5f, -dist)
-                 * Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), 0.001f, dist * 2)
-                 * Matrix.CreateScale(1, -1, 1);
+            yield return Matrix.CreateTranslation(-(float)viewport.Width / 2 - 0.5f, -(float)viewport.Height / 2 - 0.5f, -dist);
+            yield return Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), 0.001f, dist * 2);
+            yield return Matrix.CreateScale(1, -1, 1);
         }
 
-        static Matrix GetControlTransformation(VisualElement element)
+        static IEnumerable<Matrix> GetControlTransformation(VisualElement element)
         {
             var absAnchorX = (float)(element.Bounds.Width * element.AnchorX);
             var absAnchorY = (float)(element.Bounds.Height * element.AnchorY);
@@ -364,13 +370,13 @@ namespace Jv.Games.Xna.XForms.Renderers
                 (float)(element.Bounds.Y + element.TranslationY - (absAnchorY * element.Scale - absAnchorY))
             );
 
-            return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f)
-                 * Matrix.CreateRotationX(MathHelper.ToRadians((float)element.RotationX))
-                 * Matrix.CreateRotationY(MathHelper.ToRadians((float)element.RotationY))
-                 * Matrix.CreateRotationZ(MathHelper.ToRadians((float)element.Rotation))
-                 * Matrix.CreateScale((float)element.Scale)
-                 * Matrix.CreateTranslation(absAnchorX * (float)element.Scale, absAnchorY * (float)element.Scale, 0f)
-                 * Matrix.CreateTranslation(new Vector3(offset, 0));
+            yield return Matrix.CreateTranslation(-absAnchorX, -absAnchorY, 0f);
+            yield return Matrix.CreateRotationX(MathHelper.ToRadians((float)element.RotationX));
+            yield return Matrix.CreateRotationY(MathHelper.ToRadians((float)element.RotationY));
+            yield return Matrix.CreateRotationZ(MathHelper.ToRadians((float)element.Rotation));
+            yield return Matrix.CreateScale((float)element.Scale);
+            yield return Matrix.CreateTranslation(absAnchorX * (float)element.Scale, absAnchorY * (float)element.Scale, 0f);
+            yield return Matrix.CreateTranslation(new Vector3(offset, 0));
         }
         #endregion
 
