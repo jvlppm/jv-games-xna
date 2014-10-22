@@ -15,6 +15,7 @@ namespace Sample.XForms
         SpriteBatch spriteBatch;
 
         Xamarin.Forms.VisualElement _ui;
+        Xamarin.Forms.Image _img;
 
         public Game1()
         {
@@ -67,12 +68,12 @@ namespace Sample.XForms
                             YAlign = Xamarin.Forms.TextAlignment.Center,
                             Text = "Title",
                         },
-                        new Xamarin.Forms.Image
+                        (_img = new Xamarin.Forms.Image
                         {
                             HorizontalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             VerticalOptions = Xamarin.Forms.LayoutOptions.CenterAndExpand,
                             Source = "TestImage"
-                        }
+                        })
                     }
                 }
             };
@@ -96,6 +97,10 @@ namespace Sample.XForms
         protected override void Update(GameTime gameTime)
         {
             float diffSpeed = 1f;
+
+            var rend = (Jv.Games.Xna.XForms.Renderers.VisualElementRenderer)Jv.Games.Xna.XForms.Renderers.VisualElementRenderer.GetRenderer(_img);
+            var m = Mouse.GetState();
+            rend.CheckClick(new Vector2(m.X, m.Y));
 
             // TODO: Add your update logic here
             if (Keyboard.GetState().IsKeyDown(Keys.Right))

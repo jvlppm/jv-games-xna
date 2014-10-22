@@ -14,6 +14,7 @@ namespace Jv.Games.Xna.XForms.Renderers
     using Texture2D = Microsoft.Xna.Framework.Graphics.Texture2D;
     using Vector2 = Microsoft.Xna.Framework.Vector2;
     using Vector3 = Microsoft.Xna.Framework.Vector3;
+    using Plane = Microsoft.Xna.Framework.Plane;
 
     public class VisualElementRenderer<TModel> : VisualElementRenderer
         where TModel : VisualElement
@@ -318,13 +319,72 @@ namespace Jv.Games.Xna.XForms.Renderers
         protected virtual void Arrange()
         {
             Effect.World = GetWorldTransformation(Model).Multiply();
-            Effect.Projection = GetProjectionMatrix(Model).Aggregate(Matrix.Identity, (a, b) => a * b);
+            Effect.Projection = GetProjectionMatrix().Multiply();
             _transformationBounds = Model.Bounds;
             _backgroundArea = new Microsoft.Xna.Framework.Rectangle(0, 0, (int)Model.Bounds.Width, (int)Model.Bounds.Height);
+        }
 
-            /*var p1 = new Vector2(10, 10);
-            var p2 = GetProjectionMatrix(Model).Transform(p1);
-            var reverse_p1 = GetProjectionMatrix(Model).Revert(p2);*/
+        public void CheckClick(Vector2 position)
+        {
+            var plane = new Plane(new Vector3(0, 0, 1), 0);
+            plane = Transform(plane, Effect.World);
+
+            var ray = GetPickRay(position);
+            var dist = ray.Intersects(plane);
+            if (dist != null)
+            {
+                var clickPosition = Vector3.Transform(ray.Position + ray.Direction * dist.Value, Matrix.Invert(Effect.World));
+                var convertedMouse = new Vector2((int)clickPosition.X, (int) clickPosition.Y);
+                Console.WriteLine("Final!: " + convertedMouse);
+            }
+        }
+
+        public static Plane Transform(Plane plane, Matrix matrix)
+        {
+            Plane p;
+            Matrix m;
+            Matrix.Invert(ref matrix, out m);
+            float x = plane.Normal.X;
+            float y = plane.Normal.Y;
+            float z = plane.Normal.Z;
+            float d = plane.D;
+
+            p.Normal.X = (x * m.M11) + (y * m.M12) + (z * m.M13) + (d * m.M14);
+            p.Normal.Y = (x * m.M21) + (y * m.M22) + (z * m.M23) + (d * m.M24);
+            p.Normal.Z = (x * m.M31) + (y * m.M32) + (z * m.M33) + (d * m.M34);
+            p.D = (x * m.M41) + (y * m.M42) + (z * m.M43) + (d * m.M44);
+            return p;
+        }
+
+        Microsoft.Xna.Framework.Ray GetPickRay(Vector2 mouse)
+        {
+            Vector3 nearsource = new Vector3(mouse, 0f);
+            Vector3 farsource = new Vector3(mouse, 1f);
+
+            Matrix world = Matrix.Identity;
+
+            Vector3 nearPoint = Forms.Game.GraphicsDevice.Viewport.Unproject(nearsource,
+                Effect.Projection, Effect.View, world);
+
+            Vector3 farPoint = Forms.Game.GraphicsDevice.Viewport.Unproject(farsource,
+                Effect.Projection, Effect.View, world);
+
+            // Create a ray from the near clip plane to the far clip plane.
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+            return new Microsoft.Xna.Framework.Ray(nearPoint, direction);
+        }
+
+        static IEnumerable<Matrix> GetProjectionMatrix()
+        {
+            var viewport = Forms.Game.GraphicsDevice.Viewport;
+
+            float dist = (float)Math.Max(viewport.Width, viewport.Height) * 2;
+            var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
+
+            yield return Matrix.CreateTranslation(-(float)viewport.Width / 2 - 0.5f, -(float)viewport.Height / 2 - 0.5f, -dist);
+            yield return Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), dist * 0.8f, dist * 2);
+            yield return Matrix.CreateScale(1, -1, 1);
         }
 
         static IEnumerable<Matrix> GetWorldTransformation(Element element)
@@ -340,24 +400,6 @@ namespace Jv.Games.Xna.XForms.Renderers
 
                 currentElement = currentElement.Parent;
             }
-        }
-
-        static IEnumerable<Matrix> GetProjectionMatrix(VisualElement element)
-        {
-            if (element.Bounds.Width <= 0 && element.Bounds.Height <= 0)
-            {
-                yield return Matrix.Identity;
-                yield break;
-            }
-
-            var viewport = Forms.Game.GraphicsDevice.Viewport;
-
-            float dist = (float)Math.Max(viewport.Width, viewport.Height) * 2;
-            var angle = (float)System.Math.Atan(((float)viewport.Height / 2) / dist) * 2;
-
-            yield return Matrix.CreateTranslation(-(float)viewport.Width / 2 - 0.5f, -(float)viewport.Height / 2 - 0.5f, -dist);
-            yield return Matrix.CreatePerspectiveFieldOfView(angle, ((float)viewport.Width / viewport.Height), 0.001f, dist * 2);
-            yield return Matrix.CreateScale(1, -1, 1);
         }
 
         static IEnumerable<Matrix> GetControlTransformation(VisualElement element)
