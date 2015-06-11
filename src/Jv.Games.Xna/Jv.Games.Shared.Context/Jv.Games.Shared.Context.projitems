@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -20,11 +20,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Operations\ContextTimer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Operations\DummyOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Operations\FloatAnimation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operations\RepeatingTimer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Operations\WhenAllExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Operations\WhenAnyExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Operations\Yield.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Operations\" />
   </ItemGroup>
 </Project>
