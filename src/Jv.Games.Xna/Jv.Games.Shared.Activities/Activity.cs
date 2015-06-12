@@ -210,15 +210,6 @@
         {
             return UpdateContext.Wait(Run(subActivity, subActivity.Run));
         }
-
-        public ContextTask<TResult> RunNew<TActivity, TResult>(params object[] args)
-            where TActivity : Activity<TResult>
-        {
-            object[] ctorArgs = new[] { Game }.Concat(args).ToArray();
-
-            var act = (TActivity)Activator.CreateInstance(typeof(TActivity), ctorArgs);
-            return Run(act);
-        }
         #endregion
     }
 }
