@@ -25,6 +25,29 @@
             return context.Run(info);
         }
 
+        public static ContextOperation<TimeSpan> Animate(this IContext context, TimeSpan duration, Vector2 start, Vector2 end, Action<Vector2> step, CancellationToken cancellationToken = default(CancellationToken)
+#if !DISABLE_TWEENER
+            , XNATweener.TweeningFunction easingFunction = null
+#endif
+        )
+        {
+            if (step == null)
+                throw new ArgumentNullException("colorStep");
+
+            var info = new FloatAnimation(duration, 0, 1, value => step(new Vector2(
+                x: MathHelper.Lerp(start.X, end.X, value),
+                y: MathHelper.Lerp(start.Y, end.Y, value)))
+#if !DISABLE_TWEENER
+                , easingFunction
+#endif
+                       );
+
+            if (cancellationToken != default(CancellationToken))
+                cancellationToken.Register(info.Cancel);
+
+            return context.Run(info);
+        }
+
         public static ContextOperation<TimeSpan> Animate(this IContext context, TimeSpan duration, Reference<Color> color, Color endColor, CancellationToken cancellationToken = default(CancellationToken)
 			#if !DISABLE_TWEENER
             , XNATweener.TweeningFunction easingFunction = null

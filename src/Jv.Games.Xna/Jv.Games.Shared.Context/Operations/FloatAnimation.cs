@@ -35,7 +35,7 @@
 			#endif
         )
         {
-            if (duration <= TimeSpan.Zero)
+            if (duration < TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException("duration", "Duration must be greater than zero");
 
             if (valueStep == null)
@@ -83,6 +83,9 @@
 
         float GetValue()
         {
+            if (Duration <= TimeSpan.Zero)
+                return 1;
+
             float curDuration = MathHelper.Clamp((float)CurrentDuration.TotalMilliseconds, 0, (float)Duration.TotalMilliseconds);
 
             #if !DISABLE_TWEENER
