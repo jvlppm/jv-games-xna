@@ -36,6 +36,11 @@
         public Animation CurrentAnimation { get; private set; }
 
         /// <summary>
+        /// First animation added to this sprite.
+        /// </summary>
+        public Animation DefaultAnimation { get; private set; }
+
+        /// <summary>
         /// Indicates if the current animation is finished, or no animation is playing.
         /// </summary>
         public bool AnimationIsFinished { get { return CurrentAnimation == null || CurrentAnimation.IsFinished; } }
@@ -130,7 +135,7 @@
 
             _animations.Add(item.Name, item);
             if (CurrentAnimation == null)
-                CurrentAnimation = item;
+                CurrentAnimation = DefaultAnimation = item;
         }
 
         /// <summary>

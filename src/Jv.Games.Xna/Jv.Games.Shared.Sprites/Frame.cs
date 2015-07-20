@@ -40,6 +40,11 @@
         public int Height { get { return Rectangle.Height; } }
 
         /// <summary>
+        /// The Size of this frame.
+        /// </summary>
+        public Point Size { get { return new Point(Rectangle.Width, Rectangle.Height); } }
+
+        /// <summary>
         /// Initializes a new <see cref="Jv.Games.Xna.Sprites.Frame"/> class.
         /// </summary>
         /// <param name="texture">Texture image used to render this frame.</param>
