@@ -75,11 +75,11 @@
         /// before and after this method call respectivelly.
         /// </param>
         /// <param name="gameTime">Current game time.</param>
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime, float layerDepth = 1)
         {
             if (CurrentAnimation == null)
                 return;
-            CurrentAnimation.Draw(spriteBatch, Position, Color, Effect, Rotation);
+			CurrentAnimation.Draw(spriteBatch, Position, Color, Effect, Rotation, layerDepth);
         }
         #endregion
 

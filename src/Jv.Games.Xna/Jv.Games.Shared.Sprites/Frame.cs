@@ -30,6 +30,11 @@
         public float DurationWeight;
 
         /// <summary>
+        /// Scale used to render this frame
+        /// </summary>
+        public Vector2 RenderScale = Vector2.One;
+
+        /// <summary>
         /// The Width of this frame.
         /// </summary>
         public int Width { get { return Rectangle.Width; } }
@@ -51,18 +56,13 @@
         /// <param name="rectangle">Region of the Frame inside the texture.</param>
         /// <param name="origin">/// The origin of the sprite. Specify (0,0) for the upper-left corner.</param>
         /// <param name="durationWeight">Frame duration weight.</param>
-        public Frame(Texture2D texture, Rectangle rectangle, Vector2 origin = default(Vector2), float durationWeight = 1)
+        public Frame(Texture2D texture, Rectangle rectangle)
         {
             if (rectangle.Width <= 0 || rectangle.Height <= 0)
                 throw new ArgumentException("Invalid frame rectangle", "rectangle");
 
-            if (durationWeight < 0)
-                throw new ArgumentOutOfRangeException("durationWeight", "Duration weight cannot be negative");
-
             Texture = texture;
             Rectangle = rectangle;
-            Origin = origin;
-            DurationWeight = durationWeight;
         }
     }
 }

@@ -125,15 +125,16 @@
             if (index < 0 || index >= Columns * Rows)
                 throw new ArgumentOutOfRangeException("index");
 
-            return new Frame
-            (
+            return new Frame (
                 Texture,
                 rectangle: new Rectangle(
                     (index % Columns) * FrameSize.X,
                     (index / Columns) * FrameSize.Y,
                     FrameSize.X,
                     FrameSize.Y)
-            );
+				) {
+				RenderScale = RenderScale
+			};
         }
     }
 }

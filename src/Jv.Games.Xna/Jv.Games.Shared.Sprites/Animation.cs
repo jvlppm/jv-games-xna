@@ -104,16 +104,18 @@
         /// <param name="color">The color channel modulation to use. Use <c>Color.White</c> for full color with no tinting.</param>
         /// <param name="effect">Effect to apply prior to rendering.</param>
         /// <param name="rotation">The angle, in radians, to rotate the sprite around the origin.</param>
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, SpriteEffects effect, float rotation)
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, SpriteEffects effect, float rotation, float layerDepth)
         {
             spriteBatch.Draw(
                 texture: _currentFrame.Texture,
-                sourceRectangle: _currentFrame.Rectangle,
-                origin: _currentFrame.Origin,
                 position: position,
-                rotation: rotation,
+                sourceRectangle: _currentFrame.Rectangle,
                 color: color,
-                effect: effect);
+                rotation: rotation,
+                origin: _currentFrame.Origin,
+                scale: _currentFrame.RenderScale,
+                effects: effect,
+                layerDepth: layerDepth);
         }
         #endregion
 
@@ -141,7 +143,11 @@
 
             _currentFrameIndex = frameIndex;
             _currentFrame = Frames[frameIndex];
-            _currentFrameDuration = TimeSpan.FromSeconds((Duration.TotalSeconds / Frames.Sum(f => f.DurationWeight)) * _currentFrame.DurationWeight);
+            var totalWeidht = Frames.Sum(f => f.DurationWeight);
+            if (Math.Abs(totalWeidht) < 0.0001)
+                _currentFrameDuration = TimeSpan.FromSeconds(Duration.TotalSeconds / Frames.Length);
+            else
+                _currentFrameDuration = TimeSpan.FromSeconds((Duration.TotalSeconds / totalWeidht) * _currentFrame.DurationWeight);
             _frameSpentTime = TimeSpan.Zero;
         }
         #endregion

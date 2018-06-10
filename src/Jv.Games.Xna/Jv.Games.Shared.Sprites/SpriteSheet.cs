@@ -14,6 +14,10 @@
         /// Sprite sheet image.
         /// </summary>
         public readonly Texture2D Texture;
+		/// <summary>
+		/// Scale used to render frames
+		/// </summary>
+		public Vector2 RenderScale = Vector2.One;
 
         /// <summary>
         /// Creates a new <see cref="Jv.Games.Xna.Sprites.SpriteSheet"/>.
@@ -45,7 +49,7 @@
             if (frameDuration <= TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException("frameDuration");
 
-            var frames = frameRects.Select(r => new Frame(Texture, r)).ToArray();
+			var frames = frameRects.Select(r => new Frame(Texture, r) { RenderScale = RenderScale }).ToArray();
             var duration = TimeSpan.FromSeconds(frameDuration.TotalSeconds * frames.Length);
             if (repeat)
                 return new LoopedAnimation(name, frames, duration, 0, null);

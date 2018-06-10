@@ -47,6 +47,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Jv.Games.Shared.Context", "
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Jv.Games.Shared.Async", "Jv.Games.Shared.Async\Jv.Games.Shared.Async.shproj", "{86AB1ED0-EA5E-46BF-B23C-F59573CEBF6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jv.Games.NetStandard", "Platforms\Jv.Games.NetStandard\Jv.Games.NetStandard.csproj", "{CEAB0A9E-05C8-43EE-B8F4-AE9687A98B97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEAB0A9E-05C8-43EE-B8F4-AE9687A98B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEAB0A9E-05C8-43EE-B8F4-AE9687A98B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEAB0A9E-05C8-43EE-B8F4-AE9687A98B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEAB0A9E-05C8-43EE-B8F4-AE9687A98B97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FA5AB381-3DE9-4429-B1C3-D34E61ECF629} = {9AFF3E13-6E8B-4067-8B77-52503AFFB72F}
@@ -119,6 +125,7 @@ Global
 		{6560B0AF-7391-47F0-9716-6ADA58531ED1} = {4A793BBB-B4B7-410F-8311-E1C13AED0134}
 		{8DDA2D87-ABAC-469C-B6F2-50833C94D429} = {4A793BBB-B4B7-410F-8311-E1C13AED0134}
 		{DEBA5313-E2D0-46F6-943D-626B039A70F0} = {4A793BBB-B4B7-410F-8311-E1C13AED0134}
+		{CEAB0A9E-05C8-43EE-B8F4-AE9687A98B97} = {E51F4226-C6FB-44A4-9F03-E0644A736A9B}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Platforms\Jv.Games.MonoGame\Jv.Games.MonoGame.csproj
