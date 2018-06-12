@@ -6,18 +6,18 @@
 
     public class ContextOperationAwaiter : INotifyCompletion
     {
-        readonly IGameOperation _operation;
+        readonly IOperationStatus _operation;
         readonly IContext _context;
 
-        public bool IsCompleted { get { return _operation.IsCompleted; } }
+        public bool IsCompleted => _operation.IsCompleted;
 
-        public bool IsFaulted { get { return _operation.IsFaulted; } }
+        public bool IsFaulted => _operation.IsFaulted;
 
-        public bool IsCanceled { get { return _operation.IsCanceled; } }
+        public bool IsCanceled => _operation.IsCanceled;
 
-        public Exception Error { get { return _operation.Error; } }
+        public Exception Error => _operation.Error;
 
-        public ContextOperationAwaiter(IGameOperation operation, IContext context)
+        public ContextOperationAwaiter(IOperationStatus operation, IContext context)
         {
             _operation = operation;
             _context = context;
@@ -25,33 +25,27 @@
 
         #region INotifyCompletion implementation
 
-        public void OnCompleted(Action continuation)
-        {
-            _operation.OnCompleted(() => _context.Post(continuation));
-        }
+        public void GetResult() => _operation.GetResult();
 
-        public void GetResult()
-        {
-            _operation.GetResult();
-        }
+        public void OnCompleted(Action continuation) => _operation.OnCompleted(() => _context.Post(continuation));
 
         #endregion
     }
 
     public class ContextOperationAwaiter<T> : INotifyCompletion
     {
-        readonly IGameOperation<T> _operation;
+        readonly IOperationStatus<T> _operation;
         readonly IContext _context;
 
-        public bool IsCompleted { get { return _operation.IsCompleted; } }
+        public bool IsCompleted => _operation.IsCompleted;
 
-        public bool IsFaulted { get { return _operation.IsFaulted; } }
+        public bool IsFaulted => _operation.IsFaulted;
 
-        public bool IsCanceled { get { return _operation.IsCanceled; } }
+        public bool IsCanceled => _operation.IsCanceled;
 
-        public Exception Error { get { return _operation.Error; } }
+        public Exception Error => _operation.Error;
 
-        public ContextOperationAwaiter(IGameOperation<T> operation, IContext context)
+        public ContextOperationAwaiter(IOperationStatus<T> operation, IContext context)
         {
             _operation = operation;
             _context = context;
@@ -59,15 +53,9 @@
 
         #region INotifyCompletion implementation
 
-        public void OnCompleted(Action continuation)
-        {
-            _operation.OnCompleted(() => _context.Post(continuation));
-        }
+        public T GetResult() => _operation.GetResult();
 
-        public T GetResult()
-        {
-            return _operation.GetResult();
-        }
+        public void OnCompleted(Action continuation) => _operation.OnCompleted(() => _context.Post(continuation));
 
         #endregion
     }

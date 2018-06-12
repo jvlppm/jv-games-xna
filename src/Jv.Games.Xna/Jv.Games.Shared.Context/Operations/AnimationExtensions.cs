@@ -32,7 +32,7 @@
         )
         {
             if (step == null)
-                throw new ArgumentNullException("colorStep");
+                throw new ArgumentNullException(nameof(step));
 
             var info = new FloatAnimation(duration, 0, 1, value => step(new Vector2(
                 x: MathHelper.Lerp(start.X, end.X, value),
@@ -55,7 +55,7 @@
         )
         {
             if (color == null)
-                throw new ArgumentNullException("color");
+                throw new ArgumentNullException(nameof(color));
 
             return Animate(context, duration, color.Value, endColor, c =>
             {
@@ -74,7 +74,7 @@
         )
         {
             if (colorStep == null)
-                throw new ArgumentNullException("colorStep");
+                throw new ArgumentNullException(nameof(colorStep));
 
             var info = new FloatAnimation(duration, 0, 1, value =>
             colorStep(Color.Lerp(startColor, endColor, value))

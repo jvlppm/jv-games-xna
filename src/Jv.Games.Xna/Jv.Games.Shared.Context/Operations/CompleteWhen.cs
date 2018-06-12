@@ -10,23 +10,18 @@
         public CompleteWhenOperation(Func<GameTime, bool> checkCompletion)
         {
             if (checkCompletion == null)
-                throw new ArgumentNullException("checkCompletion");
+                throw new ArgumentNullException(nameof(checkCompletion));
 
             _checkCompletion = checkCompletion;
         }
 
-        public override bool Continue(GameTime gameTime)
+        public override void Continue(GameTime gameTime)
         {
-            if (IsCompleted)
-                return false;
+            if (Status.IsCompleted)
+                return;
 
             if (_checkCompletion(gameTime))
-            {
-                SetCompleted();
-                return false;
-            }
-
-            return true;
+                Status.SetCompleted();
         }
     }
 

@@ -20,65 +20,53 @@
 
         public int DrawOrder
         {
-            get { return _drawOrder; }
+            get => _drawOrder;
             set
             {
                 if (_drawOrder == value)
                     return;
-
                 _drawOrder = value;
-
-                if (DrawOrderChanged != null)
-                    DrawOrderChanged(this, EventArgs.Empty);
+                DrawOrderChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public int UpdateOrder
         {
-            get { return _updateOrder; }
+            get => _updateOrder;
             set
             {
                 if (_updateOrder == value)
                     return;
-
                 _updateOrder = value;
-
-                if (UpdateOrderChanged != null)
-                    UpdateOrderChanged(this, EventArgs.Empty);
+                UpdateOrderChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public bool Visible
         {
-            get { return _visible; }
+            get => _visible;
             set
             {
                 if (_visible == value)
                     return;
-
                 _visible = value;
-
-                if (VisibleChanged != null)
-                    VisibleChanged(this, EventArgs.Empty);
+                VisibleChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public bool Enabled
         {
-            get { return _enabled; }
+            get => _enabled;
             set
             {
                 if (_enabled == value)
                     return;
-
                 _enabled = value;
-
-                if (EnabledChanged != null)
-                    EnabledChanged(this, EventArgs.Empty);
+                EnabledChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        protected Game Game { get; private set; }
+        protected Game Game { get; }
 
         #endregion
 

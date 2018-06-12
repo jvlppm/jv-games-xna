@@ -6,6 +6,23 @@
 
     public interface IGameOperation
     {
+        IOperationStatus Status { get; }
+
+        /// <summary>
+        /// Updates the operation.
+        /// </summary>
+        /// <param name="gameTime">Current game time.</param>
+        /// <returns>True if the operation can continue (its not complete).</returns>
+        void Continue(GameTime gameTime);
+    }
+
+    public interface IGameOperation<out T> : IGameOperation
+    {
+        new IOperationStatus<T> Status { get; }
+    }
+
+    public interface IOperationStatus
+    {
         /// <summary>
         /// Gets whether this IGameOperation has completed.
         /// </summary>
@@ -24,29 +41,17 @@
         /// <value><c>true</c> if this instance is completed in a canceled state; otherwise, <c>false</c>.</value>
         bool IsCanceled { get; }
 
-        /*/// <summary>
+        /// <summary>
         /// Gets the state of this operation.
         /// </summary>
         /// <value>The state.</value>
-        OperationState State { get; }*/
+        OperationState State { get; }
 
         /// <summary>
         /// Gets the error of the operation, if it is in a faulted state.
         /// </summary>
         /// <value>The resulting error.</value>
         Exception Error { get; }
-
-        /// <summary>
-        /// Updates the operation.
-        /// </summary>
-        /// <param name="gameTime">Current game time.</param>
-        /// <returns>True if the operation can continue (its not complete).</returns>
-        bool Continue(GameTime gameTime);
-
-        /// <summary>
-        /// Set the operation in a cancelled state.
-        /// </summary>
-        void Cancel();
 
         /// <summary>
         /// Throws the resulting exception if the operation failed.
@@ -56,7 +61,7 @@
         void OnCompleted(Action continuation);
     }
 
-    public interface IGameOperation<out T> : IGameOperation
+    public interface IOperationStatus<out T> : IOperationStatus
     {
         /// <summary>
         /// Throws the resulting exception if the operation failed.

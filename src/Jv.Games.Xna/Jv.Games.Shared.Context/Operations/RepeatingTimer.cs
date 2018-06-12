@@ -5,11 +5,10 @@
 
     public class RepeatingTimer : GameOperation, IDisposable
     {
-        private bool _disposed = false;
+        public event EventHandler Elapsed;
 
-        public TimeSpan DueTime, Period;
-
-        public event EventHandler Ellapsed = delegate { };
+        public TimeSpan DueTime { get; private set; }
+        public TimeSpan Period { get; private set; }
 
         public RepeatingTimer(TimeSpan dueTime, TimeSpan period)
         {
@@ -23,24 +22,22 @@
             Period = period;
         }
 
-        public override bool Continue(GameTime gameTime)
+        public override void Continue(GameTime gameTime)
         {
-            if (_disposed)
-                return false;
+            if (Status.IsCompleted)
+                return;
 
             DueTime -= gameTime.ElapsedGameTime;
             if (DueTime <= TimeSpan.Zero)
             {
                 DueTime = Period;
-                Ellapsed(this, EventArgs.Empty);
+                Elapsed(this, EventArgs.Empty);
             }
-
-            return true;
         }
 
-        public virtual void Change(TimeSpan dueTime, TimeSpan period)
+        public void Change(TimeSpan dueTime, TimeSpan period)
         {
-            if (_disposed)
+            if (Status.IsCompleted)
                 throw new ObjectDisposedException(GetType().FullName);
 
             Period = period;
@@ -49,7 +46,7 @@
 
         public void Dispose()
         {
-            _disposed = true;
+            Status.SetCompleted();
         }
     }
 

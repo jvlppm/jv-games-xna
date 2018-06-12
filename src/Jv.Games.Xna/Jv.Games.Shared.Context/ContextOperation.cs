@@ -1,23 +1,40 @@
 ﻿namespace Jv.Games.Xna.Context
 {
-    public class ContextOperation
+    public interface IOperationContext
     {
-        public readonly IGameOperation Operation;
-        public readonly IContext Context;
+        IOperationStatus Operation { get; }
+        IContext Context { get; }
+    }
 
-        public ContextOperation(IGameOperation operation, IContext context)
+    public interface IOperationContext<out T> : IOperationContext
+    {
+        new IOperationStatus<T> Operation { get; }
+    }
+
+    public struct ContextOperation : IOperationContext
+    {
+        public IOperationStatus Operation { get; }
+        public IContext Context { get; }
+
+        public ContextOperation(IContext context, IOperationStatus operation)
         {
-            Operation = operation;
             Context = context;
+            Operation = operation;
         }
     }
 
-    public class ContextOperation<T> : ContextOperation
+    public struct ContextOperation<T> : IOperationContext<T>
     {
-        public ContextOperation(IGameOperation<T> operation, IContext context)
-            : base(operation, context)
+        public IOperationStatus<T> Operation { get; }
+        public IContext Context { get; }
+
+        IOperationStatus IOperationContext.Operation => Operation;
+        IOperationStatus<T> IOperationContext<T>.Operation => Operation;
+
+        public ContextOperation(IContext context, IOperationStatus<T> operation)
         {
+            Context = context;
+            Operation = operation;
         }
     }
 }
-

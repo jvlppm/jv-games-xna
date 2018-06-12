@@ -41,14 +41,14 @@
         {
             _runningOperations.Add(operation);
             _lastOperationIndex++;
-            return new ContextOperation<T>(operation, this);
+            return new ContextOperation<T>(this, operation.Status);
         }
 
         public ContextOperation Run(IGameOperation operation)
         {
             _runningOperations.Add(operation);
             _lastOperationIndex++;
-            return new ContextOperation(operation, this);
+            return new ContextOperation(this, operation.Status);
         }
 
         public void Remove(IGameOperation operation)
@@ -81,7 +81,9 @@
         {
             for (int i = _lastOperationIndex; i >= 0; i--)
             {
-                if (!_runningOperations[i].Continue(gameTime))
+                var current = _runningOperations[i];
+                current.Continue(gameTime);
+                if (current.Status.IsCompleted)
                 {
                     _runningOperations.RemoveAt(i);
                     _lastOperationIndex--;

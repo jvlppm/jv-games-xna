@@ -27,7 +27,7 @@
 
         public static ContextOperationAwaiter<T> GetAwaiter<T>(this ContextOperation<T> op)
         {
-            return new ContextOperationAwaiter<T>((IGameOperation<T>)op.Operation, op.Context);
+            return new ContextOperationAwaiter<T>(op.Operation, op.Context);
         }
 
         public static Task<T> AsTask<T>(this ContextOperation<T> op)
@@ -40,7 +40,7 @@
                 else if (op.Operation.IsCanceled)
                     tcs.SetCanceled();
                 else
-                    tcs.SetResult(((IGameOperation<T>)op.Operation).GetResult());
+                    tcs.SetResult(op.Operation.GetResult());
             });
             return tcs.Task;
         }

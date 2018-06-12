@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using Jv.Games.Xna.Context;
 
-    public class ContextTaskAwaiter : INotifyCompletion
+    public struct ContextTaskAwaiter : INotifyCompletion
     {
         readonly Task _task;
         readonly IContext _context;
@@ -32,11 +32,12 @@
 
         public void OnCompleted(Action continuation)
         {
-            _task.ContinueWith(t => _context.Post(continuation), TaskContinuationOptions.ExecuteSynchronously);
+            var ctx = _context;
+            _task.ContinueWith(t => ctx.Post(continuation), TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 
-    public class ContextTaskAwaiter<T> : INotifyCompletion
+    public struct ContextTaskAwaiter<T> : INotifyCompletion
     {
         readonly IContext _context;
         readonly Task<T> _task;
@@ -63,7 +64,8 @@
 
         public void OnCompleted(Action continuation)
         {
-            _task.ContinueWith(t => _context.Post(continuation), TaskContinuationOptions.ExecuteSynchronously);
+            var ctx = _context;
+            _task.ContinueWith(t => ctx.Post(continuation), TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 }

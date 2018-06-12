@@ -7,11 +7,11 @@
     {
         public static ContextOperation WhenAll(this IContext context, params ContextOperation[] operations)
         {
-            var operation = new DummyOperation();
+            var operation = new OperationStatus();
             if (operations.Length <= 0)
             {
                 operation.SetCompleted();
-                return context.Run(operation);
+                return new ContextOperation(context, operation);
             }
 
             var remaining = new List<ContextOperation>(operations);
@@ -44,19 +44,19 @@
                 });
             }
 
-            return context.Run(operation);
+            return new ContextOperation(context, operation);
         }
 
         public static ContextOperation<T[]> WhenAll<T>(this IContext context, params ContextOperation<T>[] operations)
         {
-            var operation = new DummyOperation<T[]>();
+            var operation = new OperationStatus<T[]>();
             if (operations.Length <= 0)
             {
                 operation.SetResult(new T[0]);
-                return context.Run(operation);
+                return new ContextOperation<T[]>(context, operation);
             }
 
-            var remaining = new List<ContextOperation>(operations);
+            var remaining = new List<ContextOperation<T>>(operations);
 
             List<Exception> errors = new List<Exception>();
             bool canceled = false;
@@ -77,7 +77,7 @@
                         else if (op.Operation.IsCanceled)
                             canceled = true;
                         else
-                            results[curOpIndex] = ((IGameOperation<T>)op.Operation).GetResult();
+                            results[curOpIndex] = op.Operation.GetResult();
 
                         if (remaining.Count <= 0)
                         {
@@ -94,7 +94,7 @@
                 opIndexCount++;
             }
 
-            return context.Run(operation);
+            return new ContextOperation<T[]>(context, operation);
         }
     }
 }

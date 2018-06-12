@@ -9,12 +9,6 @@
     <Import_RootNamespace>Jv.Games.Xna.Async</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ContextOperationExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ContextOperationAwaiter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ContextExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ContextTask.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ContextTaskAwaiter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AsyncBridge.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TaskExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)**\*.cs" />
   </ItemGroup>
 </Project>

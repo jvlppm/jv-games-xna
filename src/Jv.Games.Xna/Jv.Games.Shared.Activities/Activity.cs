@@ -177,11 +177,11 @@
         protected readonly TaskCompletionSource<T> ActivityCompletion;
         protected readonly CancellationToken CancelOnExit;
 
-        protected SpriteBatch SpriteBatch { get; private set; }
+        protected SpriteBatch SpriteBatch { get; }
 
-        protected ContentManager Content { get { return Game.Content; } }
-        protected GraphicsDevice GraphicsDevice { get { return Game.GraphicsDevice; } }
-        protected Viewport Viewport { get { return Game.GraphicsDevice.Viewport; } }
+        protected ContentManager Content => Game.Content;
+        protected GraphicsDevice GraphicsDevice => Game.GraphicsDevice;
+        protected Viewport Viewport => Game.GraphicsDevice.Viewport;
 
         protected Activity(Game game)
             : base(game)

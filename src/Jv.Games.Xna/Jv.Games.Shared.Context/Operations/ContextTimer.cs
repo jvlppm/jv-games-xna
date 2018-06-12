@@ -16,7 +16,7 @@
 
         public TimeSpan Time { get; private set; }
 
-        public TimeSpan RemainingTime { get { return Duration - Time; } }
+        public TimeSpan RemainingTime => Duration - Time;
 
         #endregion
 
@@ -36,19 +36,17 @@
         /// </summary>
         /// <param name="gameTime">Current game time.</param>
         /// <returns>True if the timer is complete.</returns>
-        public override bool Continue(GameTime gameTime)
+        public override void Continue(GameTime gameTime)
         {
-            if (IsCompleted)
-                return false;
+            if (Status.IsCompleted)
+                return;
 
             Time += gameTime.ElapsedGameTime;
             if (Time >= Duration)
-            {
-                SetResult(Time);
-                return false;
-            }
-            return true;
+                Status.SetResult(Time);
         }
+
+        public void Cancel() => Status.Cancel();
 
         #endregion
     }

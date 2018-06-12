@@ -57,20 +57,19 @@
 
         #region Public Methods
 
-        public override bool Continue(GameTime gameTime)
+        public override void Continue(GameTime gameTime)
         {
-            if (IsCompleted)
-                return false;
+            if (Status.IsCompleted)
+                return;
 
             CurrentDuration += gameTime.ElapsedGameTime;
             NotifyValue();
 
-            if (CurrentDuration < Duration)
-                return true;
-
-            SetResult(CurrentDuration);
-            return false;
+            if (CurrentDuration >= Duration)
+                Status.SetResult(CurrentDuration);
         }
+
+        public void Cancel() => Status.Cancel();
 
         #endregion
 
@@ -78,7 +77,7 @@
 
         void NotifyValue()
         {
-            ValueStep(GetValue());
+            ValueStep?.Invoke(GetValue());
         }
 
         float GetValue()
