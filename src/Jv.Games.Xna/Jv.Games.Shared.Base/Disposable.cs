@@ -5,9 +5,11 @@ namespace Jv.Games.Xna.Base
     public struct Disposable : IDisposable
     {
         #region Attributes
-        bool _disposed;
+        bool _needsDisposing;
         readonly Action _onDispose;
         #endregion
+
+        public readonly static Disposable Empty = default(Disposable);
 
         public static IDisposable Create(Action onDispose)
         {
@@ -17,7 +19,7 @@ namespace Jv.Games.Xna.Base
         #region Constructors
         private Disposable(Action onDispose)
         {
-            _disposed = false;
+            _needsDisposing = true;
             _onDispose = onDispose;
         }
         #endregion
@@ -25,9 +27,9 @@ namespace Jv.Games.Xna.Base
         #region IDisposable
         public void Dispose()
         {
-            if (!_disposed)
+            if (_needsDisposing)
             {
-                _disposed = true;
+                _needsDisposing = false;
                 _onDispose();
             }
         }
