@@ -11,6 +11,7 @@
     public class Sprite : ICollection<Animation>
     {
         Dictionary<string, Animation> _animations;
+        Animation _nextAnimation;
 
         /// <summary>
         /// The color to tint the sprite. Use <c>Color.White</c> for full color with no tinting.
@@ -61,6 +62,11 @@
         /// <param name="gameTime"></param>
         public void Update(GameTime gameTime)
         {
+            if (_nextAnimation != null && _nextAnimation != CurrentAnimation) {
+                CurrentAnimation = _nextAnimation;
+                CurrentAnimation?.Reset();
+                _nextAnimation = null;
+            }
             if (CurrentAnimation == null)
                 return;
             CurrentAnimation.Update(gameTime);
@@ -79,7 +85,7 @@
         {
             if (CurrentAnimation == null)
                 return;
-			CurrentAnimation.Draw(spriteBatch, Position, Color, Effect, Rotation, layerDepth);
+            CurrentAnimation.Draw(spriteBatch, Position, Color, Effect, Rotation, layerDepth);
         }
         #endregion
 
@@ -93,13 +99,12 @@
         public void PlayAnimation(string name)
         {
             if (!_animations.ContainsKey(name))
-                throw new ArgumentException("Invalid animation name", "name");
+                throw new ArgumentException($"Invalid animation name: {name}", "name");
 
-            if (CurrentAnimation != null && CurrentAnimation.Name == name)
+            if (_nextAnimation != null && _nextAnimation.Name == name)
                 return;
 
-            CurrentAnimation = _animations[name];
-            CurrentAnimation.Reset();
+            _nextAnimation = _animations[name];
         }
 
         /// <summary>
