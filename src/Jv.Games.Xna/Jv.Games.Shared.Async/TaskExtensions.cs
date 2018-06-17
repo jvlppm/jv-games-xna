@@ -5,6 +5,8 @@
 
     public static class TaskExtensions
     {
+        public static void Forget(this Task task) { }
+
         public static Task<TResult> Select<T, TResult>(this Task<T> task, Func<T, TResult> selector)
         {
             if (selector == null)
