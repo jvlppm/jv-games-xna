@@ -6,11 +6,9 @@
 
     public abstract class GameOperation : IGameOperation
     {
-        readonly OperationStatus _status = new OperationStatus();
+        protected OperationStatus Status { get; } = new OperationStatus();
 
-        protected OperationStatus Status => _status;
-
-        IOperationStatus IGameOperation.Status => _status;
+        IOperationStatus IGameOperation.Status => Status;
 
         #region IOperation implementation
 

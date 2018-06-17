@@ -27,6 +27,11 @@
         #endregion
 
         #region Public Methods
+        public void Reset()
+        {
+            State = OperationState.NotCompleted;
+            Error = null;
+        }
 
         public void SetCompleted()
         {
