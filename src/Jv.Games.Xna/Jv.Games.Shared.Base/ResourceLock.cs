@@ -3,23 +3,16 @@ using System;
 
 namespace Jv.Games.Xna.Base
 {
-    public struct ResourceLock
+    public class ResourceLock
     {
-        HashSet<string> Locks;
+        uint _locks;
 
-        public bool IsLocked => Locks != null && Locks.Count > 0;
+        public bool IsLocked => _locks > 0;
 
         public IDisposable Lock(string reason)
         {
-            if (Locks == null) {
-                Locks = new HashSet<string>();
-            }
-
-            if (!Locks.Add(reason)) {
-                throw new InvalidOperationException();
-            }
-            var locks = Locks;
-            return Disposable.Create(() => locks.Remove(reason));
+            _locks++;
+            return Disposable.Create(() => _locks--);
         }
     }
 }
